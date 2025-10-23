@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三角比小テスト</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>三角比小テスト</h1>
+            <p class="subtitle">角度から三角比の値を求めよう</p>
+        </header>
+
+        <div id="loginScreen" class="screen">
+            <div class="welcome">
+                <h2>Googleアカウントでログイン</h2>
+                <p>テスト結果を記録するためにログインしてください</p>
+                <div id="googleSignInBtn"></div>
+                <p id="loginStatus" class="login-status"></p>
+            </div>
+        </div>
+
+        <div id="startScreen" class="screen hidden">
+            <div class="welcome">
+                <h2>テストを開始します</h2>
+                <p id="userEmail" class="user-email"></p>
+                <p>試運転: 3問 (本番は27問)</p>
+                <button id="startBtn" class="btn-primary">テスト開始</button>
+            </div>
+        </div>
+
+        <div id="quizScreen" class="screen hidden">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div class="question-info">
+                <span id="questionNumber">問題 1/10</span>
+            </div>
+
+            <div class="question-card">
+                <h2 id="questionText">sin(30°) の値を求めなさい</h2>
+
+                <div class="answer-choices">
+                    <button class="choice-btn" data-value="-√3">-√3</button>
+                    <button class="choice-btn" data-value="-1">-1</button>
+                    <button class="choice-btn" data-value="-√3/2">-√3/2</button>
+                    <button class="choice-btn" data-value="-√2/2">-√2/2</button>
+                    <button class="choice-btn" data-value="-1/2">-1/2</button>
+                    <button class="choice-btn" data-value="-√3/3">-√3/3</button>
+                    <button class="choice-btn" data-value="0">0</button>
+                    <button class="choice-btn" data-value="√3/3">√3/3</button>
+                    <button class="choice-btn" data-value="1/2">1/2</button>
+                    <button class="choice-btn" data-value="√2/2">√2/2</button>
+                    <button class="choice-btn" data-value="√3/2">√3/2</button>
+                    <button class="choice-btn" data-value="1">1</button>
+                    <button class="choice-btn" data-value="√3">√3</button>
+                    <button class="choice-btn" data-value="なし">なし</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="resultScreen" class="screen hidden">
+            <div class="result-card">
+                <h2>テスト結果</h2>
+                <div class="score-display">
+                    <div class="score-circle">
+                        <span id="scoreText">0/10</span>
+                    </div>
+                    <p class="score-percentage" id="scorePercentage">0%</p>
+                </div>
+
+                <div id="resultDetails" class="result-details"></div>
+
+                <button id="retryBtn" class="btn-primary">もう一度挑戦</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Google Cloud 認証情報
+client_secret_*.json
+*.json
+
+# テキストファイル（個人情報含む可能性）
+OAuthクライアント.txt
+Spreadsheet.txt
+デプロイ.txt
+powershell.txt
+
+# 設定ファイルのバックアップ
+config.js.bak
+
+# セットアップ用ファイル（不要）
+gas-code.js
+gas-code-ready.js
+SETUP.md
