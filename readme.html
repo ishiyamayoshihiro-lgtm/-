@@ -268,35 +268,50 @@
                     <div class="mode-status" id="currentMode">テストモード</div>
 
                     <div style="margin: 30px 0;">
-                        <h4 style="color: white; margin-bottom: 20px; font-size: 1.3em;">📝 モード切り替え方法</h4>
+                        <h4 style="color: white; margin-bottom: 20px; font-size: 1.3em;">📝 モード切り替え方法（超簡単！）</h4>
 
-                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
-                            <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">
-                                ① config.js を開く
+                        <div style="background: rgba(255,255,255,0.25); padding: 25px; border-radius: 15px; margin-bottom: 20px; border: 3px solid rgba(255,255,255,0.4);">
+                            <div style="font-size: 1.4em; font-weight: bold; margin-bottom: 15px; color: #fff;">
+                                ⭐ 一番簡単な方法
                             </div>
-                            <div style="font-size: 0.95em; line-height: 1.6;">
-                                メモ帳などで <code style="background: rgba(0,0,0,0.3); padding: 3px 8px; border-radius: 3px;">config.js</code> を開く
+                            <div style="font-size: 1.1em; line-height: 2;">
+                                <strong style="font-size: 1.2em; color: #ffeb3b;">モード切替.bat</strong> をダブルクリック<br>
+                                <span style="font-size: 0.9em; opacity: 0.9;">→ 番号を選択 → Yでプッシュ → 完了！</span>
                             </div>
                         </div>
 
-                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
-                            <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">
-                                ② 25行目を変更
-                            </div>
-                            <div style="font-size: 0.95em; line-height: 1.8;">
-                                <strong>練習モード:</strong> <code style="background: rgba(76,175,80,0.4); padding: 3px 8px; border-radius: 3px;">TEST_MODE: false</code><br>
-                                <strong>テストモード:</strong> <code style="background: rgba(33,150,243,0.4); padding: 3px 8px; border-radius: 3px;">TEST_MODE: true</code>
-                            </div>
-                        </div>
+                        <details style="margin-top: 20px;">
+                            <summary style="cursor: pointer; font-size: 1.1em; font-weight: bold; padding: 10px; background: rgba(255,255,255,0.15); border-radius: 5px;">手動で変更する方法（クリックして開く）</summary>
+                            <div style="margin-top: 15px;">
+                                <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                                    <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">
+                                        ① config.js を開く
+                                    </div>
+                                    <div style="font-size: 0.95em; line-height: 1.6;">
+                                        メモ帳などで <code style="background: rgba(0,0,0,0.3); padding: 3px 8px; border-radius: 3px;">config.js</code> を開く
+                                    </div>
+                                </div>
 
-                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 10px;">
-                            <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">
-                                ③ 保存してプッシュ
+                                <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                                    <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">
+                                        ② 25行目を変更
+                                    </div>
+                                    <div style="font-size: 0.95em; line-height: 1.8;">
+                                        <strong>練習モード:</strong> <code style="background: rgba(76,175,80,0.4); padding: 3px 8px; border-radius: 3px;">TEST_MODE: false</code><br>
+                                        <strong>テストモード:</strong> <code style="background: rgba(33,150,243,0.4); padding: 3px 8px; border-radius: 3px;">TEST_MODE: true</code>
+                                    </div>
+                                </div>
+
+                                <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 10px;">
+                                    <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">
+                                        ③ 保存してプッシュ
+                                    </div>
+                                    <div style="font-size: 0.95em; line-height: 1.6;">
+                                        ファイルを保存 → GitHubにプッシュ → 1〜2分で反映
+                                    </div>
+                                </div>
                             </div>
-                            <div style="font-size: 0.95em; line-height: 1.6;">
-                                ファイルを保存 → GitHubにプッシュ → 1〜2分で反映
-                            </div>
-                        </div>
+                        </details>
                     </div>
 
                     <div class="admin-warning" style="margin-top: 20px;">
