@@ -10,9 +10,17 @@ const CONFIG = {
     // Apps Script をデプロイした後に表示されるURLをここに設定
     GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbz9BsQpyV57A0KaPz8FgeiRTZUceFdqgOrfME3rv2weHXkz5MNyj-DrpXvnT98tq-wn/exec',
 
-    // テストモード設定
-    // true: テストモード（結果をスプレッドシートに記録）
-    // false: 練習モード（結果を記録しない）
-    // この設定は readme.html の管理者パネルから変更できます
+    // ========================================
+    // モード切り替え（ここを変更するだけ！）
+    // ========================================
+    // true: テストモード（全27問、結果を記録）
+    // false: 練習モード（10問ランダム、結果を記録しない）
+    //
+    // 変更手順:
+    // 1. この行の true を false に変更（または false を true に）
+    // 2. ファイルを保存
+    // 3. GitHubにプッシュ（git add config.js && git commit -m "モード変更" && git push）
+    // 4. 1〜2分待つとGitHub Pagesに反映されます
+    // ========================================
     TEST_MODE: true
 };
