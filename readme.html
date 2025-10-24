@@ -302,6 +302,13 @@
             padding: 10px 20px;
             border-radius: 20px;
             background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-label:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
         }
 
         .mode-label.active {
@@ -653,6 +660,17 @@
         // トグルスイッチの変更イベント
         modeToggle.addEventListener('change', function() {
             updateDisplay(this.checked);
+        });
+
+        // ラベルをクリックしたときにスイッチを切り替え
+        practiceLabel.addEventListener('click', function() {
+            modeToggle.checked = false;
+            updateDisplay(false);
+        });
+
+        testLabel.addEventListener('click', function() {
+            modeToggle.checked = true;
+            updateDisplay(true);
         });
 
         // 保存ボタンのクリックイベント
