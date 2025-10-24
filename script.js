@@ -98,6 +98,18 @@ const modeInfo = document.getElementById('modeInfo');
 
 // Google Sign-In初期化
 window.onload = function() {
+    // 練習モードの場合はログインをスキップ
+    if (!CONFIG.TEST_MODE) {
+        // ログイン画面を非表示、スタート画面を表示
+        loginScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+        userEmailDisplay.textContent = '練習モード（ログイン不要）';
+        // モード情報を更新
+        updateModeDisplay();
+        return;
+    }
+
+    // テストモードの場合のみGoogle認証を初期化
     // Google Identity Services の初期化
     google.accounts.id.initialize({
         client_id: CONFIG.GOOGLE_CLIENT_ID,
