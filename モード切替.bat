@@ -24,14 +24,14 @@ if errorlevel 1 goto :practice_mode
 :practice_mode
 echo.
 echo 練習モードに切り替えています...
-powershell -Command "(Get-Content config.js) -replace 'TEST_MODE: true', 'TEST_MODE: false' | Set-Content config.js"
+python -c "import codecs; f = codecs.open('config.js', 'r', 'utf-8'); content = f.read(); f.close(); content = content.replace('TEST_MODE: true', 'TEST_MODE: false'); f = codecs.open('config.js', 'w', 'utf-8'); f.write(content); f.close(); print('完了')"
 echo ✓ 練習モードに変更しました
 goto :push
 
 :test_mode
 echo.
 echo テストモードに切り替えています...
-powershell -Command "(Get-Content config.js) -replace 'TEST_MODE: false', 'TEST_MODE: true' | Set-Content config.js"
+python -c "import codecs; f = codecs.open('config.js', 'r', 'utf-8'); content = f.read(); f.close(); content = content.replace('TEST_MODE: false', 'TEST_MODE: true'); f = codecs.open('config.js', 'w', 'utf-8'); f.write(content); f.close(); print('完了')"
 echo ✓ テストモードに変更しました
 goto :push
 
