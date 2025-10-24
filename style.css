@@ -188,32 +188,35 @@ header h1 {
 
 .answer-choices {
     display: grid;
-    grid-template-columns: repeat(5, 160px);
-    grid-template-rows: repeat(3, auto);
+    grid-template-columns: repeat(4, 160px);
+    grid-template-rows: repeat(4, auto);
     gap: 12px;
     margin-top: 30px;
-    padding-left: 10px;
+    padding-left: 0;
+    justify-content: center;
 }
 
-/* 1段目: 1, 4, 7, 10, 13 */
+/* 1段目: 1, 5, 9, 13 */
 .answer-choices .choice-btn:nth-child(1) { grid-row: 1; grid-column: 1; }
-.answer-choices .choice-btn:nth-child(4) { grid-row: 1; grid-column: 2; }
-.answer-choices .choice-btn:nth-child(7) { grid-row: 1; grid-column: 3; }
-.answer-choices .choice-btn:nth-child(10) { grid-row: 1; grid-column: 4; }
-.answer-choices .choice-btn:nth-child(13) { grid-row: 1; grid-column: 5; }
+.answer-choices .choice-btn:nth-child(5) { grid-row: 1; grid-column: 2; }
+.answer-choices .choice-btn:nth-child(9) { grid-row: 1; grid-column: 3; }
+.answer-choices .choice-btn:nth-child(13) { grid-row: 1; grid-column: 4; }
 
-/* 2段目: 2, 5, 8, 11, 14 */
-.answer-choices .choice-btn:nth-child(2) { grid-row: 2; grid-column: 1; margin-left: 25px; }
-.answer-choices .choice-btn:nth-child(5) { grid-row: 2; grid-column: 2; margin-left: 25px; }
-.answer-choices .choice-btn:nth-child(8) { grid-row: 2; grid-column: 3; margin-left: 25px; }
-.answer-choices .choice-btn:nth-child(11) { grid-row: 2; grid-column: 4; margin-left: 25px; }
-.answer-choices .choice-btn:nth-child(14) { grid-row: 2; grid-column: 5; margin-left: 25px; }
+/* 2段目: 2, 6, 10, 14 */
+.answer-choices .choice-btn:nth-child(2) { grid-row: 2; grid-column: 1; }
+.answer-choices .choice-btn:nth-child(6) { grid-row: 2; grid-column: 2; }
+.answer-choices .choice-btn:nth-child(10) { grid-row: 2; grid-column: 3; }
+.answer-choices .choice-btn:nth-child(14) { grid-row: 2; grid-column: 4; }
 
-/* 3段目: 3, 6, 9, 12 */
-.answer-choices .choice-btn:nth-child(3) { grid-row: 3; grid-column: 1; margin-left: 50px; }
-.answer-choices .choice-btn:nth-child(6) { grid-row: 3; grid-column: 2; margin-left: 50px; }
-.answer-choices .choice-btn:nth-child(9) { grid-row: 3; grid-column: 3; margin-left: 50px; }
-.answer-choices .choice-btn:nth-child(12) { grid-row: 3; grid-column: 4; margin-left: 50px; }
+/* 3段目: 3, 7, 11 */
+.answer-choices .choice-btn:nth-child(3) { grid-row: 3; grid-column: 1; }
+.answer-choices .choice-btn:nth-child(7) { grid-row: 3; grid-column: 2; }
+.answer-choices .choice-btn:nth-child(11) { grid-row: 3; grid-column: 3; }
+
+/* 4段目: 4, 8, 12 */
+.answer-choices .choice-btn:nth-child(4) { grid-row: 4; grid-column: 1; }
+.answer-choices .choice-btn:nth-child(8) { grid-row: 4; grid-column: 2; }
+.answer-choices .choice-btn:nth-child(12) { grid-row: 4; grid-column: 3; }
 
 .choice-btn {
     padding: 15px 10px;
@@ -400,20 +403,9 @@ header h1 {
     }
 
     .answer-choices {
-        padding-left: 10px;
         gap: 10px;
+        grid-template-columns: repeat(4, 140px);
     }
-
-    .answer-choices .choice-btn:nth-child(2) { margin-left: 20px; }
-    .answer-choices .choice-btn:nth-child(5) { margin-left: 20px; }
-    .answer-choices .choice-btn:nth-child(8) { margin-left: 20px; }
-    .answer-choices .choice-btn:nth-child(11) { margin-left: 20px; }
-    .answer-choices .choice-btn:nth-child(14) { margin-left: 20px; }
-
-    .answer-choices .choice-btn:nth-child(3) { margin-left: 40px; }
-    .answer-choices .choice-btn:nth-child(6) { margin-left: 40px; }
-    .answer-choices .choice-btn:nth-child(9) { margin-left: 40px; }
-    .answer-choices .choice-btn:nth-child(12) { margin-left: 40px; }
 }
 
 @media (max-width: 768px) {
@@ -439,27 +431,15 @@ header h1 {
     }
 
     .answer-choices {
-        padding-left: 5px;
         gap: 8px;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, 1fr);
     }
 
-    .answer-choices .choice-btn:nth-child(2) { margin-left: 15px; }
-    .answer-choices .choice-btn:nth-child(5) { margin-left: 15px; }
-    .answer-choices .choice-btn:nth-child(8) { margin-left: 15px; }
-    .answer-choices .choice-btn:nth-child(11) { margin-left: 15px; }
-    .answer-choices .choice-btn:nth-child(14) { margin-left: 15px; }
-
-    .answer-choices .choice-btn:nth-child(3) { margin-left: 30px; }
-    .answer-choices .choice-btn:nth-child(6) { margin-left: 30px; }
-    .answer-choices .choice-btn:nth-child(9) { margin-left: 30px; }
-    .answer-choices .choice-btn:nth-child(12) { margin-left: 30px; }
-
     .choice-btn {
-        padding: 15px;
-        font-size: 1rem;
+        padding: 12px 8px;
+        font-size: 0.9rem;
         width: auto;
-        min-width: 80px;
+        min-width: 120px;
         height: 60px;
     }
 }
