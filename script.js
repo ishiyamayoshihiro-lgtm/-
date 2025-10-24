@@ -94,6 +94,7 @@ const scorePercentage = document.getElementById('scorePercentage');
 const resultDetails = document.getElementById('resultDetails');
 const userEmailDisplay = document.getElementById('userEmail');
 const loginStatus = document.getElementById('loginStatus');
+const modeInfo = document.getElementById('modeInfo');
 
 // Google Sign-In初期化
 window.onload = function() {
@@ -113,7 +114,21 @@ window.onload = function() {
             locale: 'ja'
         }
     );
+
+    // モード情報を更新
+    updateModeDisplay();
 };
+
+// モード表示を更新
+function updateModeDisplay() {
+    if (modeInfo) {
+        if (CONFIG.TEST_MODE) {
+            modeInfo.textContent = '全27問（テストモード - 結果を記録）';
+        } else {
+            modeInfo.textContent = '10問ランダム（練習モード - 結果は記録されません）';
+        }
+    }
+}
 
 // Google ログインのコールバック
 function handleCredentialResponse(response) {
@@ -148,9 +163,17 @@ retryBtn.addEventListener('click', resetQuiz);
 
 // テスト開始
 function startQuiz() {
-    // totalQuestions = 3; // 既に上で設定済み（本番時は27に変更）
+    // モードに応じて問題数を設定
+    let questionCount;
+    if (CONFIG.TEST_MODE) {
+        questionCount = 27; // テストモード: 全27問
+    } else {
+        questionCount = 10; // 練習モード: 10問ランダム
+    }
+
     const allProblems = shuffleArray([...trigProblems]);
-    selectedProblems = allProblems.slice(0, totalQuestions);
+    selectedProblems = allProblems.slice(0, questionCount);
+    totalQuestions = questionCount; // 実際の問題数を設定
     currentQuestionIndex = 0;
     userAnswers = [];
     startTime = new Date(); // 開始時刻を記録
