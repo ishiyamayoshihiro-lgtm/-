@@ -192,7 +192,7 @@ header h1 {
     grid-template-rows: repeat(4, auto);
     gap: 12px;
     margin-top: 30px;
-    padding-left: 20px;
+    padding-left: 0;
     justify-content: flex-start;
 }
 
@@ -405,7 +405,7 @@ header h1 {
     .answer-choices {
         gap: 10px;
         grid-template-columns: repeat(4, 140px);
-        padding-left: 15px;
+        padding-left: 0;
     }
 
     .answer-choices .choice-btn:nth-child(2) { margin-left: 25px; }
@@ -447,7 +447,7 @@ header h1 {
     .answer-choices {
         gap: 8px;
         grid-template-columns: repeat(4, 1fr);
-        padding-left: 5px;
+        padding-left: 0;
     }
 
     .answer-choices .choice-btn:nth-child(2) { margin-left: 15px; }
