@@ -6,6 +6,12 @@
     <title>三角比小テスト</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link rel="stylesheet" href="style.css">
+    <script>
+        // ローカルで開いた場合は、GitHub Pagesにリダイレクト
+        if (window.location.hostname === '' || window.location.protocol === 'file:') {
+            window.location.href = 'https://ishiyamayoshihiro-lgtm.github.io/-/';
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -27,7 +33,7 @@
             <div class="welcome">
                 <h2>テストを開始します</h2>
                 <p id="userEmail" class="user-email"></p>
-                <p>試運転: 3問 (本番は27問)</p>
+                <p>全27問</p>
                 <button id="startBtn" class="btn-primary">テスト開始</button>
             </div>
         </div>
