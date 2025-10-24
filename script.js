@@ -290,9 +290,15 @@ function showResult() {
     const percentage = Math.round((correctCount / totalQuestions) * 100);
 
     scoreText.textContent = `${correctCount}/${totalQuestions}`;
-    scorePercentage.textContent = `${percentage}% (${timeString})`;
 
-    // 結果をGoogle Spreadsheetに送信
+    // モードに応じて表示を変更
+    if (CONFIG.TEST_MODE) {
+        scorePercentage.textContent = `${percentage}% (${timeString})`;
+    } else {
+        scorePercentage.textContent = `${percentage}% (${timeString}) - 練習モード`;
+    }
+
+    // 結果をGoogle Spreadsheetに送信（テストモードのみ）
     sendResultToSpreadsheet(correctCount, totalQuestions, elapsedTime, timeString);
 
     // 詳細結果を表示
@@ -352,6 +358,12 @@ function showResult() {
 
 // 結果をGoogle Spreadsheetに送信
 async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeconds, timeString) {
+    // テストモードが無効の場合は送信しない
+    if (!CONFIG.TEST_MODE) {
+        console.log('練習モードのため、結果を送信しませんでした');
+        return;
+    }
+
     if (!userEmail) {
         console.error('ユーザーがログインしていません');
         return;
@@ -375,7 +387,7 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
             body: JSON.stringify(data)
         });
 
-        console.log('結果を送信しました');
+        console.log('結果を送信しました（テストモード）');
     } catch (error) {
         console.error('結果の送信に失敗しました:', error);
     }

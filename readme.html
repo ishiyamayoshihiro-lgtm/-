@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三角比小テスト - 使い方ガイド</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.3em;
+            margin: 25px 0 15px 0;
+        }
+
+        .link-box {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .link-box h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        .link-box a {
+            display: block;
+            color: #667eea;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            transition: all 0.3s;
+            word-break: break-all;
+        }
+
+        .link-box a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(10px);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin: 5px 5px 5px 0;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #667eea30;
+        }
+
+        .info-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .info-card p {
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #d63384;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tip {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .quick-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        /* 管理者パネル専用スタイル */
+        .admin-panel {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(238, 90, 111, 0.3);
+        }
+
+        .admin-panel h3 {
+            color: white;
+            margin-top: 0;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .mode-switch-container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .mode-status {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 120px;
+            height: 60px;
+            margin: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4caf50;
+            transition: .4s;
+            border-radius: 60px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 52px;
+            width: 52px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(60px);
+        }
+
+        .mode-labels {
+            display: flex;
+            justify-content: space-around;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .mode-label {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mode-label.active {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .save-btn {
+            background: white;
+            color: #ee5a6f;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .save-btn:active {
+            transform: translateY(0);
+        }
+
+        .save-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .save-message.success {
+            background: rgba(76, 175, 80, 0.3);
+            display: block;
+        }
+
+        .admin-warning {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>三角比小テスト</h1>
+            <p>使い方ガイド & リンク集</p>
+        </header>
+
+        <div class="content">
+            <!-- 管理者パネル -->
+            <div class="admin-panel">
+                <h3>🔧 管理者パネル</h3>
+                <div class="mode-switch-container">
+                    <p>現在のモード:</p>
+                    <div class="mode-status" id="currentMode">テストモード</div>
+
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="modeToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+
+                    <div class="mode-labels">
+                        <span class="mode-label" id="practiceLabel">練習モード</span>
+                        <span class="mode-label active" id="testLabel">テストモード</span>
+                    </div>
+
+                    <button class="save-btn" id="saveBtn">設定を保存</button>
+                    <div class="save-message" id="saveMessage"></div>
+
+                    <div class="admin-warning">
+                        <strong>⚠️ 注意:</strong> この設定を変更すると、すべての生徒のテスト結果の記録が切り替わります。<br>
+                        <strong>練習モード:</strong> 結果は記録されません（練習用）<br>
+                        <strong>テストモード:</strong> 結果がスプレッドシートに記録されます
+                    </div>
+                </div>
+            </div>
+
+            <!-- クイックアクセスリンク -->
+            <div class="section">
+                <h2>🚀 クイックアクセス</h2>
+                <div class="quick-links">
+                    <a href="https://ishiyamayoshihiro-lgtm.github.io/-/" class="btn" target="_blank">📝 テストを開始</a>
+                    <a href="https://docs.google.com/spreadsheets/d/1tryBWpHzBJzltuSbmZlr1rtwMirGR44xK8H84sgCu7I/edit" class="btn" target="_blank">📊 結果を確認</a>
+                </div>
+            </div>
+
+            <!-- 現在の状態 -->
+            <div class="section">
+                <h2>📌 現在の状態</h2>
+                <div>
+                    <span class="status-badge status-success">✓ 27問で本番運用中</span>
+                    <span class="status-badge status-success">✓ GitHub Pages公開済み</span>
+                    <span class="status-badge status-success">✓ スプレッドシート連携完了</span>
+                    <span class="status-badge status-info">iPad / PC 対応</span>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h4>📝 問題数</h4>
+                        <p>全27問（sin, cos, tan × 9つの角度）</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>🌐 アクセス方法</h4>
+                        <p>どこからでもURLでアクセス可能</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>📊 結果記録</h4>
+                        <p>自動でスプレッドシートに保存</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>🔐 ログイン</h4>
+                        <p>Googleアカウント認証</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 重要なリンク -->
+            <div class="section">
+                <h2>🔗 重要なリンク</h2>
+
+                <div class="link-box">
+                    <h3>📱 アプリケーション</h3>
+                    <a href="https://ishiyamayoshihiro-lgtm.github.io/-/" target="_blank">
+                        🌐 三角比小テスト（本番環境）<br>
+                        <small>https://ishiyamayoshihiro-lgtm.github.io/-/</small>
+                    </a>
+                </div>
+
+                <div class="link-box">
+                    <h3>📊 データ管理</h3>
+                    <a href="https://docs.google.com/spreadsheets/d/1tryBWpHzBJzltuSbmZlr1rtwMirGR44xK8H84sgCu7I/edit" target="_blank">
+                        📈 結果記録スプレッドシート<br>
+                        <small>テスト結果を確認・集計</small>
+                    </a>
+                </div>
+
+                <div class="link-box">
+                    <h3>💻 開発・管理</h3>
+                    <a href="https://github.com/ishiyamayoshihiro-lgtm/-" target="_blank">
+                        📦 GitHubリポジトリ<br>
+                        <small>ソースコード管理</small>
+                    </a>
+                    <a href="https://console.cloud.google.com/" target="_blank">
+                        ☁️ Google Cloud Console<br>
+                        <small>OAuth設定・認証管理</small>
+                    </a>
+                    <a href="https://script.google.com/home" target="_blank">
+                        ⚙️ Google Apps Script<br>
+                        <small>スプレッドシート連携スクリプト</small>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 使い方 -->
+            <div class="section">
+                <h2>📖 使い方</h2>
+
+                <h3>生徒がテストを受ける手順</h3>
+                <ol>
+                    <li>以下のURLにアクセス:<br>
+                        <code>https://ishiyamayoshihiro-lgtm.github.io/-/</code>
+                    </li>
+                    <li>「Googleアカウントでログイン」ボタンをクリック</li>
+                    <li>学校または個人のGoogleアカウントでログイン</li>
+                    <li>「テスト開始」ボタンをクリック</li>
+                    <li>全27問に回答</li>
+                    <li>結果が自動的にスプレッドシートに記録されます</li>
+                </ol>
+
+                <h3>教師が結果を確認する手順</h3>
+                <ol>
+                    <li><a href="https://docs.google.com/spreadsheets/d/1tryBWpHzBJzltuSbmZlr1rtwMirGR44xK8H84sgCu7I/edit" target="_blank">結果記録スプレッドシート</a>を開く</li>
+                    <li>以下の情報が記録されています:
+                        <ul>
+                            <li>日時</li>
+                            <li>メールアドレス</li>
+                            <li>正解数 / 総問題数</li>
+                            <li>正答率（%）</li>
+                            <li>経過時間</li>
+                        </ul>
+                    </li>
+                    <li>スプレッドシートで並び替え・フィルタ・グラフ作成が可能</li>
+                </ol>
+            </div>
+
+            <!-- スプレッドシート記録内容 -->
+            <div class="section">
+                <h2>📊 スプレッドシート記録内容</h2>
+                <p>テスト完了時に以下の情報が自動的に記録されます:</p>
+                <ul>
+                    <li><strong>日時:</strong> テスト実施日時</li>
+                    <li><strong>メールアドレス:</strong> ログインしたGoogleアカウント</li>
+                    <li><strong>正解数:</strong> 正解した問題の数</li>
+                    <li><strong>総問題数:</strong> 27問</li>
+                    <li><strong>正答率(%):</strong> 自動計算された正答率</li>
+                    <li><strong>経過時間（秒）:</strong> テスト開始から終了までの秒数</li>
+                    <li><strong>経過時間（表示用）:</strong> 「○分○秒」形式</li>
+                </ul>
+            </div>
+
+            <!-- 技術情報 -->
+            <div class="section">
+                <h2>⚙️ 技術情報</h2>
+
+                <h3>使用技術</h3>
+                <ul>
+                    <li><strong>フロントエンド:</strong> HTML, CSS, JavaScript</li>
+                    <li><strong>数式表示:</strong> KaTeX</li>
+                    <li><strong>認証:</strong> Google OAuth 2.0</li>
+                    <li><strong>データ保存:</strong> Google Apps Script + Google Spreadsheet</li>
+                    <li><strong>ホスティング:</strong> GitHub Pages</li>
+                </ul>
+
+                <h3>Google Cloud Platform情報</h3>
+                <ul>
+                    <li><strong>プロジェクト名:</strong> 三角比テスト</li>
+                    <li><strong>OAuth 2.0 クライアントID:</strong><br>
+                        <code>1081498976325-2cbnp1qvk2u9cnltrc3nk2jkqfgkrbue.apps.googleusercontent.com</code>
+                    </li>
+                    <li><strong>承認済みURL:</strong>
+                        <ul>
+                            <li><code>http://localhost:8000</code> (開発用)</li>
+                            <li><code>https://ishiyamayoshihiro-lgtm.github.io</code> (本番)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- トラブルシューティング -->
+            <div class="section">
+                <h2>🔧 トラブルシューティング</h2>
+
+                <h3>ログインできない / 認証エラー</h3>
+                <div class="tip">
+                    <strong>解決方法:</strong>
+                    <ul>
+                        <li>ブラウザのキャッシュをクリア（Ctrl + Shift + R でスーパーリロード）</li>
+                        <li>シークレット/プライベートモードで開く</li>
+                        <li>別のブラウザで試す</li>
+                    </ul>
+                </div>
+
+                <h3>スプレッドシートに記録されない</h3>
+                <div class="tip">
+                    <strong>確認事項:</strong>
+                    <ul>
+                        <li>ログインが成功しているか確認</li>
+                        <li>テストを最後まで完了したか確認</li>
+                        <li>ブラウザのコンソール（F12）でエラーを確認</li>
+                    </ul>
+                </div>
+
+                <h3>古いバージョンが表示される（3問のまま）</h3>
+                <div class="tip">
+                    <strong>解決方法:</strong>
+                    <ul>
+                        <li><strong>Ctrl + Shift + R</strong> (Windows) または <strong>Cmd + Shift + R</strong> (Mac) でスーパーリロード</li>
+                        <li>ブラウザのキャッシュを削除</li>
+                        <li>シークレットモードで確認</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- セキュリティ -->
+            <div class="section">
+                <h2>🔐 セキュリティ注意事項</h2>
+                <div class="warning">
+                    <ul>
+                        <li>OAuth クライアントIDは公開情報なので問題ありません</li>
+                        <li>クライアントシークレットは使用していません</li>
+                        <li>スプレッドシートの共有設定に注意してください</li>
+                        <li>個人情報（メールアドレス）が記録されるため、適切に管理してください</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ファイル構成 -->
+            <div class="section">
+                <h2>📁 ファイル構成</h2>
+                <ul>
+                    <li><code>index.html</code> - メインのHTMLファイル（自動リダイレクト機能付き）</li>
+                    <li><code>style.css</code> - スタイルシート</li>
+                    <li><code>script.js</code> - メインロジック（27問設定済み）</li>
+                    <li><code>config.js</code> - OAuth設定とGAS URL</li>
+                    <li><code>readme.html</code> - このファイル（使い方ガイド）</li>
+                    <li><code>README.md</code> - マークダウン版ドキュメント</li>
+                    <li><code>今後の予定.md</code> - 開発メモ・TODO</li>
+                    <li><code>Google Cloud Console設定手順.md</code> - OAuth設定手順</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>三角比小テスト</strong></p>
+            <p>作成日: 2025年10月23日 | 最終更新: 2025年10月24日</p>
+            <p>状態: <span class="status-badge status-success">✓ 本番運用中（27問）</span></p>
+        </footer>
+    </div>
+
+    <script>
+        // config.jsを読み込んで現在の設定を取得
+        const modeToggle = document.getElementById('modeToggle');
+        const currentMode = document.getElementById('currentMode');
+        const practiceLabel = document.getElementById('practiceLabel');
+        const testLabel = document.getElementById('testLabel');
+        const saveBtn = document.getElementById('saveBtn');
+        const saveMessage = document.getElementById('saveMessage');
+
+        // ページ読み込み時にconfig.jsから現在の設定を読み込む
+        async function loadCurrentMode() {
+            try {
+                const response = await fetch('config.js');
+                const text = await response.text();
+                const testModeMatch = text.match(/TEST_MODE:\s*(true|false)/);
+
+                if (testModeMatch) {
+                    const isTestMode = testModeMatch[1] === 'true';
+                    modeToggle.checked = isTestMode;
+                    updateDisplay(isTestMode);
+                }
+            } catch (error) {
+                console.error('設定の読み込みに失敗:', error);
+            }
+        }
+
+        // 表示を更新
+        function updateDisplay(isTestMode) {
+            if (isTestMode) {
+                currentMode.textContent = 'テストモード';
+                practiceLabel.classList.remove('active');
+                testLabel.classList.add('active');
+            } else {
+                currentMode.textContent = '練習モード';
+                practiceLabel.classList.add('active');
+                testLabel.classList.remove('active');
+            }
+        }
+
+        // トグルスイッチの変更イベント
+        modeToggle.addEventListener('change', function() {
+            updateDisplay(this.checked);
+        });
+
+        // 保存ボタンのクリックイベント
+        saveBtn.addEventListener('click', async function() {
+            const isTestMode = modeToggle.checked;
+
+            try {
+                // config.jsの内容を取得
+                const response = await fetch('config.js');
+                let configText = await response.text();
+
+                // TEST_MODEの値を更新
+                configText = configText.replace(
+                    /TEST_MODE:\s*(true|false)/,
+                    `TEST_MODE: ${isTestMode}`
+                );
+
+                // ファイルをダウンロードさせる（手動で保存してもらう）
+                const blob = new Blob([configText], { type: 'text/javascript' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'config.js';
+                a.click();
+                URL.revokeObjectURL(url);
+
+                // 成功メッセージを表示
+                saveMessage.textContent = '✓ config.jsをダウンロードしました。このファイルを上書き保存して、GitHubにプッシュしてください。';
+                saveMessage.className = 'save-message success';
+
+                setTimeout(() => {
+                    saveMessage.style.display = 'none';
+                }, 10000);
+
+            } catch (error) {
+                saveMessage.textContent = '✗ エラーが発生しました: ' + error.message;
+                saveMessage.className = 'save-message';
+                saveMessage.style.display = 'block';
+                saveMessage.style.background = 'rgba(244, 67, 54, 0.3)';
+            }
+        });
+
+        // ページ読み込み時に現在のモードを読み込む
+        loadCurrentMode();
+    </script>
+</body>
+</html>
