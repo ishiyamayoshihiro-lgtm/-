@@ -214,9 +214,9 @@ header h1 {
 .answer-choices .choice-btn:nth-child(9) { grid-row: 3; grid-column: 5; }
 .answer-choices .choice-btn:nth-child(11) { grid-row: 3; grid-column: 7; }
 
-/* 4段目: -√2/2(4), √2/2(10) - 3段目の間に配置 */
-.answer-choices .choice-btn:nth-child(4) { grid-row: 4; grid-column: 2; }
-.answer-choices .choice-btn:nth-child(10) { grid-row: 4; grid-column: 6; }
+/* 4段目: -√2/2(4), √2/2(10) - 3段目の間に配置（0.5個分ずらす） */
+.answer-choices .choice-btn:nth-child(4) { grid-row: 4; grid-column: 2; margin-left: 80px; }
+.answer-choices .choice-btn:nth-child(10) { grid-row: 4; grid-column: 6; margin-left: 80px; }
 
 .choice-btn {
     padding: 15px 10px;
@@ -406,6 +406,9 @@ header h1 {
         gap: 10px;
         grid-template-columns: repeat(7, 140px);
     }
+
+    .answer-choices .choice-btn:nth-child(4) { margin-left: 70px; }
+    .answer-choices .choice-btn:nth-child(10) { margin-left: 70px; }
 }
 
 @media (max-width: 768px) {
@@ -434,6 +437,9 @@ header h1 {
         gap: 8px;
         grid-template-columns: repeat(7, 1fr);
     }
+
+    .answer-choices .choice-btn:nth-child(4) { margin-left: 50px; }
+    .answer-choices .choice-btn:nth-child(10) { margin-left: 50px; }
 
     .choice-btn {
         padding: 12px 8px;
