@@ -22,5 +22,5 @@ const CONFIG = {
     // 3. GitHubにプッシュ（git add config.js && git commit -m "モード変更" && git push）
     // 4. 1〜2分待つとGitHub Pagesに反映されます
     // ========================================
-    TEST_MODE: false
+    TEST_MODE: true
 };
