@@ -354,7 +354,13 @@ function showResult() {
 
         const questionDiv = document.createElement('div');
         questionDiv.className = 'result-item-question';
-        questionDiv.textContent = `問${index + 1}: ${answer.problem.func}(${answer.problem.angle}°)`;
+        questionDiv.textContent = `問${index + 1}: `;
+        const mathSpan = document.createElement('span');
+        katex.render(`\\${answer.problem.func} ${answer.problem.angle}^\\circ`, mathSpan, {
+            throwOnError: false,
+            displayMode: false
+        });
+        questionDiv.appendChild(mathSpan);
 
         const answerDiv = document.createElement('div');
         answerDiv.className = 'result-item-answer';
