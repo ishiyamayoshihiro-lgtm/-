@@ -1,3 +1,2 @@
 @echo off
-python mode_switch.py
-pause
+py mode_switch.py

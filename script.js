@@ -208,7 +208,17 @@ function shuffleArray(array) {
 // 問題を表示
 function showQuestion() {
     const problem = selectedProblems[currentQuestionIndex];
-    questionText.textContent = `${problem.func}(${problem.angle}°) の値を求めなさい`;
+
+    // 問題文をKaTeXでレンダリング
+    questionText.innerHTML = '';
+    const mathSpan = document.createElement('span');
+    katex.render(`\\${problem.func} ${problem.angle}^\\circ`, mathSpan, {
+        throwOnError: false,
+        displayMode: false
+    });
+    questionText.appendChild(mathSpan);
+    questionText.appendChild(document.createTextNode(' の値を求めなさい'));
+
     questionNumber.textContent = `問題 ${currentQuestionIndex + 1}/${totalQuestions}`;
     selectedChoice = null;
 
