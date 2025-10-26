@@ -98,6 +98,49 @@
             transform: translateX(10px);
         }
 
+        .url-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin: 5px 0;
+        }
+
+        .url-text {
+            flex: 1;
+            color: #667eea;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copy-btn.copied {
+            background: #28a745;
+        }
+
         .status-badge {
             display: inline-block;
             padding: 5px 15px;
@@ -335,7 +378,7 @@
             <div class="section">
                 <h2>📌 現在の状態</h2>
                 <div>
-                    <span class="status-badge status-success">✓ 27問で本番運用中</span>
+                    <span class="status-badge status-success">✓ 練習/テストモード切り替え対応</span>
                     <span class="status-badge status-success">✓ GitHub Pages公開済み</span>
                     <span class="status-badge status-success">✓ スプレッドシート連携完了</span>
                     <span class="status-badge status-info">iPad / PC 対応</span>
@@ -343,20 +386,20 @@
 
                 <div class="info-grid">
                     <div class="info-card">
-                        <h4>📝 問題数</h4>
-                        <p>全27問（sin, cos, tan × 9つの角度）</p>
+                        <h4>📝 練習モード</h4>
+                        <p>ログイン不要・10問ランダム・記録なし</p>
                     </div>
                     <div class="info-card">
-                        <h4>🌐 アクセス方法</h4>
-                        <p>どこからでもURLでアクセス可能</p>
+                        <h4>✅ テストモード</h4>
+                        <p>ログイン必須・全27問・スプレッドシートに記録</p>
                     </div>
                     <div class="info-card">
-                        <h4>📊 結果記録</h4>
-                        <p>自動でスプレッドシートに保存</p>
+                        <h4>✨ 数式表示</h4>
+                        <p>KaTeXで美しいTeX表記（sin 0°など）</p>
                     </div>
                     <div class="info-card">
-                        <h4>🔐 ログイン</h4>
-                        <p>Googleアカウント認証</p>
+                        <h4>📐 選択肢配置</h4>
+                        <p>値の大きさ順に並べて見やすく</p>
                     </div>
                 </div>
             </div>
@@ -367,10 +410,15 @@
 
                 <div class="link-box">
                     <h3>📱 アプリケーション</h3>
-                    <a href="https://ishiyamayoshihiro-lgtm.github.io/-/" target="_blank">
-                        🌐 三角比小テスト（本番環境）<br>
-                        <small>https://ishiyamayoshihiro-lgtm.github.io/-/</small>
-                    </a>
+                    <div class="url-container">
+                        <a href="https://ishiyamayoshihiro-lgtm.github.io/-/" target="_blank" class="url-text">
+                            🌐 三角比小テスト（本番環境）<br>
+                            <small>https://ishiyamayoshihiro-lgtm.github.io/-/</small>
+                        </a>
+                        <button class="copy-btn" onclick="copyToClipboard('https://ishiyamayoshihiro-lgtm.github.io/-/', this)">
+                            📋 コピー
+                        </button>
+                    </div>
                 </div>
 
                 <div class="link-box">
@@ -452,10 +500,11 @@
                 <h3>使用技術</h3>
                 <ul>
                     <li><strong>フロントエンド:</strong> HTML, CSS, JavaScript</li>
-                    <li><strong>数式表示:</strong> KaTeX</li>
+                    <li><strong>数式表示:</strong> KaTeX（TeX記法で美しい数式表示）</li>
                     <li><strong>認証:</strong> Google OAuth 2.0</li>
                     <li><strong>データ保存:</strong> Google Apps Script + Google Spreadsheet</li>
                     <li><strong>ホスティング:</strong> GitHub Pages</li>
+                    <li><strong>レイアウト:</strong> CSSグリッド（値の大きさ順配置）</li>
                 </ul>
 
                 <h3>Google Cloud Platform情報</h3>
@@ -526,21 +575,57 @@
                 <h2>📁 ファイル構成</h2>
                 <ul>
                     <li><code>index.html</code> - メインのHTMLファイル（自動リダイレクト機能付き）</li>
-                    <li><code>style.css</code> - スタイルシート</li>
-                    <li><code>script.js</code> - メインロジック（27問設定済み）</li>
+                    <li><code>style.css</code> - スタイルシート（4列グリッド、値の大きさ順レイアウト）</li>
+                    <li><code>script.js</code> - メインロジック（27問設定済み、KaTeX数式表示）</li>
                     <li><code>config.js</code> - OAuth設定とGAS URL</li>
+                    <li><code>モード切替.bat</code> - モード切り替えツール（Windows）</li>
+                    <li><code>mode_switch.py</code> - モード切り替えスクリプト</li>
                     <li><code>readme.html</code> - このファイル（使い方ガイド）</li>
                     <li><code>README.md</code> - マークダウン版ドキュメント</li>
                     <li><code>今後の予定.md</code> - 開発メモ・TODO</li>
                     <li><code>Google Cloud Console設定手順.md</code> - OAuth設定手順</li>
                 </ul>
             </div>
+
+            <!-- 更新履歴 -->
+            <div class="section">
+                <h2>📝 更新履歴</h2>
+
+                <h3>2025年10月26日</h3>
+                <ul>
+                    <li>✨ 問題文をTeX表記（KaTeX）で美しく表示（例: sin(0°) → sin 0°）</li>
+                    <li>✨ テスト結果画面の問題文もTeX表記に対応</li>
+                    <li>✨ 選択肢を値の大きさ順に並べる4列レイアウトに変更
+                        <ul>
+                            <li>1段目: -1, 0, 1, なし</li>
+                            <li>2段目: -√3, -√3/3, √3/3, √3</li>
+                            <li>3段目: -√3/2, -1/2, 1/2, √3/2</li>
+                            <li>4段目: -√2/2, √2/2（3段目の間に配置）</li>
+                        </ul>
+                    </li>
+                    <li>🔧 モード切替.batの修正（pythonコマンド→pyコマンド、不要なpause削除）</li>
+                </ul>
+
+                <h3>2025年10月24日</h3>
+                <ul>
+                    <li>✅ 練習/テストモード切り替え機能実装</li>
+                    <li>✅ モード切替.bat追加（ワンクリックで切替可能）</li>
+                </ul>
+
+                <h3>2025年10月23日</h3>
+                <ul>
+                    <li>🎉 初版リリース</li>
+                    <li>✅ Google OAuth 2.0認証実装</li>
+                    <li>✅ Google Apps Script連携完了</li>
+                    <li>✅ GitHub Pages公開</li>
+                </ul>
+            </div>
         </div>
 
         <footer>
             <p><strong>三角比小テスト</strong></p>
-            <p>作成日: 2025年10月23日 | 最終更新: 2025年10月24日</p>
-            <p>状態: <span class="status-badge status-success">✓ 本番運用中（27問）</span></p>
+            <p>作成日: 2025年10月23日 | 最終更新: 2025年10月26日</p>
+            <p>状態: <span class="status-badge status-success">✓ 本番運用中（TeX数式表示・モード切替対応）</span></p>
         </footer>
     </div>
 
@@ -573,6 +658,53 @@
 
         // ページ読み込み時に実行
         loadCurrentMode();
+
+        // クリップボードにコピーする関数
+        function copyToClipboard(text, button) {
+            // navigator.clipboard APIを使用
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    // コピー成功時の処理
+                    const originalText = button.textContent;
+                    button.textContent = '✓ コピー完了！';
+                    button.classList.add('copied');
+
+                    // 2秒後に元に戻す
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('コピーに失敗しました:', err);
+                    alert('コピーに失敗しました');
+                });
+            } else {
+                // 古いブラウザ用のフォールバック
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+
+                try {
+                    document.execCommand('copy');
+                    const originalText = button.textContent;
+                    button.textContent = '✓ コピー完了！';
+                    button.classList.add('copied');
+
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.classList.remove('copied');
+                    }, 2000);
+                } catch (err) {
+                    console.error('コピーに失敗しました:', err);
+                    alert('コピーに失敗しました');
+                }
+
+                document.body.removeChild(textarea);
+            }
+        }
     </script>
 </body>
 </html>
