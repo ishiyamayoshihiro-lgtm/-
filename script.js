@@ -103,27 +103,10 @@ const allChoices = [
     { display: 'なし', latex: '\\text{なし}' }
 ];
 
-// 各関数で実際に出現する値のリストを作成
-const validValuesByFunc = {
-    'sin': ['0', '1/2', '√2/2', '√3/2', '1'],
-    'cos': ['-1', '-√3/2', '-√2/2', '-1/2', '0', '1/2', '√2/2', '√3/2', '1'],
-    'tan': ['-√3', '-1', '-√3/3', '0', '√3/3', '1', '√3', 'なし']
-};
-
 // 各問題で表示する選択肢を決定する関数
 function getChoicesForProblem(func, angle) {
-    let validChoices = [];
-
-    // その関数で実際に出現する値のみを選択肢とする
-    const validValues = validValuesByFunc[func];
-    validChoices = allChoices.filter(c => validValues.includes(c.display));
-
-    // tanの90°以外の場合は「なし」を除外
-    if (func === 'tan' && angle !== 90) {
-        validChoices = validChoices.filter(c => c.display !== 'なし');
-    }
-
-    return validChoices;
+    // 値を求めるモードではすべての値の選択肢（14個）を表示
+    return allChoices;
 }
 
 // 後方互換性のため、結果画面などで使用するchoices変数を保持
