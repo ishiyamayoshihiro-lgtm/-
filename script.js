@@ -68,9 +68,14 @@ trigProblems.forEach(p => {
     valueMap[p.func][key].push(p.angle);
 });
 
-// 問題を生成（重複する値を持つものだけ、または代表的な値）
+// 問題を生成（「なし」を除外）
 functions.forEach(func => {
     Object.keys(valueMap[func]).forEach(value => {
+        // 「なし」の問題は除外（tan 90°）
+        if (value === 'なし') {
+            return;
+        }
+
         const correctAngles = valueMap[func][value];
         angleProblems.push({
             func: func,
@@ -98,30 +103,24 @@ const allChoices = [
     { display: 'なし', latex: '\\text{なし}' }
 ];
 
+// 各関数で実際に出現する値のリストを作成
+const validValuesByFunc = {
+    'sin': ['0', '1/2', '√2/2', '√3/2', '1'],
+    'cos': ['-1', '-√3/2', '-√2/2', '-1/2', '0', '1/2', '√2/2', '√3/2', '1'],
+    'tan': ['-√3', '-1', '-√3/3', '0', '√3/3', '1', '√3', 'なし']
+};
+
 // 各問題で表示する選択肢を決定する関数
 function getChoicesForProblem(func, angle) {
     let validChoices = [];
 
-    if (func === 'sin') {
-        // sinの値域は[-1, 1]、√3と-√3は不要、「なし」も不要
-        validChoices = allChoices.filter(c =>
-            c.display !== '√3' && c.display !== '-√3' && c.display !== 'なし'
-        );
-    } else if (func === 'cos') {
-        // cosの値域は[-1, 1]、√3と-√3は不要、「なし」も不要
-        validChoices = allChoices.filter(c =>
-            c.display !== '√3' && c.display !== '-√3' && c.display !== 'なし'
-        );
-    } else if (func === 'tan') {
-        // tanは90°で「なし」、それ以外は全範囲の値が可能
-        if (angle === 90) {
-            // 90°では「なし」のみ正解だが、他の選択肢も表示
-            validChoices = allChoices.filter(c => c.display !== 'なし');
-            validChoices.push(allChoices.find(c => c.display === 'なし'));
-        } else {
-            // 90°以外では「なし」は不要
-            validChoices = allChoices.filter(c => c.display !== 'なし');
-        }
+    // その関数で実際に出現する値のみを選択肢とする
+    const validValues = validValuesByFunc[func];
+    validChoices = allChoices.filter(c => validValues.includes(c.display));
+
+    // tanの90°以外の場合は「なし」を除外
+    if (func === 'tan' && angle !== 90) {
+        validChoices = validChoices.filter(c => c.display !== 'なし');
     }
 
     return validChoices;
