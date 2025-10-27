@@ -154,6 +154,9 @@ const submitAngleBtn = document.getElementById('submitAngleBtn');
 
 // Google Sign-In初期化
 window.onload = function() {
+    // メニュー画面の説明をKaTeXでレンダリング
+    renderMenuDescriptions();
+
     // 練習モードの場合はログインをスキップ
     if (!CONFIG.TEST_MODE) {
         // ログイン画面を非表示、メニュー画面を表示
@@ -186,6 +189,45 @@ window.onload = function() {
     // モード情報を更新
     updateModeDisplay();
 };
+
+// メニュー画面の説明をKaTeXでレンダリング
+function renderMenuDescriptions() {
+    const valueTestDesc = document.getElementById('valueTestDesc');
+    const angleTestDesc = document.getElementById('angleTestDesc');
+
+    if (valueTestDesc) {
+        valueTestDesc.innerHTML = '';
+
+        // "sin 30° → " 部分
+        const sin30 = document.createElement('span');
+        katex.render('\\sin 30^\\circ \\to ', sin30, { throwOnError: false });
+        valueTestDesc.appendChild(sin30);
+
+        // "1/2" 部分
+        const frac = document.createElement('span');
+        katex.render('\\frac{1}{2}', frac, { throwOnError: false });
+        valueTestDesc.appendChild(frac);
+    }
+
+    if (angleTestDesc) {
+        angleTestDesc.innerHTML = '';
+
+        // "sin θ = " 部分
+        const sinTheta = document.createElement('span');
+        katex.render('\\sin \\theta = ', sinTheta, { throwOnError: false });
+        angleTestDesc.appendChild(sinTheta);
+
+        // "1/2" 部分
+        const frac = document.createElement('span');
+        katex.render('\\frac{1}{2}', frac, { throwOnError: false });
+        angleTestDesc.appendChild(frac);
+
+        // " → 30°, 150°" 部分
+        const angles = document.createElement('span');
+        katex.render(' \\to 30^\\circ, 150^\\circ', angles, { throwOnError: false });
+        angleTestDesc.appendChild(angles);
+    }
+}
 
 // 説明画面の選択肢例をKaTeXでレンダリング
 let instructionExamplesRendered = false;
