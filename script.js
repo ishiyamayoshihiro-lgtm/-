@@ -2,7 +2,7 @@
 const angles = [0, 30, 45, 60, 90, 120, 135, 150, 180];
 const functions = ['sin', 'cos', 'tan'];
 
-// 全27問の問題を生成
+// 値を求める問題（全27問）
 const trigProblems = [];
 angles.forEach(angle => {
     functions.forEach(func => {
@@ -50,6 +50,36 @@ angles.forEach(angle => {
     });
 });
 
+// 角度を求める問題を生成
+const angleProblems = [];
+// 各値について、その値を持つ角度を求める問題を作成
+const valueMap = {
+    'sin': {},
+    'cos': {},
+    'tan': {}
+};
+
+// まず値と角度のマッピングを作成
+trigProblems.forEach(p => {
+    const key = p.displayAnswer;
+    if (!valueMap[p.func][key]) {
+        valueMap[p.func][key] = [];
+    }
+    valueMap[p.func][key].push(p.angle);
+});
+
+// 問題を生成（重複する値を持つものだけ、または代表的な値）
+functions.forEach(func => {
+    Object.keys(valueMap[func]).forEach(value => {
+        const correctAngles = valueMap[func][value];
+        angleProblems.push({
+            func: func,
+            value: value,
+            correctAngles: correctAngles
+        });
+    });
+});
+
 // 選択肢のリスト (表示用とLaTeX表記)
 const choices = [
     { display: '-√3', latex: '-\\sqrt{3}' },
@@ -74,6 +104,8 @@ let selectedProblems = [];
 let userAnswers = [];
 let totalQuestions = 27; // 本番用
 let selectedChoice = null;
+let selectedAngles = []; // 角度問題で選択された角度
+let testType = 'value'; // 'value' or 'angle'
 let startTime = null;
 let endTime = null;
 let userEmail = null;
@@ -81,10 +113,11 @@ let googleUser = null;
 
 // DOM要素
 const loginScreen = document.getElementById('loginScreen');
-const startScreen = document.getElementById('startScreen');
+const menuScreen = document.getElementById('menuScreen');
 const quizScreen = document.getElementById('quizScreen');
 const resultScreen = document.getElementById('resultScreen');
-const startBtn = document.getElementById('startBtn');
+const startValueTestBtn = document.getElementById('startValueTestBtn');
+const startAngleTestBtn = document.getElementById('startAngleTestBtn');
 const retryBtn = document.getElementById('retryBtn');
 const questionText = document.getElementById('questionText');
 const questionNumber = document.getElementById('questionNumber');
@@ -95,14 +128,17 @@ const resultDetails = document.getElementById('resultDetails');
 const userEmailDisplay = document.getElementById('userEmail');
 const loginStatus = document.getElementById('loginStatus');
 const modeInfo = document.getElementById('modeInfo');
+const valueChoices = document.getElementById('valueChoices');
+const angleChoices = document.getElementById('angleChoices');
+const submitAngleBtn = document.getElementById('submitAngleBtn');
 
 // Google Sign-In初期化
 window.onload = function() {
     // 練習モードの場合はログインをスキップ
     if (!CONFIG.TEST_MODE) {
-        // ログイン画面を非表示、スタート画面を表示
+        // ログイン画面を非表示、メニュー画面を表示
         loginScreen.classList.add('hidden');
-        startScreen.classList.remove('hidden');
+        menuScreen.classList.remove('hidden');
         userEmailDisplay.textContent = '練習モード（ログイン不要）';
         // モード情報を更新
         updateModeDisplay();
@@ -151,10 +187,10 @@ function handleCredentialResponse(response) {
     loginStatus.textContent = `ログイン成功: ${userEmail}`;
     loginStatus.style.color = '#28a745';
 
-    // スタート画面に移動
+    // メニュー画面に移動
     setTimeout(() => {
         loginScreen.classList.add('hidden');
-        startScreen.classList.remove('hidden');
+        menuScreen.classList.remove('hidden');
         userEmailDisplay.textContent = `ログイン中: ${userEmail}`;
     }, 1000);
 }
@@ -170,11 +206,21 @@ function parseJwt(token) {
 }
 
 // イベントリスナー
-startBtn.addEventListener('click', startQuiz);
+startValueTestBtn.addEventListener('click', () => startQuiz('value'));
+startAngleTestBtn.addEventListener('click', () => startQuiz('angle'));
 retryBtn.addEventListener('click', resetQuiz);
 
+// 角度選択ボタンのイベントリスナー
+document.querySelectorAll('.angle-btn').forEach(btn => {
+    btn.addEventListener('click', () => toggleAngleSelection(btn));
+});
+
+submitAngleBtn.addEventListener('click', submitAngleAnswer);
+
 // テスト開始
-function startQuiz() {
+function startQuiz(type) {
+    testType = type;
+
     // モードに応じて問題数を設定
     let questionCount;
     if (CONFIG.TEST_MODE) {
@@ -183,14 +229,22 @@ function startQuiz() {
         questionCount = 10; // 練習モード: 10問ランダム
     }
 
-    const allProblems = shuffleArray([...trigProblems]);
+    // テストタイプに応じて問題を選択
+    let allProblems;
+    if (testType === 'value') {
+        allProblems = shuffleArray([...trigProblems]);
+    } else {
+        allProblems = shuffleArray([...angleProblems]);
+    }
+
     selectedProblems = allProblems.slice(0, questionCount);
     totalQuestions = questionCount; // 実際の問題数を設定
     currentQuestionIndex = 0;
     userAnswers = [];
+    selectedAngles = [];
     startTime = new Date(); // 開始時刻を記録
 
-    startScreen.classList.add('hidden');
+    menuScreen.classList.add('hidden');
     quizScreen.classList.remove('hidden');
 
     showQuestion();
@@ -208,45 +262,82 @@ function shuffleArray(array) {
 // 問題を表示
 function showQuestion() {
     const problem = selectedProblems[currentQuestionIndex];
-
-    // 問題文をKaTeXでレンダリング
-    questionText.innerHTML = '';
-    const mathSpan = document.createElement('span');
-    katex.render(`\\${problem.func} ${problem.angle}^\\circ`, mathSpan, {
-        throwOnError: false,
-        displayMode: false
-    });
-    questionText.appendChild(mathSpan);
-    questionText.appendChild(document.createTextNode(' の値を求めなさい'));
-
     questionNumber.textContent = `問題 ${currentQuestionIndex + 1}/${totalQuestions}`;
-    selectedChoice = null;
 
-    // 選択肢ボタンをリセットしてKaTeXで数式をレンダリング
-    const choiceBtns = document.querySelectorAll('.choice-btn');
-    choiceBtns.forEach((btn, index) => {
-        btn.classList.remove('selected', 'correct', 'incorrect');
-        btn.disabled = false;
+    if (testType === 'value') {
+        // 値を求める問題
+        valueChoices.classList.remove('hidden');
+        angleChoices.classList.add('hidden');
 
-        const choice = choices[index];
-        btn.dataset.value = choice.display;
-
-        // KaTeXでレンダリング
-        btn.innerHTML = '';
-        katex.render(choice.latex, btn, {
+        // 問題文をKaTeXでレンダリング
+        questionText.innerHTML = '';
+        const mathSpan = document.createElement('span');
+        katex.render(`\\${problem.func} ${problem.angle}^\\circ`, mathSpan, {
             throwOnError: false,
             displayMode: false
         });
+        questionText.appendChild(mathSpan);
+        questionText.appendChild(document.createTextNode(' の値を求めなさい'));
 
-        btn.onclick = () => selectChoice(choice.display);
-    });
+        selectedChoice = null;
+
+        // 選択肢ボタンをリセットしてKaTeXで数式をレンダリング
+        const choiceBtns = document.querySelectorAll('.choice-btn');
+        choiceBtns.forEach((btn, index) => {
+            btn.classList.remove('selected', 'correct', 'incorrect');
+            btn.disabled = false;
+
+            const choice = choices[index];
+            btn.dataset.value = choice.display;
+
+            // KaTeXでレンダリング
+            btn.innerHTML = '';
+            katex.render(choice.latex, btn, {
+                throwOnError: false,
+                displayMode: false
+            });
+
+            btn.onclick = () => selectChoice(choice.display);
+        });
+    } else {
+        // 角度を求める問題
+        valueChoices.classList.add('hidden');
+        angleChoices.classList.remove('hidden');
+
+        // 問題文をKaTeXでレンダリング
+        questionText.innerHTML = '';
+        const mathSpan1 = document.createElement('span');
+        katex.render(`\\${problem.func} \\theta = `, mathSpan1, {
+            throwOnError: false,
+            displayMode: false
+        });
+        questionText.appendChild(mathSpan1);
+
+        // 値を表示
+        const choice = choices.find(c => c.display === problem.value);
+        const mathSpan2 = document.createElement('span');
+        katex.render(choice ? choice.latex : problem.value, mathSpan2, {
+            throwOnError: false,
+            displayMode: false
+        });
+        questionText.appendChild(mathSpan2);
+        questionText.appendChild(document.createTextNode(' となる角度θを求めなさい'));
+
+        // 角度選択をリセット
+        selectedAngles = [];
+        const angleBtns = document.querySelectorAll('.angle-btn');
+        angleBtns.forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        submitAngleBtn.disabled = true;
+    }
 
     // プログレスバー更新
     const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
     progressFill.style.width = `${progress}%`;
 }
 
-// 選択肢を選択
+// 選択肢を選択（値を求める問題）
 function selectChoice(value) {
     selectedChoice = value;
 
@@ -261,6 +352,51 @@ function selectChoice(value) {
     });
 
     // すぐに次の問題へ
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < totalQuestions) {
+        showQuestion();
+    } else {
+        showResult();
+    }
+}
+
+// 角度選択をトグル
+function toggleAngleSelection(btn) {
+    const angle = parseInt(btn.dataset.angle);
+
+    if (selectedAngles.includes(angle)) {
+        // 選択解除
+        selectedAngles = selectedAngles.filter(a => a !== angle);
+        btn.classList.remove('selected');
+    } else {
+        // 選択（最大2つまで）
+        if (selectedAngles.length < 2) {
+            selectedAngles.push(angle);
+            btn.classList.add('selected');
+        }
+    }
+
+    // 送信ボタンの有効/無効を切り替え
+    submitAngleBtn.disabled = selectedAngles.length === 0;
+}
+
+// 角度の回答を送信
+function submitAngleAnswer() {
+    const problem = selectedProblems[currentQuestionIndex];
+
+    // 回答が正しいかチェック（順序は問わず、要素が一致すればOK）
+    const sortedUserAnswer = [...selectedAngles].sort((a, b) => a - b);
+    const sortedCorrectAnswer = [...problem.correctAngles].sort((a, b) => a - b);
+    const isCorrect = JSON.stringify(sortedUserAnswer) === JSON.stringify(sortedCorrectAnswer);
+
+    userAnswers.push({
+        problem: problem,
+        userAnswer: selectedAngles.slice(), // コピーを保存
+        isCorrect: isCorrect
+    });
+
+    // 次の問題へ
     currentQuestionIndex++;
 
     if (currentQuestionIndex < totalQuestions) {
@@ -355,54 +491,97 @@ function showResult() {
         const questionDiv = document.createElement('div');
         questionDiv.className = 'result-item-question';
         questionDiv.textContent = `問${index + 1}: `;
-        const mathSpan = document.createElement('span');
-        katex.render(`\\${answer.problem.func} ${answer.problem.angle}^\\circ`, mathSpan, {
-            throwOnError: false,
-            displayMode: false
-        });
-        questionDiv.appendChild(mathSpan);
 
-        const answerDiv = document.createElement('div');
-        answerDiv.className = 'result-item-answer';
+        if (testType === 'value') {
+            // 値を求める問題
+            const mathSpan = document.createElement('span');
+            katex.render(`\\${answer.problem.func} ${answer.problem.angle}^\\circ`, mathSpan, {
+                throwOnError: false,
+                displayMode: false
+            });
+            questionDiv.appendChild(mathSpan);
 
-        // 正解のLaTeX表記を取得
-        const correctChoice = choices.find(c => c.display === answer.problem.displayAnswer);
-        const userChoice = choices.find(c => c.display === answer.userAnswer);
+            const answerDiv = document.createElement('div');
+            answerDiv.className = 'result-item-answer';
 
-        // 正解部分をレンダリング
-        const correctSpan = document.createElement('span');
-        correctSpan.textContent = '正解: ';
-        const correctMath = document.createElement('span');
-        correctMath.className = 'math-inline';
-        if (correctChoice) {
-            katex.render(correctChoice.latex, correctMath, { throwOnError: false });
+            // 正解のLaTeX表記を取得
+            const correctChoice = choices.find(c => c.display === answer.problem.displayAnswer);
+            const userChoice = choices.find(c => c.display === answer.userAnswer);
+
+            // 正解部分をレンダリング
+            const correctSpan = document.createElement('span');
+            correctSpan.textContent = '正解: ';
+            const correctMath = document.createElement('span');
+            correctMath.className = 'math-inline';
+            if (correctChoice) {
+                katex.render(correctChoice.latex, correctMath, { throwOnError: false });
+            } else {
+                correctMath.textContent = answer.problem.displayAnswer;
+            }
+
+            // ユーザーの答え部分をレンダリング
+            const userSpan = document.createElement('span');
+            userSpan.textContent = ' | あなたの答え: ';
+            const userMath = document.createElement('span');
+            userMath.className = answer.isCorrect ? 'math-inline' : 'math-inline user-wrong';
+            if (userChoice) {
+                katex.render(userChoice.latex, userMath, { throwOnError: false });
+            } else {
+                userMath.textContent = answer.userAnswer;
+            }
+
+            // 結果マークを追加
+            const markSpan = document.createElement('span');
+            markSpan.textContent = answer.isCorrect ? ' ✓' : ' ✗';
+
+            answerDiv.appendChild(correctSpan);
+            answerDiv.appendChild(correctMath);
+            answerDiv.appendChild(userSpan);
+            answerDiv.appendChild(userMath);
+            answerDiv.appendChild(markSpan);
+
+            resultItem.appendChild(questionDiv);
+            resultItem.appendChild(answerDiv);
         } else {
-            correctMath.textContent = answer.problem.displayAnswer;
+            // 角度を求める問題
+            const mathSpan1 = document.createElement('span');
+            katex.render(`\\${answer.problem.func} \\theta = `, mathSpan1, {
+                throwOnError: false,
+                displayMode: false
+            });
+            questionDiv.appendChild(mathSpan1);
+
+            const choice = choices.find(c => c.display === answer.problem.value);
+            const mathSpan2 = document.createElement('span');
+            katex.render(choice ? choice.latex : answer.problem.value, mathSpan2, {
+                throwOnError: false,
+                displayMode: false
+            });
+            questionDiv.appendChild(mathSpan2);
+
+            const answerDiv = document.createElement('div');
+            answerDiv.className = 'result-item-answer';
+
+            // 正解を表示
+            const correctAnglesStr = answer.problem.correctAngles.map(a => `${a}°`).join(', ');
+            answerDiv.textContent = `正解: ${correctAnglesStr} | あなたの答え: `;
+
+            // ユーザーの答えを表示
+            const userAnglesStr = answer.userAnswer.map(a => `${a}°`).join(', ');
+            const userAnswerSpan = document.createElement('span');
+            userAnswerSpan.className = answer.isCorrect ? '' : 'user-wrong';
+            userAnswerSpan.textContent = userAnglesStr;
+            answerDiv.appendChild(userAnswerSpan);
+
+            // 結果マークを追加
+            const markSpan = document.createElement('span');
+            markSpan.textContent = answer.isCorrect ? ' ✓' : ' ✗';
+            answerDiv.appendChild(markSpan);
+
+            resultItem.appendChild(questionDiv);
+            resultItem.appendChild(answerDiv);
         }
 
-        // ユーザーの答え部分をレンダリング
-        const userSpan = document.createElement('span');
-        userSpan.textContent = ' | あなたの答え: ';
-        const userMath = document.createElement('span');
-        userMath.className = answer.isCorrect ? 'math-inline' : 'math-inline user-wrong';
-        if (userChoice) {
-            katex.render(userChoice.latex, userMath, { throwOnError: false });
-        } else {
-            userMath.textContent = answer.userAnswer;
-        }
-
-        // 結果マークを追加
-        const markSpan = document.createElement('span');
-        markSpan.textContent = answer.isCorrect ? ' ✓' : ' ✗';
-
-        answerDiv.appendChild(correctSpan);
-        answerDiv.appendChild(correctMath);
-        answerDiv.appendChild(userSpan);
-        answerDiv.appendChild(userMath);
-        answerDiv.appendChild(markSpan);
-
-        resultItem.appendChild(questionDiv);
-        resultItem.appendChild(answerDiv);
         resultDetails.appendChild(resultItem);
     });
 }
@@ -447,8 +626,9 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
 // リセット
 function resetQuiz() {
     resultScreen.classList.add('hidden');
-    startScreen.classList.remove('hidden');
+    menuScreen.classList.remove('hidden');
     currentQuestionIndex = 0;
     userAnswers = [];
     selectedProblems = [];
+    selectedAngles = [];
 }
