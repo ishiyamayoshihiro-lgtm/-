@@ -736,6 +736,8 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
         testType: testTypeName
     };
 
+    console.log('送信するデータ:', data);
+
     try {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
@@ -746,7 +748,7 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
             body: JSON.stringify(data)
         });
 
-        console.log('結果を送信しました');
+        console.log('結果を送信しました - testType:', testTypeName);
     } catch (error) {
         console.error('結果の送信に失敗しました:', error);
     }
