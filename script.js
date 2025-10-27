@@ -611,7 +611,7 @@ function showResult() {
     scorePercentage.textContent = `${percentage}% (${timeString})`;
 
     // 結果をGoogle Spreadsheetに送信
-    sendResultToSpreadsheet(correctCount, totalQuestions, elapsedTime, timeString);
+    sendResultToSpreadsheet(correctCount, totalQuestions, elapsedTime, timeString, testType);
 
     // 詳細結果を表示
     resultDetails.innerHTML = '';
@@ -718,18 +718,22 @@ function showResult() {
 }
 
 // 結果をGoogle Spreadsheetに送信
-async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeconds, timeString) {
+async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeconds, timeString, testType) {
     if (!userEmail) {
         console.error('ユーザーがログインしていません');
         return;
     }
+
+    // テストタイプを日本語に変換
+    const testTypeName = testType === 'value' ? '値を求める' : '角度を求める';
 
     const data = {
         email: userEmail,
         correctCount: correctCount,
         totalQuestions: totalQuestions,
         elapsedSeconds: elapsedSeconds,
-        timeString: timeString
+        timeString: timeString,
+        testType: testTypeName
     };
 
     try {
