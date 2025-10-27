@@ -245,6 +245,11 @@ function renderInstructionExamples() {
             btn.style.cursor = 'default';
             btn.style.opacity = '0.8';
 
+            // 幅を明示的に設定
+            btn.style.width = '160px';
+            btn.style.minWidth = '160px';
+            btn.style.maxWidth = '160px';
+
             // KaTeXでレンダリング
             katex.render(choice.latex, btn, {
                 throwOnError: false,
@@ -450,6 +455,11 @@ function showQuestion() {
             const btn = document.createElement('button');
             btn.className = 'choice-btn';
             btn.dataset.value = choice.display;
+
+            // 幅を明示的に設定
+            btn.style.width = '160px';
+            btn.style.minWidth = '160px';
+            btn.style.maxWidth = '160px';
 
             // KaTeXでレンダリング
             katex.render(choice.latex, btn, {
