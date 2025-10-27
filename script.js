@@ -147,7 +147,6 @@ const scorePercentage = document.getElementById('scorePercentage');
 const resultDetails = document.getElementById('resultDetails');
 const userEmailDisplay = document.getElementById('userEmail');
 const loginStatus = document.getElementById('loginStatus');
-const modeInfo = document.getElementById('modeInfo');
 const valueChoices = document.getElementById('valueChoices');
 const angleChoices = document.getElementById('angleChoices');
 const submitAngleBtn = document.getElementById('submitAngleBtn');
@@ -157,18 +156,6 @@ window.onload = function() {
     // メニュー画面の説明をKaTeXでレンダリング
     renderMenuDescriptions();
 
-    // 練習モードの場合はログインをスキップ
-    if (!CONFIG.TEST_MODE) {
-        // ログイン画面を非表示、メニュー画面を表示
-        loginScreen.classList.add('hidden');
-        menuScreen.classList.remove('hidden');
-        userEmailDisplay.textContent = '練習モード（ログイン不要）';
-        // モード情報を更新
-        updateModeDisplay();
-        return;
-    }
-
-    // テストモードの場合のみGoogle認証を初期化
     // Google Identity Services の初期化
     google.accounts.id.initialize({
         client_id: CONFIG.GOOGLE_CLIENT_ID,
@@ -185,9 +172,6 @@ window.onload = function() {
             locale: 'ja'
         }
     );
-
-    // モード情報を更新
-    updateModeDisplay();
 };
 
 // メニュー画面の説明をKaTeXでレンダリング
@@ -296,17 +280,6 @@ function renderInstructionExamples() {
     instructionExamplesRendered = true;
 }
 
-// モード表示を更新
-function updateModeDisplay() {
-    if (modeInfo) {
-        if (CONFIG.TEST_MODE) {
-            modeInfo.textContent = '全27問（テストモード - 結果を記録）';
-        } else {
-            modeInfo.textContent = '10問ランダム（練習モード - 結果は記録されません）';
-        }
-    }
-}
-
 // Google ログインのコールバック
 function handleCredentialResponse(response) {
     // JWTトークンをデコード
@@ -381,24 +354,18 @@ function backToMenu() {
 function startQuiz(type) {
     testType = type;
 
-    // モードに応じて問題数を設定
-    let questionCount;
-    if (CONFIG.TEST_MODE) {
-        questionCount = 27; // テストモード: 全27問
-    } else {
-        questionCount = 10; // 練習モード: 10問ランダム
-    }
-
-    // テストタイプに応じて問題を選択
+    // テストタイプに応じて全問題を選択
     let allProblems;
     if (testType === 'value') {
+        // 値を求める: 全27問
         allProblems = shuffleArray([...trigProblems]);
     } else {
+        // 角度を求める: 全26問（「なし」を除外済み）
         allProblems = shuffleArray([...angleProblems]);
     }
 
-    selectedProblems = allProblems.slice(0, questionCount);
-    totalQuestions = questionCount; // 実際の問題数を設定
+    selectedProblems = allProblems; // 全問題を出題
+    totalQuestions = allProblems.length; // 実際の問題数を設定
     currentQuestionIndex = 0;
     userAnswers = [];
     selectedAngles = [];
@@ -641,15 +608,9 @@ function showResult() {
     const percentage = Math.round((correctCount / totalQuestions) * 100);
 
     scoreText.textContent = `${correctCount}/${totalQuestions}`;
+    scorePercentage.textContent = `${percentage}% (${timeString})`;
 
-    // モードに応じて表示を変更
-    if (CONFIG.TEST_MODE) {
-        scorePercentage.textContent = `${percentage}% (${timeString})`;
-    } else {
-        scorePercentage.textContent = `${percentage}% (${timeString}) - 練習モード`;
-    }
-
-    // 結果をGoogle Spreadsheetに送信（テストモードのみ）
+    // 結果をGoogle Spreadsheetに送信
     sendResultToSpreadsheet(correctCount, totalQuestions, elapsedTime, timeString);
 
     // 詳細結果を表示
@@ -758,12 +719,6 @@ function showResult() {
 
 // 結果をGoogle Spreadsheetに送信
 async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeconds, timeString) {
-    // テストモードが無効の場合は送信しない
-    if (!CONFIG.TEST_MODE) {
-        console.log('練習モードのため、結果を送信しませんでした');
-        return;
-    }
-
     if (!userEmail) {
         console.error('ユーザーがログインしていません');
         return;
@@ -787,7 +742,7 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
             body: JSON.stringify(data)
         });
 
-        console.log('結果を送信しました（テストモード）');
+        console.log('結果を送信しました');
     } catch (error) {
         console.error('結果の送信に失敗しました:', error);
     }
