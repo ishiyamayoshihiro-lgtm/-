@@ -194,7 +194,7 @@ header h1 {
 
 .answer-choices {
     display: grid;
-    grid-template-columns: repeat(4, 160px);
+    grid-template-columns: repeat(4, 190px);
     grid-template-rows: repeat(4, auto);
     gap: 12px;
     margin-top: 30px;
@@ -225,13 +225,13 @@ header h1 {
     grid-row: 4;
     grid-column: 1;
     position: relative;
-    left: 86px;
+    left: 101px;
 }
 .answer-choices .choice-btn:nth-child(10) {
     grid-row: 4;
     grid-column: 3;
     position: relative;
-    left: 86px;
+    left: 101px;
 }
 
 .choice-btn {
@@ -244,9 +244,9 @@ header h1 {
     transition: all 0.3s ease;
     font-weight: 600;
     color: #333;
-    width: 160px !important;
-    min-width: 160px !important;
-    max-width: 160px !important;
+    width: 190px !important;
+    min-width: 190px !important;
+    max-width: 190px !important;
     height: 70px;
     display: flex;
     align-items: center;
@@ -641,17 +641,17 @@ header h1 {
 
     .answer-choices {
         gap: 10px;
-        grid-template-columns: repeat(4, 140px);
+        grid-template-columns: repeat(4, 165px);
     }
 
     .choice-btn {
-        width: 140px !important;
-        min-width: 140px !important;
-        max-width: 140px !important;
+        width: 165px !important;
+        min-width: 165px !important;
+        max-width: 165px !important;
     }
 
-    .answer-choices .choice-btn:nth-child(4) { left: 75px; }
-    .answer-choices .choice-btn:nth-child(10) { left: 75px; }
+    .answer-choices .choice-btn:nth-child(4) { left: 87px; }
+    .answer-choices .choice-btn:nth-child(10) { left: 87px; }
 }
 
 @media (max-width: 768px) {

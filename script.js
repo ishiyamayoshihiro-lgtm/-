@@ -90,13 +90,13 @@ const allChoices = [
     { display: '-√3', latex: '-\\sqrt{3}' },
     { display: '-1', latex: '-1' },
     { display: '-√3/2', latex: '-\\frac{\\sqrt{3}}{2}' },
-    { display: '-√2/2', latex: '-\\frac{\\sqrt{2}}{2}' },
+    { display: '-√2/2', latex: '-\\frac{\\sqrt{2}}{2} = -\\frac{1}{\\sqrt{2}}' },
     { display: '-1/2', latex: '-\\frac{1}{2}' },
-    { display: '-√3/3', latex: '-\\frac{\\sqrt{3}}{3}' },
+    { display: '-√3/3', latex: '-\\frac{\\sqrt{3}}{3} = -\\frac{1}{\\sqrt{3}}' },
     { display: '0', latex: '0' },
-    { display: '√3/3', latex: '\\frac{\\sqrt{3}}{3}' },
+    { display: '√3/3', latex: '\\frac{\\sqrt{3}}{3} = \\frac{1}{\\sqrt{3}}' },
     { display: '1/2', latex: '\\frac{1}{2}' },
-    { display: '√2/2', latex: '\\frac{\\sqrt{2}}{2}' },
+    { display: '√2/2', latex: '\\frac{\\sqrt{2}}{2} = \\frac{1}{\\sqrt{2}}' },
     { display: '√3/2', latex: '\\frac{\\sqrt{3}}{2}' },
     { display: '1', latex: '1' },
     { display: '√3', latex: '\\sqrt{3}' },
@@ -246,9 +246,9 @@ function renderInstructionExamples() {
             btn.style.opacity = '0.8';
 
             // 幅を明示的に設定
-            btn.style.width = '160px';
-            btn.style.minWidth = '160px';
-            btn.style.maxWidth = '160px';
+            btn.style.width = '190px';
+            btn.style.minWidth = '190px';
+            btn.style.maxWidth = '190px';
 
             // KaTeXでレンダリング
             katex.render(choice.latex, btn, {
@@ -457,9 +457,9 @@ function showQuestion() {
             btn.dataset.value = choice.display;
 
             // 幅を明示的に設定
-            btn.style.width = '160px';
-            btn.style.minWidth = '160px';
-            btn.style.maxWidth = '160px';
+            btn.style.width = '190px';
+            btn.style.minWidth = '190px';
+            btn.style.maxWidth = '190px';
 
             // KaTeXでレンダリング
             katex.render(choice.latex, btn, {
