@@ -154,6 +154,9 @@ const submitAngleBtn = document.getElementById('submitAngleBtn');
 
 // Google Sign-In初期化
 window.onload = function() {
+    // 説明画面の選択肢例をKaTeXでレンダリング
+    renderInstructionExamples();
+
     // 練習モードの場合はログインをスキップ
     if (!CONFIG.TEST_MODE) {
         // ログイン画面を非表示、メニュー画面を表示
@@ -186,6 +189,58 @@ window.onload = function() {
     // モード情報を更新
     updateModeDisplay();
 };
+
+// 説明画面の選択肢例をKaTeXでレンダリング
+function renderInstructionExamples() {
+    // 値を求めるモードの例
+    const valueExamples = [
+        { latex: '0' },
+        { latex: '\\frac{1}{2}' },
+        { latex: '\\frac{\\sqrt{2}}{2}' },
+        { latex: '\\frac{\\sqrt{3}}{2}' },
+        { latex: '1' },
+        { latex: '\\text{なし}' }
+    ];
+
+    const valueExampleChoices = document.getElementById('valueExampleChoices');
+    if (valueExampleChoices) {
+        valueExamples.forEach(example => {
+            const span = document.createElement('span');
+            span.className = 'example-chip';
+            katex.render(example.latex, span, {
+                throwOnError: false,
+                displayMode: false
+            });
+            valueExampleChoices.appendChild(span);
+        });
+    }
+
+    // 角度を求めるモードの例
+    const angleExamples = [
+        { latex: '0^\\circ' },
+        { latex: '30^\\circ' },
+        { latex: '45^\\circ' },
+        { latex: '60^\\circ' },
+        { latex: '90^\\circ' },
+        { latex: '120^\\circ' },
+        { latex: '135^\\circ' },
+        { latex: '150^\\circ' },
+        { latex: '180^\\circ' }
+    ];
+
+    const angleExampleChoices = document.getElementById('angleExampleChoices');
+    if (angleExampleChoices) {
+        angleExamples.forEach(example => {
+            const span = document.createElement('span');
+            span.className = 'example-chip';
+            katex.render(example.latex, span, {
+                throwOnError: false,
+                displayMode: false
+            });
+            angleExampleChoices.appendChild(span);
+        });
+    }
+}
 
 // モード表示を更新
 function updateModeDisplay() {
