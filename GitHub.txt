@@ -1,0 +1,215 @@
+# GitHub アカウント情報
+
+## アカウント情報
+ユーザー名: ishiyamayoshihiro-lgtm
+メールアドレス: ishiyama.yoshihiro@gmail.com
+GitHub URL: https://github.com/ishiyamayoshihiro-lgtm
+
+---
+
+# 新しいプロジェクトをGitHub Pagesで公開する手順
+
+## 前提条件
+- Gitがインストール済み
+- GitHubアカウント作成済み
+- Git設定完了済み（初回のみ）
+
+---
+
+## ステップ1: 新しいGitHubリポジトリを作成
+
+### 1-1. GitHubにログイン
+https://github.com にアクセス
+
+### 1-2. 新しいリポジトリを作成
+1. 右上の「+」→「New repository」
+2. リポジトリ名を入力（例: my-project）
+3. Public を選択（GitHub Pages無料版に必要）
+4. README、.gitignore、license は追加しない
+5. 「Create repository」をクリック
+
+### 1-3. リポジトリURLをメモ
+表示されるURL例: `https://github.com/ishiyamayoshihiro-lgtm/my-project.git`
+
+---
+
+## ステップ2: ローカルプロジェクトをGitHubにプッシュ
+
+### 2-1. プロジェクトフォルダに移動
+PowerShellまたはコマンドプロンプトで:
+```powershell
+cd "プロジェクトのパス"
+```
+
+### 2-2. Gitリポジトリ初期化
+```powershell
+git init
+```
+
+### 2-3. ファイルをステージング
+```powershell
+# 全てのファイルを追加
+git add .
+
+# または特定のファイルのみ追加
+git add index.html style.css script.js
+```
+
+### 2-4. 最初のコミット
+```powershell
+git commit -m "Initial commit"
+```
+
+### 2-5. メインブランチに変更
+```powershell
+git branch -M main
+```
+
+### 2-6. GitHubリポジトリを追加
+```powershell
+# YOUR_REPO_NAMEを実際のリポジトリ名に変更
+git remote add origin https://github.com/ishiyamayoshihiro-lgtm/YOUR_REPO_NAME.git
+```
+
+### 2-7. GitHubにプッシュ
+```powershell
+git push -u origin main
+```
+
+---
+
+## ステップ3: GitHub Pagesを有効化
+
+### 3-1. リポジトリのSettingsに移動
+1. GitHubのリポジトリページにアクセス
+2. 「Settings」タブをクリック
+
+### 3-2. Pagesセクションで設定
+1. 左メニューから「Pages」を選択
+2. Source: 「Deploy from a branch」
+3. Branch: 「main」を選択、フォルダ「/ (root)」
+4. 「Save」をクリック
+
+### 3-3. URLを確認
+数分後、以下のURLで公開されます:
+```
+https://ishiyamayoshihiro-lgtm.github.io/YOUR_REPO_NAME/
+```
+
+---
+
+## ステップ4: ファイル更新時の手順
+
+### ファイルを変更した後:
+```powershell
+cd "プロジェクトのパス"
+git add .
+git commit -m "変更内容の説明"
+git push
+```
+
+数分後、GitHub Pagesに自動的に反映されます。
+
+---
+
+## .gitignoreの作成（推奨）
+
+機密情報をGitHubに公開しないため、`.gitignore`ファイルを作成:
+
+```
+# 機密情報
+*.json
+*.txt
+*.env
+client_secret_*
+
+# 個人情報
+config_private.js
+
+# バックアップファイル
+*.bak
+*~
+
+# システムファイル
+.DS_Store
+Thumbs.db
+```
+
+---
+
+## よく使うGitコマンド
+
+### 現在の状態を確認
+```powershell
+git status
+```
+
+### 変更履歴を確認
+```powershell
+git log
+```
+
+### 最新の状態を取得
+```powershell
+git pull
+```
+
+### ブランチを確認
+```powershell
+git branch
+```
+
+### リモートリポジトリを確認
+```powershell
+git remote -v
+```
+
+---
+
+## トラブルシューティング
+
+### プッシュ時に認証エラーが出る
+- ブラウザでGitHubにログインして認証
+- Personal Access Token (PAT) が必要な場合あり
+
+### GitHub Pagesが表示されない
+- 数分待ってから再度アクセス
+- Settings → Pages でURLが表示されているか確認
+- リポジトリがPublicになっているか確認
+
+### ファイルがプッシュされない
+- `git status` で確認
+- `.gitignore` で除外されていないか確認
+- `git add .` を再度実行
+
+---
+
+## 参考リンク
+
+### GitHub公式ドキュメント
+- GitHub Pages: https://docs.github.com/ja/pages
+- Git基本: https://docs.github.com/ja/get-started
+
+### Git設定（初回のみ必要）
+```powershell
+git config --global user.name "ishiyamayoshihiro-lgtm"
+git config --global user.email "ishiyama.yoshihiro@gmail.com"
+```
+
+---
+
+## このプロジェクトの情報
+
+### リポジトリ
+- URL: https://github.com/ishiyamayoshihiro-lgtm/-
+- 公開URL: https://ishiyamayoshihiro-lgtm.github.io/-/
+
+### ローカルパス
+```
+E:\マイドライブ\DB\App\三角比小テスト
+```
+
+---
+
+**作成日: 2025年10月23日**
+**最終更新: 2025年10月23日**
