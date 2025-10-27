@@ -240,6 +240,13 @@ function renderInstructionExamples() {
             });
             angleExampleChoices.appendChild(span);
         });
+
+        // 送信ボタンも追加
+        const submitBtn = document.createElement('button');
+        submitBtn.className = 'example-chip example-submit';
+        submitBtn.textContent = '送信';
+        submitBtn.disabled = true;
+        angleExampleChoices.appendChild(submitBtn);
     }
 
     instructionExamplesRendered = true;
