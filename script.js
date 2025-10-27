@@ -114,10 +114,16 @@ let googleUser = null;
 // DOM要素
 const loginScreen = document.getElementById('loginScreen');
 const menuScreen = document.getElementById('menuScreen');
+const valueInstructionScreen = document.getElementById('valueInstructionScreen');
+const angleInstructionScreen = document.getElementById('angleInstructionScreen');
 const quizScreen = document.getElementById('quizScreen');
 const resultScreen = document.getElementById('resultScreen');
+const selectValueTestBtn = document.getElementById('selectValueTestBtn');
+const selectAngleTestBtn = document.getElementById('selectAngleTestBtn');
 const startValueTestBtn = document.getElementById('startValueTestBtn');
 const startAngleTestBtn = document.getElementById('startAngleTestBtn');
+const backFromValueBtn = document.getElementById('backFromValueBtn');
+const backFromAngleBtn = document.getElementById('backFromAngleBtn');
 const retryBtn = document.getElementById('retryBtn');
 const questionText = document.getElementById('questionText');
 const questionNumber = document.getElementById('questionNumber');
@@ -206,8 +212,19 @@ function parseJwt(token) {
 }
 
 // イベントリスナー
+// メニュー画面から説明画面へ
+selectValueTestBtn.addEventListener('click', () => showInstructionScreen('value'));
+selectAngleTestBtn.addEventListener('click', () => showInstructionScreen('angle'));
+
+// 説明画面からテスト開始
 startValueTestBtn.addEventListener('click', () => startQuiz('value'));
 startAngleTestBtn.addEventListener('click', () => startQuiz('angle'));
+
+// 説明画面からメニューに戻る
+backFromValueBtn.addEventListener('click', backToMenu);
+backFromAngleBtn.addEventListener('click', backToMenu);
+
+// その他のボタン
 retryBtn.addEventListener('click', resetQuiz);
 
 // 角度選択ボタンのイベントリスナー
@@ -216,6 +233,23 @@ document.querySelectorAll('.angle-btn').forEach(btn => {
 });
 
 submitAngleBtn.addEventListener('click', submitAngleAnswer);
+
+// 説明画面を表示
+function showInstructionScreen(type) {
+    menuScreen.classList.add('hidden');
+    if (type === 'value') {
+        valueInstructionScreen.classList.remove('hidden');
+    } else {
+        angleInstructionScreen.classList.remove('hidden');
+    }
+}
+
+// メニュー画面に戻る
+function backToMenu() {
+    valueInstructionScreen.classList.add('hidden');
+    angleInstructionScreen.classList.add('hidden');
+    menuScreen.classList.remove('hidden');
+}
 
 // テスト開始
 function startQuiz(type) {
@@ -244,7 +278,9 @@ function startQuiz(type) {
     selectedAngles = [];
     startTime = new Date(); // 開始時刻を記録
 
-    menuScreen.classList.add('hidden');
+    // 説明画面を非表示にしてクイズ画面を表示
+    valueInstructionScreen.classList.add('hidden');
+    angleInstructionScreen.classList.add('hidden');
     quizScreen.classList.remove('hidden');
 
     showQuestion();

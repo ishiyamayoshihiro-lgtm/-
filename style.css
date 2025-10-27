@@ -388,6 +388,79 @@ header h1 {
     vertical-align: middle;
 }
 
+/* 説明画面のスタイル */
+.instruction {
+    text-align: left;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.instruction h2 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.instruction-content {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.instruction-content h3 {
+    color: #667eea;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    margin-top: 25px;
+}
+
+.instruction-content h3:first-child {
+    margin-top: 0;
+}
+
+.instruction-content p {
+    color: #333;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.instruction-content strong {
+    color: #667eea;
+    font-weight: 700;
+}
+
+.example-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.example-chip {
+    padding: 8px 16px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.note {
+    color: #666 !important;
+    font-size: 0.95rem !important;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+.instruction .btn-primary,
+.instruction .btn-secondary {
+    margin: 0 10px;
+}
+
 /* メニュー画面のスタイル */
 .menu-buttons {
     display: flex;

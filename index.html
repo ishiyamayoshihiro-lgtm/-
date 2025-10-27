@@ -35,15 +35,68 @@
                 <p id="userEmail" class="user-email"></p>
                 <p id="modeInfo" class="mode-info">全27問（テストモード）</p>
                 <div class="menu-buttons">
-                    <button id="startValueTestBtn" class="btn-menu">
+                    <button id="selectValueTestBtn" class="btn-menu">
                         <div class="menu-btn-title">値を求める</div>
                         <div class="menu-btn-desc">sin 30° → 1/2</div>
                     </button>
-                    <button id="startAngleTestBtn" class="btn-menu">
+                    <button id="selectAngleTestBtn" class="btn-menu">
                         <div class="menu-btn-title">角度を求める</div>
                         <div class="menu-btn-desc">sin θ = 1/2 → 30°, 150°</div>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <div id="valueInstructionScreen" class="screen hidden">
+            <div class="instruction">
+                <h2>値を求めるテスト</h2>
+                <div class="instruction-content">
+                    <h3>📋 出題形式</h3>
+                    <p>「<strong>sin 30°</strong> の値を求めなさい」のような問題が出題されます。</p>
+
+                    <h3>✏️ 回答方法</h3>
+                    <p>14個の選択肢の中から、<strong>正しい値を1つ</strong>選択してください。</p>
+                    <p>選択肢には以下のような値が含まれます：</p>
+                    <div class="example-choices">
+                        <span class="example-chip">0</span>
+                        <span class="example-chip">1/2</span>
+                        <span class="example-chip">√2/2</span>
+                        <span class="example-chip">√3/2</span>
+                        <span class="example-chip">1</span>
+                        <span class="example-chip">なし</span>
+                    </div>
+                    <p class="note">※ クリックするとすぐに次の問題に進みます</p>
+                </div>
+                <button id="startValueTestBtn" class="btn-primary">テスト開始</button>
+                <button id="backFromValueBtn" class="btn-secondary">戻る</button>
+            </div>
+        </div>
+
+        <div id="angleInstructionScreen" class="screen hidden">
+            <div class="instruction">
+                <h2>角度を求めるテスト</h2>
+                <div class="instruction-content">
+                    <h3>📋 出題形式</h3>
+                    <p>「<strong>sin θ = 1/2</strong> となる角度θを求めなさい」のような問題が出題されます。</p>
+
+                    <h3>✏️ 回答方法</h3>
+                    <p>9つの角度ボタンの中から、<strong>正しい角度を1つまたは2つ</strong>選択してください。</p>
+                    <div class="example-choices">
+                        <span class="example-chip">0°</span>
+                        <span class="example-chip">30°</span>
+                        <span class="example-chip">45°</span>
+                        <span class="example-chip">60°</span>
+                        <span class="example-chip">90°</span>
+                        <span class="example-chip">120°</span>
+                        <span class="example-chip">135°</span>
+                        <span class="example-chip">150°</span>
+                        <span class="example-chip">180°</span>
+                    </div>
+                    <p class="note">※ 複数の答えがある場合は、すべて選択してください</p>
+                    <p class="note">※ 選択後、「送信」ボタンをクリックして次の問題に進みます</p>
+                </div>
+                <button id="startAngleTestBtn" class="btn-primary">テスト開始</button>
+                <button id="backFromAngleBtn" class="btn-secondary">戻る</button>
             </div>
         </div>
 
