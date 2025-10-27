@@ -228,7 +228,9 @@ header h1 {
     transition: all 0.3s ease;
     font-weight: 600;
     color: #333;
-    width: 160px;
+    width: 160px !important;
+    min-width: 160px;
+    max-width: 160px;
     height: 70px;
     display: flex;
     align-items: center;
@@ -432,11 +434,16 @@ header h1 {
     font-weight: 700;
 }
 
-.example-choices {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 20px 0;
+/* 説明画面の選択肢（無効化） */
+.example-answer-choices .choice-btn {
+    cursor: default !important;
+    opacity: 0.8;
+}
+
+.example-answer-choices .choice-btn:hover {
+    transform: none !important;
+    background: white !important;
+    border-color: #ddd !important;
 }
 
 #angleExampleChoices {
@@ -611,6 +618,12 @@ header h1 {
         grid-template-columns: repeat(4, 140px);
     }
 
+    .choice-btn {
+        width: 140px !important;
+        min-width: 140px !important;
+        max-width: 140px !important;
+    }
+
     .answer-choices .choice-btn:nth-child(4) { margin-left: 75px; }
     .answer-choices .choice-btn:nth-child(10) { margin-left: 75px; }
 }
@@ -648,8 +661,9 @@ header h1 {
     .choice-btn {
         padding: 12px 8px;
         font-size: 0.9rem;
-        width: auto;
-        min-width: 100px;
+        width: auto !important;
+        min-width: 100px !important;
+        max-width: none !important;
         height: 60px;
     }
 }

@@ -235,26 +235,23 @@ function renderInstructionExamples() {
     // 既にレンダリング済みの場合はスキップ
     if (instructionExamplesRendered) return;
 
-    // 値を求めるモードの例
-    const valueExamples = [
-        { latex: '0' },
-        { latex: '\\frac{1}{2}' },
-        { latex: '\\frac{\\sqrt{2}}{2}' },
-        { latex: '\\frac{\\sqrt{3}}{2}' },
-        { latex: '1' },
-        { latex: '\\text{なし}' }
-    ];
-
+    // 値を求めるモードの例（実際の選択肢と同じ）
     const valueExampleChoices = document.getElementById('valueExampleChoices');
     if (valueExampleChoices && valueExampleChoices.children.length === 0) {
-        valueExamples.forEach(example => {
-            const span = document.createElement('span');
-            span.className = 'example-chip';
-            katex.render(example.latex, span, {
+        allChoices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.disabled = true;
+            btn.style.cursor = 'default';
+            btn.style.opacity = '0.8';
+
+            // KaTeXでレンダリング
+            katex.render(choice.latex, btn, {
                 throwOnError: false,
                 displayMode: false
             });
-            valueExampleChoices.appendChild(span);
+
+            valueExampleChoices.appendChild(btn);
         });
     }
 
