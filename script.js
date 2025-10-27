@@ -314,10 +314,13 @@ function showQuestion() {
     const problem = selectedProblems[currentQuestionIndex];
     questionNumber.textContent = `問題 ${currentQuestionIndex + 1}/${totalQuestions}`;
 
+    // まず両方を非表示にする
+    valueChoices.classList.add('hidden');
+    angleChoices.classList.add('hidden');
+
     if (testType === 'value') {
         // 値を求める問題
         valueChoices.classList.remove('hidden');
-        angleChoices.classList.add('hidden');
 
         // 問題文をKaTeXでレンダリング
         questionText.innerHTML = '';
@@ -352,7 +355,6 @@ function showQuestion() {
         });
     } else {
         // 角度を求める問題
-        valueChoices.classList.add('hidden');
         angleChoices.classList.remove('hidden');
 
         // 問題文をKaTeXでレンダリング
