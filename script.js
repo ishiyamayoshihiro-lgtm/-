@@ -154,9 +154,6 @@ const submitAngleBtn = document.getElementById('submitAngleBtn');
 
 // Google Sign-In初期化
 window.onload = function() {
-    // 説明画面の選択肢例をKaTeXでレンダリング
-    renderInstructionExamples();
-
     // 練習モードの場合はログインをスキップ
     if (!CONFIG.TEST_MODE) {
         // ログイン画面を非表示、メニュー画面を表示
@@ -191,7 +188,11 @@ window.onload = function() {
 };
 
 // 説明画面の選択肢例をKaTeXでレンダリング
+let instructionExamplesRendered = false;
 function renderInstructionExamples() {
+    // 既にレンダリング済みの場合はスキップ
+    if (instructionExamplesRendered) return;
+
     // 値を求めるモードの例
     const valueExamples = [
         { latex: '0' },
@@ -203,7 +204,7 @@ function renderInstructionExamples() {
     ];
 
     const valueExampleChoices = document.getElementById('valueExampleChoices');
-    if (valueExampleChoices) {
+    if (valueExampleChoices && valueExampleChoices.children.length === 0) {
         valueExamples.forEach(example => {
             const span = document.createElement('span');
             span.className = 'example-chip';
@@ -229,7 +230,7 @@ function renderInstructionExamples() {
     ];
 
     const angleExampleChoices = document.getElementById('angleExampleChoices');
-    if (angleExampleChoices) {
+    if (angleExampleChoices && angleExampleChoices.children.length === 0) {
         angleExamples.forEach(example => {
             const span = document.createElement('span');
             span.className = 'example-chip';
@@ -240,6 +241,8 @@ function renderInstructionExamples() {
             angleExampleChoices.appendChild(span);
         });
     }
+
+    instructionExamplesRendered = true;
 }
 
 // モード表示を更新
@@ -305,6 +308,9 @@ submitAngleBtn.addEventListener('click', submitAngleAnswer);
 
 // 説明画面を表示
 function showInstructionScreen(type) {
+    // 説明画面の選択肢例をKaTeXでレンダリング（初回のみ）
+    renderInstructionExamples();
+
     menuScreen.classList.add('hidden');
     if (type === 'value') {
         valueInstructionScreen.classList.remove('hidden');
