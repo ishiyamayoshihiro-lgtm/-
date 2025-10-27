@@ -80,8 +80,8 @@ functions.forEach(func => {
     });
 });
 
-// 選択肢のリスト (表示用とLaTeX表記)
-const choices = [
+// すべての選択肢のリスト (表示用とLaTeX表記)
+const allChoices = [
     { display: '-√3', latex: '-\\sqrt{3}' },
     { display: '-1', latex: '-1' },
     { display: '-√3/2', latex: '-\\frac{\\sqrt{3}}{2}' },
@@ -97,6 +97,38 @@ const choices = [
     { display: '√3', latex: '\\sqrt{3}' },
     { display: 'なし', latex: '\\text{なし}' }
 ];
+
+// 各問題で表示する選択肢を決定する関数
+function getChoicesForProblem(func, angle) {
+    let validChoices = [];
+
+    if (func === 'sin') {
+        // sinの値域は[-1, 1]、√3と-√3は不要、「なし」も不要
+        validChoices = allChoices.filter(c =>
+            c.display !== '√3' && c.display !== '-√3' && c.display !== 'なし'
+        );
+    } else if (func === 'cos') {
+        // cosの値域は[-1, 1]、√3と-√3は不要、「なし」も不要
+        validChoices = allChoices.filter(c =>
+            c.display !== '√3' && c.display !== '-√3' && c.display !== 'なし'
+        );
+    } else if (func === 'tan') {
+        // tanは90°で「なし」、それ以外は全範囲の値が可能
+        if (angle === 90) {
+            // 90°では「なし」のみ正解だが、他の選択肢も表示
+            validChoices = allChoices.filter(c => c.display !== 'なし');
+            validChoices.push(allChoices.find(c => c.display === 'なし'));
+        } else {
+            // 90°以外では「なし」は不要
+            validChoices = allChoices.filter(c => c.display !== 'なし');
+        }
+    }
+
+    return validChoices;
+}
+
+// 後方互換性のため、結果画面などで使用するchoices変数を保持
+const choices = allChoices;
 
 // グローバル変数
 let currentQuestionIndex = 0;
@@ -317,23 +349,24 @@ function showQuestion() {
 
         selectedChoice = null;
 
-        // 選択肢ボタンをリセットしてKaTeXで数式をレンダリング
-        const choiceBtns = document.querySelectorAll('.choice-btn');
-        choiceBtns.forEach((btn, index) => {
-            btn.classList.remove('selected', 'correct', 'incorrect');
-            btn.disabled = false;
+        // この問題で必要な選択肢のみを取得
+        const validChoices = getChoicesForProblem(problem.func, problem.angle);
 
-            const choice = choices[index];
+        // 選択肢ボタンを動的に生成
+        valueChoices.innerHTML = '';
+        validChoices.forEach((choice, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
             btn.dataset.value = choice.display;
 
             // KaTeXでレンダリング
-            btn.innerHTML = '';
             katex.render(choice.latex, btn, {
                 throwOnError: false,
                 displayMode: false
             });
 
             btn.onclick = () => selectChoice(choice.display);
+            valueChoices.appendChild(btn);
         });
     } else {
         // 角度を求める問題
