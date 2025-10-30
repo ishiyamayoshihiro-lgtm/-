@@ -717,10 +717,61 @@ function showResult() {
     });
 }
 
-// 結果をGoogle Spreadsheetに送信
+// 送信状態を管理する変数
+let sendStatus = 'idle'; // 'idle', 'sending', 'success', 'retrying', 'failed'
+let retryCount = 0;
+const MAX_RETRY = 3;
+const RETRY_INTERVAL = 3000; // 3秒ごとにリトライ
+
+// 送信状態を更新してUIに反映
+function updateSendStatus(status, message = '') {
+    sendStatus = status;
+    const statusElement = document.getElementById('sendStatus');
+    const statusIcon = document.getElementById('sendStatusIcon');
+    const statusText = document.getElementById('sendStatusText');
+
+    if (!statusElement) return;
+
+    // ステータスに応じてアイコンとテキストを更新
+    switch(status) {
+        case 'sending':
+            statusElement.className = 'send-status sending';
+            statusIcon.textContent = '⏳';
+            statusText.textContent = '結果を送信中...';
+            statusElement.classList.remove('hidden');
+            break;
+        case 'retrying':
+            statusElement.className = 'send-status retrying';
+            statusIcon.textContent = '🔄';
+            statusText.textContent = `再送信中... (${retryCount}/${MAX_RETRY})`;
+            statusElement.classList.remove('hidden');
+            break;
+        case 'success':
+            statusElement.className = 'send-status success';
+            statusIcon.textContent = '✓';
+            statusText.textContent = '送信完了';
+            statusElement.classList.remove('hidden');
+            // 3秒後に非表示
+            setTimeout(() => {
+                statusElement.classList.add('hidden');
+            }, 3000);
+            break;
+        case 'failed':
+            statusElement.className = 'send-status failed';
+            statusIcon.textContent = '✗';
+            statusText.textContent = `送信に失敗しました${message ? ': ' + message : ''}`;
+            statusElement.classList.remove('hidden');
+            break;
+        default:
+            statusElement.classList.add('hidden');
+    }
+}
+
+// 結果をGoogle Spreadsheetに送信（リトライ機能付き）
 async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeconds, timeString, testType) {
     if (!userEmail) {
         console.error('ユーザーがログインしていません');
+        updateSendStatus('failed', 'ログインしていません');
         return;
     }
 
@@ -736,22 +787,56 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
         testType: testTypeName
     };
 
-    console.log('送信するデータ:', data);
+    // リトライロジック
+    retryCount = 0;
 
-    try {
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            mode: 'no-cors', // Google Apps Scriptの制約により必要
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
+    async function attemptSend() {
+        try {
+            if (retryCount === 0) {
+                updateSendStatus('sending');
+            } else {
+                updateSendStatus('retrying');
+            }
 
-        console.log('結果を送信しました - testType:', testTypeName);
-    } catch (error) {
-        console.error('結果の送信に失敗しました:', error);
+            console.log(`送信試行 ${retryCount + 1}/${MAX_RETRY}:`, data);
+
+            const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            // レスポンスを確認
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                console.log('結果を送信しました - testType:', testTypeName);
+                updateSendStatus('success');
+                return true;
+            } else {
+                throw new Error(result.message || '送信失敗');
+            }
+        } catch (error) {
+            console.error(`送信試行 ${retryCount + 1} 失敗:`, error);
+            retryCount++;
+
+            if (retryCount < MAX_RETRY) {
+                // リトライ
+                console.log(`${RETRY_INTERVAL/1000}秒後に再試行します...`);
+                await new Promise(resolve => setTimeout(resolve, RETRY_INTERVAL));
+                return attemptSend();
+            } else {
+                // 最大リトライ回数に達した
+                console.error('最大リトライ回数に達しました');
+                updateSendStatus('failed', '再試行回数超過');
+                return false;
+            }
+        }
     }
+
+    await attemptSend();
 }
 
 // リセット
