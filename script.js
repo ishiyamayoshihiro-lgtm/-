@@ -330,6 +330,103 @@ document.querySelectorAll('.angle-btn').forEach(btn => {
 
 submitAngleBtn.addEventListener('click', submitAngleAnswer);
 
+// 手動再送信ボタン
+document.addEventListener('DOMContentLoaded', () => {
+    const manualRetryBtn = document.getElementById('manualRetryBtn');
+    if (manualRetryBtn) {
+        manualRetryBtn.addEventListener('click', manualRetrySend);
+    }
+});
+
+// 手動で再送信する関数
+async function manualRetrySend() {
+    if (!lastSendData) {
+        console.error('送信データがありません');
+        return;
+    }
+
+    console.log('手動再送信を開始します');
+
+    // リトライカウントをリセット
+    retryCount = 0;
+
+    // 再送信を実行
+    await sendDataWithRetry(lastSendData);
+}
+
+// データ送信のコア処理（リトライロジックを分離）
+async function sendDataWithRetry(data) {
+    retryCount = 0;
+
+    async function attemptSend() {
+        try {
+            if (retryCount === 0) {
+                updateSendStatus('sending');
+            } else {
+                updateSendStatus('retrying');
+            }
+
+            console.log(`送信試行 ${retryCount + 1}/${MAX_RETRY}:`, data);
+
+            // まずCORSありで試行
+            try {
+                const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                // レスポンスを確認
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    console.log('結果を送信しました（CORS対応）');
+                    updateSendStatus('success');
+                    return true;
+                } else {
+                    throw new Error(result.message || '送信失敗');
+                }
+            } catch (corsError) {
+                // CORSエラーの場合、no-corsモードで再試行
+                console.log('CORS対応送信失敗、no-corsモードで再試行:', corsError);
+
+                await fetch(CONFIG.GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                // no-corsモードではレスポンスが読めないため、送信成功と見なす
+                console.log('結果を送信しました（no-corsモード）');
+                updateSendStatus('success');
+                return true;
+            }
+        } catch (error) {
+            console.error(`送信試行 ${retryCount + 1} 失敗:`, error);
+            retryCount++;
+
+            if (retryCount < MAX_RETRY) {
+                // リトライ
+                console.log(`${RETRY_INTERVAL/1000}秒後に再試行します...`);
+                await new Promise(resolve => setTimeout(resolve, RETRY_INTERVAL));
+                return attemptSend();
+            } else {
+                // 最大リトライ回数に達した
+                console.error('最大リトライ回数に達しました');
+                updateSendStatus('failed', '再試行回数超過');
+                return false;
+            }
+        }
+    }
+
+    await attemptSend();
+}
+
 // 説明画面を表示
 function showInstructionScreen(type) {
     // 説明画面の選択肢例をKaTeXでレンダリング（初回のみ）
@@ -722,6 +819,7 @@ let sendStatus = 'idle'; // 'idle', 'sending', 'success', 'retrying', 'failed'
 let retryCount = 0;
 const MAX_RETRY = 3;
 const RETRY_INTERVAL = 3000; // 3秒ごとにリトライ
+let lastSendData = null; // 最後に送信しようとしたデータを保持
 
 // 送信状態を更新してUIに反映
 function updateSendStatus(status, message = '') {
@@ -729,6 +827,7 @@ function updateSendStatus(status, message = '') {
     const statusElement = document.getElementById('sendStatus');
     const statusIcon = document.getElementById('sendStatusIcon');
     const statusText = document.getElementById('sendStatusText');
+    const retryBtn = document.getElementById('manualRetryBtn');
 
     if (!statusElement) return;
 
@@ -739,18 +838,21 @@ function updateSendStatus(status, message = '') {
             statusIcon.textContent = '⏳';
             statusText.textContent = '結果を送信中...';
             statusElement.classList.remove('hidden');
+            if (retryBtn) retryBtn.classList.add('hidden');
             break;
         case 'retrying':
             statusElement.className = 'send-status retrying';
             statusIcon.textContent = '🔄';
             statusText.textContent = `再送信中... (${retryCount}/${MAX_RETRY})`;
             statusElement.classList.remove('hidden');
+            if (retryBtn) retryBtn.classList.add('hidden');
             break;
         case 'success':
             statusElement.className = 'send-status success';
             statusIcon.textContent = '✓';
             statusText.textContent = '送信完了';
             statusElement.classList.remove('hidden');
+            if (retryBtn) retryBtn.classList.add('hidden');
             // 3秒後に非表示
             setTimeout(() => {
                 statusElement.classList.add('hidden');
@@ -761,9 +863,12 @@ function updateSendStatus(status, message = '') {
             statusIcon.textContent = '✗';
             statusText.textContent = `送信に失敗しました${message ? ': ' + message : ''}`;
             statusElement.classList.remove('hidden');
+            // 手動再送信ボタンを表示
+            if (retryBtn) retryBtn.classList.remove('hidden');
             break;
         default:
             statusElement.classList.add('hidden');
+            if (retryBtn) retryBtn.classList.add('hidden');
     }
 }
 
@@ -787,76 +892,11 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
         testType: testTypeName
     };
 
-    // リトライロジック
-    retryCount = 0;
+    // 送信データを保存（手動再送信用）
+    lastSendData = data;
 
-    async function attemptSend() {
-        try {
-            if (retryCount === 0) {
-                updateSendStatus('sending');
-            } else {
-                updateSendStatus('retrying');
-            }
-
-            console.log(`送信試行 ${retryCount + 1}/${MAX_RETRY}:`, data);
-
-            // まずCORSありで試行
-            try {
-                const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                // レスポンスを確認
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    console.log('結果を送信しました（CORS対応） - testType:', testTypeName);
-                    updateSendStatus('success');
-                    return true;
-                } else {
-                    throw new Error(result.message || '送信失敗');
-                }
-            } catch (corsError) {
-                // CORSエラーの場合、no-corsモードで再試行
-                console.log('CORS対応送信失敗、no-corsモードで再試行:', corsError);
-
-                await fetch(CONFIG.GAS_WEB_APP_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                // no-corsモードではレスポンスが読めないため、送信成功と見なす
-                console.log('結果を送信しました（no-corsモード） - testType:', testTypeName);
-                updateSendStatus('success');
-                return true;
-            }
-        } catch (error) {
-            console.error(`送信試行 ${retryCount + 1} 失敗:`, error);
-            retryCount++;
-
-            if (retryCount < MAX_RETRY) {
-                // リトライ
-                console.log(`${RETRY_INTERVAL/1000}秒後に再試行します...`);
-                await new Promise(resolve => setTimeout(resolve, RETRY_INTERVAL));
-                return attemptSend();
-            } else {
-                // 最大リトライ回数に達した
-                console.error('最大リトライ回数に達しました');
-                updateSendStatus('failed', '再試行回数超過');
-                return false;
-            }
-        }
-    }
-
-    await attemptSend();
+    // データ送信を実行
+    await sendDataWithRetry(data);
 }
 
 // リセット

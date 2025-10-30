@@ -409,6 +409,30 @@ header h1 {
     font-size: 1.5rem;
 }
 
+/* 手動再送信ボタンのスタイル */
+.btn-manual-retry {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border: 2px solid #ff6b6b;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    margin: 15px auto;
+    display: block;
+}
+
+.btn-manual-retry:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
+}
+
+.btn-manual-retry:active {
+    transform: translateY(0);
+}
+
 .result-details {
     margin: 30px 0;
     text-align: left;
