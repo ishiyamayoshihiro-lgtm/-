@@ -853,10 +853,7 @@ function updateSendStatus(status, message = '') {
             statusText.textContent = '送信完了';
             statusElement.classList.remove('hidden');
             if (retryBtn) retryBtn.classList.add('hidden');
-            // 3秒後に非表示
-            setTimeout(() => {
-                statusElement.classList.add('hidden');
-            }, 3000);
+            // ずっと表示したままにする
             break;
         case 'failed':
             statusElement.className = 'send-status failed';
