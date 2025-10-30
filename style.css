@@ -10,14 +10,17 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     padding: 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .container {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
+    padding-top: 20px;
 }
 
 header {
