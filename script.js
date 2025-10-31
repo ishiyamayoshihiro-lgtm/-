@@ -586,12 +586,24 @@ function selectChoice(value) {
     });
 
     // iPadなどのタッチデバイスでボタンの状態が残らないようにする
-    // すべてのボタンからフォーカスを外し、選択状態をクリア
+    // 強制的にすべての状態をリセット
     const allChoiceBtns = document.querySelectorAll('.choice-btn');
     allChoiceBtns.forEach(btn => {
         btn.blur(); // フォーカスを外す
         btn.classList.remove('selected'); // 選択状態をクリア
+        // スタイルを強制的にリセット
+        btn.style.backgroundColor = '';
+        btn.style.borderColor = '';
+        btn.style.transform = '';
     });
+
+    // アクティブな要素からフォーカスを外す
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
+
+    // bodyにフォーカスを移す
+    document.body.focus();
 
     // すぐに次の問題へ
     currentQuestionIndex++;
@@ -639,14 +651,30 @@ function submitAngleAnswer() {
     });
 
     // iPadなどのタッチデバイスでボタンの状態が残らないようにする
-    // すべてのボタンからフォーカスを外し、選択状態をクリア
+    // 強制的にすべての状態をリセット
     const allAngleBtns = document.querySelectorAll('.angle-btn');
     allAngleBtns.forEach(btn => {
         btn.blur(); // フォーカスを外す
         btn.classList.remove('selected'); // 選択状態をクリア
+        // スタイルを強制的にリセット
+        btn.style.backgroundColor = '';
+        btn.style.borderColor = '';
+        btn.style.transform = '';
     });
-    // 送信ボタンのフォーカスも外す
+
+    // 送信ボタンのフォーカスも外してスタイルをリセット
     submitAngleBtn.blur();
+    submitAngleBtn.style.backgroundColor = '';
+    submitAngleBtn.style.borderColor = '';
+    submitAngleBtn.style.transform = '';
+
+    // アクティブな要素からフォーカスを外す
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
+
+    // bodyにフォーカスを移す
+    document.body.focus();
 
     // 次の問題へ
     currentQuestionIndex++;
