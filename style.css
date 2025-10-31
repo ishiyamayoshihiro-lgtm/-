@@ -268,6 +268,8 @@ header h1 {
     box-sizing: border-box !important;
     flex-shrink: 0 !important;
     overflow: hidden;
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+    tap-highlight-color: rgba(102, 126, 234, 0.2);
 }
 
 /* KaTeXでレンダリングされた要素も幅を固定 */
@@ -285,6 +287,16 @@ header h1 {
 
 .choice-btn:active {
     transform: translateY(0);
+    background: #e0e0e0;
+}
+
+/* タッチデバイスでホバー状態が残らないようにする */
+@media (hover: none) and (pointer: coarse) {
+    .choice-btn:hover {
+        background: white;
+        border-color: #ddd;
+        transform: none;
+    }
 }
 
 .choice-btn.selected {
@@ -665,12 +677,27 @@ header h1 {
     transition: all 0.3s ease;
     font-weight: 600;
     color: #333;
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+    tap-highlight-color: rgba(102, 126, 234, 0.2);
 }
 
 .angle-btn:hover {
     background: #f8f9fa;
     border-color: #667eea;
     transform: translateY(-2px);
+}
+
+.angle-btn:active {
+    background: #e0e0e0;
+}
+
+/* タッチデバイスでホバー状態が残らないようにする */
+@media (hover: none) and (pointer: coarse) {
+    .angle-btn:hover {
+        background: white;
+        border-color: #ddd;
+        transform: none;
+    }
 }
 
 .angle-btn.selected {

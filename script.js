@@ -585,6 +585,14 @@ function selectChoice(value) {
         isCorrect: isCorrect
     });
 
+    // iPadなどのタッチデバイスでボタンの状態が残らないようにする
+    // すべてのボタンからフォーカスを外し、選択状態をクリア
+    const allChoiceBtns = document.querySelectorAll('.choice-btn');
+    allChoiceBtns.forEach(btn => {
+        btn.blur(); // フォーカスを外す
+        btn.classList.remove('selected'); // 選択状態をクリア
+    });
+
     // すぐに次の問題へ
     currentQuestionIndex++;
 
@@ -629,6 +637,16 @@ function submitAngleAnswer() {
         userAnswer: selectedAngles.slice(), // コピーを保存
         isCorrect: isCorrect
     });
+
+    // iPadなどのタッチデバイスでボタンの状態が残らないようにする
+    // すべてのボタンからフォーカスを外し、選択状態をクリア
+    const allAngleBtns = document.querySelectorAll('.angle-btn');
+    allAngleBtns.forEach(btn => {
+        btn.blur(); // フォーカスを外す
+        btn.classList.remove('selected'); // 選択状態をクリア
+    });
+    // 送信ボタンのフォーカスも外す
+    submitAngleBtn.blur();
 
     // 次の問題へ
     currentQuestionIndex++;
