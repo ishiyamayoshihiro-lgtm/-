@@ -503,6 +503,19 @@
             <div class="section">
                 <h2>📝 更新履歴</h2>
 
+                <h3>2025年11月5日</h3>
+                <ul>
+                    <li>🔒 <strong>カンニング防止機能を実装</strong>
+                        <ul>
+                            <li>アプリ切り替え検出: 他のアプリに切り替えたらテストリセット</li>
+                            <li>ウィンドウフォーカス監視: フォーカスが外れたらテストリセット</li>
+                            <li>画面サイズ変更検出: Split Viewなど画面分割したらテストリセット</li>
+                            <li>テスト開始時に画面サイズを記録し、50px以上の変更で検出</li>
+                            <li>デバウンス処理（300ms）で誤検知を防止</li>
+                        </ul>
+                    </li>
+                </ul>
+
                 <h3>2025年10月31日</h3>
                 <ul>
                     <li>🐛 <strong>iPadタッチ操作の不具合修正</strong>
@@ -577,8 +590,8 @@
 
         <footer>
             <p><strong>三角比小テスト</strong></p>
-            <p>作成日: 2025年10月23日 | 最終更新: 2025年10月31日</p>
-            <p>状態: <span class="status-badge status-success">✓ 本番運用中（2モード・自動リトライ対応）</span></p>
+            <p>作成日: 2025年10月23日 | 最終更新: 2025年11月5日</p>
+            <p>状態: <span class="status-badge status-success">✓ 本番運用中（2モード・カンニング防止機能付き）</span></p>
             <p style="margin-top: 15px;">&copy;2025 IshiyamaYoshihiro</p>
         </footer>
     </div>
