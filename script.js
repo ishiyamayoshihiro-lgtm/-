@@ -151,6 +151,60 @@ const valueChoices = document.getElementById('valueChoices');
 const angleChoices = document.getElementById('angleChoices');
 const submitAngleBtn = document.getElementById('submitAngleBtn');
 
+// カンニング防止：テストリセット処理（共通関数）
+function resetTestForCheating(reason) {
+    // テスト中（クイズ画面が表示されている）かチェック
+    if (!quizScreen.classList.contains('hidden')) {
+        console.log(`カンニング防止: ${reason}`);
+
+        // テストをリセット
+        currentQuestionIndex = 0;
+        userAnswers = [];
+        selectedProblems = [];
+        selectedAngles = [];
+        selectedChoice = null;
+        startTime = null;
+
+        // クイズ画面を非表示にしてメニュー画面に戻る
+        quizScreen.classList.add('hidden');
+        menuScreen.classList.remove('hidden');
+
+        // 警告メッセージを表示
+        alert(`${reason}のため、テストがリセットされました。`);
+    }
+}
+
+// カンニング防止：アプリ切り替え検出
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        resetTestForCheating('アプリを切り替えた');
+    }
+});
+
+// カンニング防止：ウィンドウフォーカス監視
+window.addEventListener('blur', () => {
+    resetTestForCheating('ウィンドウのフォーカスが外れた');
+});
+
+// カンニング防止：画面サイズ変更検出（Split View対策）
+let initialWidth = window.innerWidth;
+let initialHeight = window.innerHeight;
+
+window.addEventListener('resize', () => {
+    // テスト中のみチェック
+    if (!quizScreen.classList.contains('hidden')) {
+        const widthChanged = Math.abs(window.innerWidth - initialWidth) > 100;
+        const heightChanged = Math.abs(window.innerHeight - initialHeight) > 100;
+
+        if (widthChanged || heightChanged) {
+            resetTestForCheating('画面サイズが変更された（Split Viewなど）');
+            // 新しいサイズを記録
+            initialWidth = window.innerWidth;
+            initialHeight = window.innerHeight;
+        }
+    }
+});
+
 // Google Sign-In初期化
 window.onload = function() {
     // メニュー画面の説明をKaTeXでレンダリング
