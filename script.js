@@ -164,6 +164,8 @@ function resetTestForCheating(reason) {
         selectedAngles = [];
         selectedChoice = null;
         startTime = null;
+        testStartWidth = null;
+        testStartHeight = null;
 
         // クイズ画面を非表示にしてメニュー画面に戻る
         quizScreen.classList.add('hidden');
@@ -187,21 +189,35 @@ window.addEventListener('blur', () => {
 });
 
 // カンニング防止：画面サイズ変更検出（Split View対策）
-let initialWidth = window.innerWidth;
-let initialHeight = window.innerHeight;
+let testStartWidth = null;
+let testStartHeight = null;
+let resizeTimeout = null;
+
+// テスト開始時にサイズを記録する関数
+function recordInitialScreenSize() {
+    testStartWidth = window.innerWidth;
+    testStartHeight = window.innerHeight;
+    console.log(`テスト開始時の画面サイズ: ${testStartWidth} x ${testStartHeight}`);
+}
 
 window.addEventListener('resize', () => {
     // テスト中のみチェック
-    if (!quizScreen.classList.contains('hidden')) {
-        const widthChanged = Math.abs(window.innerWidth - initialWidth) > 100;
-        const heightChanged = Math.abs(window.innerHeight - initialHeight) > 100;
+    if (!quizScreen.classList.contains('hidden') && testStartWidth !== null) {
+        // デバウンス: 連続した発火を防ぐため300ms待つ
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            const widthChanged = Math.abs(window.innerWidth - testStartWidth) > 50;
+            const heightChanged = Math.abs(window.innerHeight - testStartHeight) > 50;
 
-        if (widthChanged || heightChanged) {
-            resetTestForCheating('画面サイズが変更された（Split Viewなど）');
-            // 新しいサイズを記録
-            initialWidth = window.innerWidth;
-            initialHeight = window.innerHeight;
-        }
+            console.log(`画面サイズ変更検出: ${window.innerWidth} x ${window.innerHeight} (開始時: ${testStartWidth} x ${testStartHeight})`);
+
+            if (widthChanged || heightChanged) {
+                resetTestForCheating('画面サイズが変更された（Split Viewなど）');
+                // リセット後はサイズ記録をクリア
+                testStartWidth = null;
+                testStartHeight = null;
+            }
+        }, 300);
     }
 });
 
@@ -521,6 +537,9 @@ function startQuiz(type) {
     userAnswers = [];
     selectedAngles = [];
     startTime = new Date(); // 開始時刻を記録
+
+    // カンニング防止: テスト開始時の画面サイズを記録
+    recordInitialScreenSize();
 
     // 説明画面を非表示にしてクイズ画面を表示
     valueInstructionScreen.classList.add('hidden');
