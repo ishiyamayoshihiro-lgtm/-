@@ -950,6 +950,9 @@ function updateSendStatus(status, message = '') {
 
     if (!statusElement) return;
 
+    // デバッグ用ログ
+    console.log('updateSendStatus:', status, 'ボタン存在:', !!retryBtn);
+
     // ステータスに応じてアイコンとテキストを更新
     switch(status) {
         case 'sending':
@@ -957,21 +960,30 @@ function updateSendStatus(status, message = '') {
             statusIcon.textContent = '⏳';
             statusText.textContent = '結果を送信中...';
             statusElement.classList.remove('hidden');
-            if (retryBtn) retryBtn.classList.add('hidden');
+            if (retryBtn) {
+                retryBtn.classList.add('hidden');
+                retryBtn.style.display = 'none';
+            }
             break;
         case 'retrying':
             statusElement.className = 'send-status retrying';
             statusIcon.textContent = '🔄';
             statusText.textContent = `再送信中... (${retryCount}/${MAX_RETRY})`;
             statusElement.classList.remove('hidden');
-            if (retryBtn) retryBtn.classList.add('hidden');
+            if (retryBtn) {
+                retryBtn.classList.add('hidden');
+                retryBtn.style.display = 'none';
+            }
             break;
         case 'success':
             statusElement.className = 'send-status success';
             statusIcon.textContent = '✓';
             statusText.textContent = '送信完了';
             statusElement.classList.remove('hidden');
-            if (retryBtn) retryBtn.classList.add('hidden');
+            if (retryBtn) {
+                retryBtn.classList.add('hidden');
+                retryBtn.style.display = 'none';
+            }
             // ずっと表示したままにする
             break;
         case 'failed':
@@ -980,11 +992,20 @@ function updateSendStatus(status, message = '') {
             statusText.textContent = `送信に失敗しました${message ? ': ' + message : ''}`;
             statusElement.classList.remove('hidden');
             // 手動再送信ボタンを表示
-            if (retryBtn) retryBtn.classList.remove('hidden');
+            if (retryBtn) {
+                retryBtn.classList.remove('hidden');
+                retryBtn.style.display = 'block';
+                console.log('手動再送信ボタンを表示しました');
+            } else {
+                console.error('手動再送信ボタンが見つかりません');
+            }
             break;
         default:
             statusElement.classList.add('hidden');
-            if (retryBtn) retryBtn.classList.add('hidden');
+            if (retryBtn) {
+                retryBtn.classList.add('hidden');
+                retryBtn.style.display = 'none';
+            }
     }
 }
 
@@ -1023,4 +1044,18 @@ function resetQuiz() {
     userAnswers = [];
     selectedProblems = [];
     selectedAngles = [];
+
+    // 送信状態をリセット
+    sendStatus = 'idle';
+    retryCount = 0;
+    lastSendData = null;
+
+    // 送信状態表示を非表示にする
+    const statusElement = document.getElementById('sendStatus');
+    const retryBtn = document.getElementById('manualRetryBtn');
+    if (statusElement) statusElement.classList.add('hidden');
+    if (retryBtn) {
+        retryBtn.classList.add('hidden');
+        retryBtn.style.display = 'none';
+    }
 }
