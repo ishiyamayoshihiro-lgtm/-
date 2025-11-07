@@ -503,6 +503,19 @@
             <div class="section">
                 <h2>📝 更新履歴</h2>
 
+                <h3>2025年11月7日</h3>
+                <ul>
+                    <li>🔧 <strong>カンニング防止機能の誤検知を修正</strong>
+                        <ul>
+                            <li>テスト開始直後の画面遷移でresizeイベントが発火し、誤ってリセットされる問題を修正</li>
+                            <li>画面遷移完了後500ms待ってから画面サイズを記録</li>
+                            <li>さらに2秒間の猶予期間を設けてから監視を開始（合計2.5秒の猶予）</li>
+                            <li>monitoringEnabledフラグで監視の有効/無効を制御</li>
+                            <li>すべてのカンニング防止イベントに監視フラグを適用</li>
+                        </ul>
+                    </li>
+                </ul>
+
                 <h3>2025年11月6日</h3>
                 <ul>
                     <li>🔧 <strong>送信失敗時の手動再送信ボタン表示を改善</strong>
@@ -602,7 +615,7 @@
 
         <footer>
             <p><strong>三角比小テスト</strong></p>
-            <p>作成日: 2025年10月23日 | 最終更新: 2025年11月6日</p>
+            <p>作成日: 2025年10月23日 | 最終更新: 2025年11月7日</p>
             <p>状態: <span class="status-badge status-success">✓ 本番運用中（2モード・カンニング防止機能付き）</span></p>
             <p style="margin-top: 15px;">&copy;2025 IshiyamaYoshihiro</p>
         </footer>
