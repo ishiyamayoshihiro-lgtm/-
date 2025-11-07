@@ -166,6 +166,7 @@ function resetTestForCheating(reason) {
         startTime = null;
         testStartWidth = null;
         testStartHeight = null;
+        monitoringEnabled = false; // 監視を無効化
 
         // クイズ画面を非表示にしてメニュー画面に戻る
         quizScreen.classList.add('hidden');
@@ -178,20 +179,25 @@ function resetTestForCheating(reason) {
 
 // カンニング防止：アプリ切り替え検出
 document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
+    // 監視が有効な場合のみチェック
+    if (document.hidden && monitoringEnabled) {
         resetTestForCheating('アプリを切り替えた');
     }
 });
 
 // カンニング防止：ウィンドウフォーカス監視
 window.addEventListener('blur', () => {
-    resetTestForCheating('ウィンドウのフォーカスが外れた');
+    // 監視が有効な場合のみチェック
+    if (monitoringEnabled) {
+        resetTestForCheating('ウィンドウのフォーカスが外れた');
+    }
 });
 
 // カンニング防止：画面サイズ変更検出（Split View対策）
 let testStartWidth = null;
 let testStartHeight = null;
 let resizeTimeout = null;
+let monitoringEnabled = false; // 監視が有効かどうか
 
 // テスト開始時にサイズを記録する関数
 function recordInitialScreenSize() {
@@ -200,9 +206,18 @@ function recordInitialScreenSize() {
     console.log(`テスト開始時の画面サイズ: ${testStartWidth} x ${testStartHeight}`);
 }
 
+// 監視を開始する関数（遅延実行）
+function enableMonitoring() {
+    // 2秒後に監視を有効化（画面遷移が安定してから）
+    setTimeout(() => {
+        monitoringEnabled = true;
+        console.log('カンニング防止監視を開始しました');
+    }, 2000);
+}
+
 window.addEventListener('resize', () => {
-    // テスト中のみチェック
-    if (!quizScreen.classList.contains('hidden') && testStartWidth !== null) {
+    // テスト中かつ監視が有効な場合のみチェック
+    if (!quizScreen.classList.contains('hidden') && testStartWidth !== null && monitoringEnabled) {
         // デバウンス: 連続した発火を防ぐため300ms待つ
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
@@ -538,15 +553,19 @@ function startQuiz(type) {
     selectedAngles = [];
     startTime = new Date(); // 開始時刻を記録
 
-    // カンニング防止: テスト開始時の画面サイズを記録
-    recordInitialScreenSize();
-
     // 説明画面を非表示にしてクイズ画面を表示
     valueInstructionScreen.classList.add('hidden');
     angleInstructionScreen.classList.add('hidden');
     quizScreen.classList.remove('hidden');
 
     showQuestion();
+
+    // カンニング防止: 画面遷移完了後に画面サイズを記録して監視を開始
+    // 画面が安定してから記録するために500ms待つ
+    setTimeout(() => {
+        recordInitialScreenSize();
+        enableMonitoring(); // 2秒後に監視開始
+    }, 500);
 }
 
 // 配列をシャッフル
