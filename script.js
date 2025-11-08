@@ -151,90 +151,6 @@ const valueChoices = document.getElementById('valueChoices');
 const angleChoices = document.getElementById('angleChoices');
 const submitAngleBtn = document.getElementById('submitAngleBtn');
 
-// カンニング防止：テストリセット処理（共通関数）
-function resetTestForCheating(reason) {
-    // テスト中（クイズ画面が表示されている）かチェック
-    if (!quizScreen.classList.contains('hidden')) {
-        console.log(`カンニング防止: ${reason}`);
-
-        // テストをリセット
-        currentQuestionIndex = 0;
-        userAnswers = [];
-        selectedProblems = [];
-        selectedAngles = [];
-        selectedChoice = null;
-        startTime = null;
-        testStartWidth = null;
-        testStartHeight = null;
-        monitoringEnabled = false; // 監視を無効化
-
-        // クイズ画面を非表示にしてメニュー画面に戻る
-        quizScreen.classList.add('hidden');
-        menuScreen.classList.remove('hidden');
-
-        // 警告メッセージを表示
-        alert(`${reason}のため、テストがリセットされました。`);
-    }
-}
-
-// カンニング防止：アプリ切り替え検出
-document.addEventListener('visibilitychange', () => {
-    // 監視が有効な場合のみチェック
-    if (document.hidden && monitoringEnabled) {
-        resetTestForCheating('アプリを切り替えた');
-    }
-});
-
-// カンニング防止：ウィンドウフォーカス監視
-window.addEventListener('blur', () => {
-    // 監視が有効な場合のみチェック
-    if (monitoringEnabled) {
-        resetTestForCheating('ウィンドウのフォーカスが外れた');
-    }
-});
-
-// カンニング防止：画面サイズ変更検出（Split View対策）
-let testStartWidth = null;
-let testStartHeight = null;
-let resizeTimeout = null;
-let monitoringEnabled = false; // 監視が有効かどうか
-
-// テスト開始時にサイズを記録する関数
-function recordInitialScreenSize() {
-    testStartWidth = window.innerWidth;
-    testStartHeight = window.innerHeight;
-    console.log(`テスト開始時の画面サイズ: ${testStartWidth} x ${testStartHeight}`);
-}
-
-// 監視を開始する関数（遅延実行）
-function enableMonitoring() {
-    // 2秒後に監視を有効化（画面遷移が安定してから）
-    setTimeout(() => {
-        monitoringEnabled = true;
-        console.log('カンニング防止監視を開始しました');
-    }, 2000);
-}
-
-window.addEventListener('resize', () => {
-    // テスト中かつ監視が有効な場合のみチェック
-    if (!quizScreen.classList.contains('hidden') && testStartWidth !== null && monitoringEnabled) {
-        // デバウンス: 連続した発火を防ぐため300ms待つ
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            const widthChanged = Math.abs(window.innerWidth - testStartWidth) > 50;
-            const heightChanged = Math.abs(window.innerHeight - testStartHeight) > 50;
-
-            console.log(`画面サイズ変更検出: ${window.innerWidth} x ${window.innerHeight} (開始時: ${testStartWidth} x ${testStartHeight})`);
-
-            if (widthChanged || heightChanged) {
-                resetTestForCheating('画面サイズが変更された（Split Viewなど）');
-                // リセット後はサイズ記録をクリア
-                testStartWidth = null;
-                testStartHeight = null;
-            }
-        }, 300);
-    }
-});
 
 // Google Sign-In初期化
 window.onload = function() {
@@ -559,13 +475,6 @@ function startQuiz(type) {
     quizScreen.classList.remove('hidden');
 
     showQuestion();
-
-    // カンニング防止: 画面遷移完了後に画面サイズを記録して監視を開始
-    // 画面が安定してから記録するために500ms待つ
-    setTimeout(() => {
-        recordInitialScreenSize();
-        enableMonitoring(); // 2秒後に監視開始
-    }, 500);
 }
 
 // 配列をシャッフル
