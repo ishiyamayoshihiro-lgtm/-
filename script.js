@@ -632,6 +632,15 @@ function toggleAngleSelection(btn) {
         }
     }
 
+    // iPadなどのタッチデバイスでフォーカスが残らないようにする
+    btn.blur();
+    // アクティブな要素からフォーカスを外す
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
+    // bodyにフォーカスを移す
+    document.body.focus();
+
     // 送信ボタンの有効/無効を切り替え
     submitAngleBtn.disabled = selectedAngles.length === 0;
 }

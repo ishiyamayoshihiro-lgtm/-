@@ -730,21 +730,28 @@ header h1 {
 
 /* タッチデバイスでホバー状態が残らないようにする */
 @media (hover: none) and (pointer: coarse) {
-    .angle-btn:hover {
+    .angle-btn:hover:not(.selected) {
         background: white !important;
         border-color: #ddd !important;
         transform: none !important;
     }
 
-    .angle-btn:active {
+    .angle-btn:active:not(.selected) {
         background: #e0e0e0 !important;
     }
 
-    .angle-btn:focus,
-    .angle-btn:focus-visible {
+    .angle-btn:focus:not(.selected),
+    .angle-btn:focus-visible:not(.selected) {
         background: white !important;
         border-color: #ddd !important;
         transform: none !important;
+    }
+
+    /* 選択済みボタンは選択状態のスタイルを維持 */
+    .angle-btn.selected {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border-color: #667eea !important;
     }
 }
 
