@@ -54,6 +54,20 @@ function handleCredentialResponse(response) {
     const credential = parseJwt(response.credential);
     userEmail = credential.email;
 
+    // ドメイン制限: @haguroko.ed.jp のみ許可
+    if (!userEmail.endsWith('@haguroko.ed.jp')) {
+        loginStatus.textContent = `エラー: @haguroko.ed.jp のアカウントでログインしてください`;
+        loginStatus.style.color = '#dc3545';
+
+        // 強制ログアウト
+        userEmail = null;
+
+        // Google Sign-Inをリセット
+        google.accounts.id.disableAutoSelect();
+
+        return;
+    }
+
     loginStatus.textContent = `ログイン成功: ${userEmail}`;
     loginStatus.style.color = '#28a745';
 
