@@ -1,0 +1,420 @@
+// Google Apps Script - Security Enhanced Version
+const SPREADSHEET_ID = '1tryBWpHzBJzltuSbmZlr1rtwMirGR44xK8H84sgCu7I';
+const SHEET_NAME = '三角比テスト結果';
+const GOOGLE_CLIENT_ID = '1081498976325-2cbnp1qvk2u9cnltrc3nk2jkqfgkrbue.apps.googleusercontent.com';
+const SESSION_EXPIRY = 30 * 60 * 1000;
+
+function generateTrigProblems() {
+  var problems = [];
+  var angles = [0, 30, 45, 60, 90, 120, 135, 150, 180];
+  var funcs = ['sin', 'cos', 'tan'];
+
+  for (var i = 0; i < angles.length; i++) {
+    var angle = angles[i];
+    for (var j = 0; j < funcs.length; j++) {
+      var func = funcs[j];
+      var answer, displayAnswer;
+
+      if (func === 'sin') {
+        if (angle === 0) { answer = 0; displayAnswer = '0'; }
+        else if (angle === 30) { answer = 0.5; displayAnswer = '1/2'; }
+        else if (angle === 45) { answer = Math.sqrt(2)/2; displayAnswer = '√2/2'; }
+        else if (angle === 60) { answer = Math.sqrt(3)/2; displayAnswer = '√3/2'; }
+        else if (angle === 90) { answer = 1; displayAnswer = '1'; }
+        else if (angle === 120) { answer = Math.sqrt(3)/2; displayAnswer = '√3/2'; }
+        else if (angle === 135) { answer = Math.sqrt(2)/2; displayAnswer = '√2/2'; }
+        else if (angle === 150) { answer = 0.5; displayAnswer = '1/2'; }
+        else if (angle === 180) { answer = 0; displayAnswer = '0'; }
+      } else if (func === 'cos') {
+        if (angle === 0) { answer = 1; displayAnswer = '1'; }
+        else if (angle === 30) { answer = Math.sqrt(3)/2; displayAnswer = '√3/2'; }
+        else if (angle === 45) { answer = Math.sqrt(2)/2; displayAnswer = '√2/2'; }
+        else if (angle === 60) { answer = 0.5; displayAnswer = '1/2'; }
+        else if (angle === 90) { answer = 0; displayAnswer = '0'; }
+        else if (angle === 120) { answer = -0.5; displayAnswer = '-1/2'; }
+        else if (angle === 135) { answer = -Math.sqrt(2)/2; displayAnswer = '-√2/2'; }
+        else if (angle === 150) { answer = -Math.sqrt(3)/2; displayAnswer = '-√3/2'; }
+        else if (angle === 180) { answer = -1; displayAnswer = '-1'; }
+      } else if (func === 'tan') {
+        if (angle === 0) { answer = 0; displayAnswer = '0'; }
+        else if (angle === 30) { answer = 1/Math.sqrt(3); displayAnswer = '√3/3'; }
+        else if (angle === 45) { answer = 1; displayAnswer = '1'; }
+        else if (angle === 60) { answer = Math.sqrt(3); displayAnswer = '√3'; }
+        else if (angle === 90) { answer = null; displayAnswer = 'なし'; }
+        else if (angle === 120) { answer = -Math.sqrt(3); displayAnswer = '-√3'; }
+        else if (angle === 135) { answer = -1; displayAnswer = '-1'; }
+        else if (angle === 150) { answer = -1/Math.sqrt(3); displayAnswer = '-√3/3'; }
+        else if (angle === 180) { answer = 0; displayAnswer = '0'; }
+      }
+
+      problems.push({ angle: angle, func: func, answer: answer, displayAnswer: displayAnswer });
+    }
+  }
+  return problems;
+}
+
+function generateAngleProblems() {
+  var trigProblems = generateTrigProblems();
+  var valueMap = { sin: {}, cos: {}, tan: {} };
+
+  for (var i = 0; i < trigProblems.length; i++) {
+    var p = trigProblems[i];
+    var key = p.displayAnswer;
+    if (!valueMap[p.func][key]) valueMap[p.func][key] = [];
+    valueMap[p.func][key].push(p.angle);
+  }
+
+  var problems = [];
+  var funcs = ['sin', 'cos', 'tan'];
+  for (var i = 0; i < funcs.length; i++) {
+    var func = funcs[i];
+    var keys = Object.keys(valueMap[func]);
+    for (var j = 0; j < keys.length; j++) {
+      var value = keys[j];
+      if (value === 'なし') continue;
+      problems.push({ func: func, value: value, correctAngles: valueMap[func][value] });
+    }
+  }
+  return problems;
+}
+
+function normalizeAnswer(input) {
+  if (input === 'なし') return null;
+  var normalized = input.replace(/√2/g, Math.sqrt(2).toString());
+  normalized = normalized.replace(/√3/g, Math.sqrt(3).toString());
+  if (normalized.indexOf('/') > -1) {
+    var parts = normalized.split('/');
+    if (parts.length === 2) {
+      return parseFloat(parts[0]) / parseFloat(parts[1]);
+    }
+  }
+  return parseFloat(normalized);
+}
+
+function checkAnswer(userInput, correctValue, correctDisplay) {
+  if (userInput === correctDisplay) return true;
+  if (correctValue === null && userInput === 'なし') return true;
+  var userNormalized = normalizeAnswer(userInput);
+  var epsilon = 0.01;
+  if (correctValue === null || userNormalized === null) {
+    return correctValue === userNormalized;
+  }
+  return Math.abs(userNormalized - correctValue) < epsilon;
+}
+
+function verifyGoogleToken(idToken) {
+  try {
+    var url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken);
+    var response = UrlFetchApp.fetch(url);
+    var payload = JSON.parse(response.getContentText());
+
+    if (payload.aud !== GOOGLE_CLIENT_ID) {
+      throw new Error('Invalid client ID');
+    }
+
+    var now = Math.floor(Date.now() / 1000);
+    if (payload.exp < now) {
+      throw new Error('Token expired');
+    }
+
+    return { valid: true, email: payload.email, sub: payload.sub };
+  } catch (error) {
+    Logger.log('Token verification failed: ' + error.toString());
+    return { valid: false, error: error.toString() };
+  }
+}
+
+function createSession(userEmail, testType) {
+  var sessionId = Utilities.getUuid();
+  var properties = PropertiesService.getScriptProperties();
+  var sessionData = {
+    email: userEmail,
+    testType: testType,
+    startTime: new Date().getTime(),
+    used: false
+  };
+  properties.setProperty('session_' + sessionId, JSON.stringify(sessionData));
+  cleanupOldSessions();
+  return sessionId;
+}
+
+function validateSession(sessionId, userEmail) {
+  var properties = PropertiesService.getScriptProperties();
+  var sessionDataStr = properties.getProperty('session_' + sessionId);
+
+  if (!sessionDataStr) {
+    return { valid: false, error: 'Session not found' };
+  }
+
+  var sessionData = JSON.parse(sessionDataStr);
+
+  if (sessionData.email !== userEmail) {
+    return { valid: false, error: 'Email mismatch' };
+  }
+
+  if (sessionData.used) {
+    return { valid: false, error: 'Session already used' };
+  }
+
+  var now = new Date().getTime();
+  if (now - sessionData.startTime > SESSION_EXPIRY) {
+    properties.deleteProperty('session_' + sessionId);
+    return { valid: false, error: 'Session expired' };
+  }
+
+  return { valid: true, data: sessionData };
+}
+
+function markSessionAsUsed(sessionId) {
+  var properties = PropertiesService.getScriptProperties();
+  var sessionDataStr = properties.getProperty('session_' + sessionId);
+
+  if (sessionDataStr) {
+    var sessionData = JSON.parse(sessionDataStr);
+    sessionData.used = true;
+    properties.setProperty('session_' + sessionId, JSON.stringify(sessionData));
+  }
+}
+
+function cleanupOldSessions() {
+  var properties = PropertiesService.getScriptProperties();
+  var allProps = properties.getProperties();
+  var now = new Date().getTime();
+  var keys = Object.keys(allProps);
+
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    if (key.indexOf('session_') === 0) {
+      try {
+        var sessionData = JSON.parse(allProps[key]);
+        if (now - sessionData.startTime > SESSION_EXPIRY) {
+          properties.deleteProperty(key);
+        }
+      } catch (e) {
+        properties.deleteProperty(key);
+      }
+    }
+  }
+}
+
+function handleStartSession(data) {
+  if (!data.idToken) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: 'ID token required'
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  var tokenValidation = verifyGoogleToken(data.idToken);
+  if (!tokenValidation.valid) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: 'Invalid token: ' + tokenValidation.error
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  var testType = data.testType;
+  if (testType !== 'value' && testType !== 'angle') {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: 'Invalid test type'
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  var sessionId = createSession(tokenValidation.email, testType);
+  var problems = testType === 'value' ? generateTrigProblems() : generateAngleProblems();
+
+  // Shuffle
+  for (var i = problems.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = problems[i];
+    problems[i] = problems[j];
+    problems[j] = temp;
+  }
+
+  var properties = PropertiesService.getScriptProperties();
+  var sessionKey = 'session_' + sessionId;
+  var sessionData = JSON.parse(properties.getProperty(sessionKey));
+  sessionData.problems = problems;
+  properties.setProperty(sessionKey, JSON.stringify(sessionData));
+
+  var problemsToSend = [];
+  for (var i = 0; i < problems.length; i++) {
+    var p = problems[i];
+    if (testType === 'value') {
+      problemsToSend.push({ index: i, angle: p.angle, func: p.func });
+    } else {
+      problemsToSend.push({ index: i, func: p.func, value: p.value });
+    }
+  }
+
+  return ContentService.createTextOutput(JSON.stringify({
+    status: 'success',
+    sessionId: sessionId,
+    problems: problemsToSend
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function handleSubmitResult(data) {
+  try {
+    if (!data.idToken) {
+      throw new Error('ID token required');
+    }
+
+    var tokenValidation = verifyGoogleToken(data.idToken);
+    if (!tokenValidation.valid) {
+      throw new Error('Invalid token: ' + tokenValidation.error);
+    }
+
+    if (!data.sessionId) {
+      throw new Error('Session ID required');
+    }
+
+    var sessionValidation = validateSession(data.sessionId, tokenValidation.email);
+    if (!sessionValidation.valid) {
+      throw new Error('Invalid session: ' + sessionValidation.error);
+    }
+
+    var sessionData = sessionValidation.data;
+
+    if (!data.answers || !Array.isArray(data.answers)) {
+      throw new Error('Invalid answers format');
+    }
+
+    var expectedCount = sessionData.problems.length;
+    if (data.answers.length !== expectedCount) {
+      throw new Error('Answer count mismatch');
+    }
+
+    var correctCount = 0;
+    var testType = sessionData.testType;
+    var scoredAnswers = [];
+
+    for (var i = 0; i < data.answers.length; i++) {
+      var answer = data.answers[i];
+      var problem = sessionData.problems[i];
+      var isCorrect = false;
+
+      if (testType === 'value') {
+        isCorrect = checkAnswer(answer.userAnswer, problem.answer, problem.displayAnswer);
+        if (isCorrect) correctCount++;
+        scoredAnswers.push({
+          problem: problem,
+          userAnswer: answer.userAnswer,
+          isCorrect: isCorrect
+        });
+      } else {
+        var sortedUserAnswer = answer.userAnswer.slice().sort(function(a, b) { return a - b; });
+        var sortedCorrectAnswer = problem.correctAngles.slice().sort(function(a, b) { return a - b; });
+        isCorrect = JSON.stringify(sortedUserAnswer) === JSON.stringify(sortedCorrectAnswer);
+        if (isCorrect) correctCount++;
+        scoredAnswers.push({
+          problem: problem,
+          userAnswer: answer.userAnswer,
+          isCorrect: isCorrect
+        });
+      }
+    }
+
+    var elapsedSeconds = parseInt(data.elapsedSeconds);
+    if (isNaN(elapsedSeconds) || elapsedSeconds < 1 || elapsedSeconds > 7200) {
+      throw new Error('Invalid elapsed time');
+    }
+
+    var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = spreadsheet.getSheetByName(SHEET_NAME);
+
+    if (!sheet) {
+      sheet = spreadsheet.insertSheet(SHEET_NAME);
+      sheet.appendRow(['日時', 'メールアドレス', '正解数', '総問題数', '正答率(%)', '経過時間(秒)', '経過時間(表示)', 'テストタイプ']);
+      var headerRange = sheet.getRange(1, 1, 1, 8);
+      headerRange.setFontWeight('bold');
+      headerRange.setBackground('#667eea');
+      headerRange.setFontColor('#ffffff');
+    }
+
+    var timestamp = new Date();
+    var percentage = Math.round((correctCount / expectedCount) * 100);
+    var minutes = Math.floor(elapsedSeconds / 60);
+    var seconds = elapsedSeconds % 60;
+    var timeString = minutes + '分' + seconds + '秒';
+    var testTypeName = testType === 'value' ? '値を求める' : '角度を求める';
+
+    sheet.appendRow([
+      timestamp,
+      tokenValidation.email,
+      correctCount,
+      expectedCount,
+      percentage,
+      elapsedSeconds,
+      timeString,
+      testTypeName
+    ]);
+
+    var lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow, 1).setNumberFormat('yyyy/mm/dd hh:mm:ss');
+    sheet.autoResizeColumns(1, 8);
+
+    markSessionAsUsed(data.sessionId);
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'success',
+      message: '結果を記録しました',
+      correctCount: correctCount,
+      totalQuestions: expectedCount,
+      percentage: percentage,
+      scoredAnswers: scoredAnswers,
+      testType: testType
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    Logger.log('Error: ' + error.toString());
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+
+    if (data.action === 'startSession') {
+      return handleStartSession(data);
+    } else if (data.action === 'submitResult') {
+      return handleSubmitResult(data);
+    } else {
+      throw new Error('Unknown action');
+    }
+  } catch (error) {
+    Logger.log('Error in doPost: ' + error.toString());
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({
+    status: 'ok',
+    message: 'Google Apps Script is running (Secure Version)'
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function recordStartTime() {
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var cell = sheet.getRange('F1');
+  cell.setValue(new Date());
+  cell.setNumberFormat('yyyy/mm/dd hh:mm:ss');
+  SpreadsheetApp.getActiveSpreadsheet().toast('テスト開始時刻を記録しました', '記録完了', 3);
+}
+
+function recordEndTime() {
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var cell = sheet.getRange('G1');
+  cell.setValue(new Date());
+  cell.setNumberFormat('yyyy/mm/dd hh:mm:ss');
+  SpreadsheetApp.getActiveSpreadsheet().toast('テスト終了時刻を記録しました', '記録完了', 3);
+}
