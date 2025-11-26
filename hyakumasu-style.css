@@ -477,6 +477,90 @@ header h1 {
     font-weight: bold;
 }
 
+/* テンキーパッド */
+.numpad {
+    margin-top: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.numpad-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.numpad-row:last-child {
+    margin-bottom: 0;
+}
+
+.numpad-btn {
+    flex: 1;
+    padding: 20px;
+    font-size: 1.8em;
+    font-weight: bold;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    background: white;
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 80px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.numpad-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
+.numpad-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.numpad-back {
+    background: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    font-size: 1.3em;
+}
+
+.numpad-back:hover {
+    background: #5a6268;
+    border-color: #5a6268;
+}
+
+.numpad-next {
+    background: #28a745;
+    border-color: #28a745;
+    color: white;
+    font-size: 1.3em;
+}
+
+.numpad-next:hover {
+    background: #218838;
+    border-color: #218838;
+}
+
+.numpad-next.submit-mode {
+    background: #dc3545;
+    border-color: #dc3545;
+}
+
+.numpad-next.submit-mode:hover {
+    background: #c82333;
+    border-color: #c82333;
+}
+
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
     header h1 {
