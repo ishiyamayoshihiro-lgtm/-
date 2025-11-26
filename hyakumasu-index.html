@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>百ます計算</title>
+    <link rel="stylesheet" href="hyakumasu-style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>百ます計算</h1>
+            <p class="subtitle">計算力を鍛えよう</p>
+        </header>
+
+        <!-- ログイン画面 -->
+        <div id="loginScreen" class="screen">
+            <div class="welcome">
+                <h2>Googleアカウントでログイン</h2>
+                <p>計算結果を記録するためにログインしてください</p>
+                <div id="googleSignInBtn"></div>
+                <p id="loginStatus" class="login-status"></p>
+            </div>
+        </div>
+
+        <!-- メニュー画面 -->
+        <div id="menuScreen" class="screen hidden">
+            <div class="welcome">
+                <h2>計算モードを選択してください</h2>
+                <p id="userEmail" class="user-email"></p>
+                <div class="menu-buttons">
+                    <button id="selectAdditionBtn" class="btn-menu">
+                        <div class="menu-btn-title">足し算</div>
+                        <div class="menu-btn-desc">0〜9の足し算 100問</div>
+                    </button>
+                    <!-- 将来的に他の演算モードを追加可能 -->
+                    <!-- <button id="selectSubtractionBtn" class="btn-menu">
+                        <div class="menu-btn-title">引き算</div>
+                        <div class="menu-btn-desc">0〜18の引き算 100問</div>
+                    </button> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 説明画面 -->
+        <div id="instructionScreen" class="screen hidden">
+            <div class="instruction">
+                <h2 id="instructionTitle">足し算モード</h2>
+                <div class="instruction-content">
+                    <h3>📋 出題形式</h3>
+                    <p>10×10のマス目に、縦と横の数字を足した答えを入力します。</p>
+                    <p>例：縦の数字が<strong>3</strong>、横の数字が<strong>7</strong>の場合、答えは<strong>10</strong>です。</p>
+
+                    <h3>✏️ 回答方法</h3>
+                    <p>各マスをクリックまたはタップして、数字を入力してください。</p>
+                    <p>Tabキーで次のマスに移動、Shift+Tabで前のマスに戻れます。</p>
+                    <p>すべてのマスを埋めたら、「提出」ボタンをクリックしてください。</p>
+
+                    <h3>⏱️ タイマー</h3>
+                    <p>「テスト開始」をクリックすると、タイマーが自動的にスタートします。</p>
+                    <p>提出するまでの時間が記録されます。</p>
+
+                    <h3>⚠️ 注意事項</h3>
+                    <p class="warning">提出すると修正できませんので、注意して回答してください。</p>
+                    <p class="warning">テスト終了後、必ず<strong>「送信完了」</strong>のメッセージを確認してからページを閉じてください。</p>
+                </div>
+                <button id="startTestBtn" class="btn-primary">テスト開始</button>
+                <button id="backFromInstructionBtn" class="btn-secondary">戻る</button>
+            </div>
+        </div>
+
+        <!-- テスト画面 -->
+        <div id="quizScreen" class="screen hidden">
+            <div class="quiz-header">
+                <div class="timer-display">
+                    <span id="timerLabel">経過時間: </span>
+                    <span id="timerValue">0:00</span>
+                </div>
+                <div class="progress-info">
+                    <span id="progressText">入力済み: 0/100</span>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="grid-wrapper">
+                    <!-- 左上の空白セル -->
+                    <div class="grid-cell corner-cell"></div>
+
+                    <!-- 上部の数字（横の数字） -->
+                    <div id="topNumbers" class="top-numbers">
+                        <!-- JavaScriptで動的に生成 -->
+                    </div>
+
+                    <!-- 左側の数字と入力マス -->
+                    <div id="gridContent" class="grid-content">
+                        <!-- JavaScriptで動的に生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-container">
+                <button id="submitBtn" class="btn-submit" disabled>提出する</button>
+            </div>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="resultScreen" class="screen hidden">
+            <div class="result-card">
+                <h2>テスト結果</h2>
+                <div class="score-display">
+                    <div class="score-circle">
+                        <span id="scoreText">0/100</span>
+                    </div>
+                    <p class="score-percentage" id="scorePercentage">0%</p>
+                    <p class="time-display" id="timeDisplay">0分0秒</p>
+                </div>
+
+                <!-- 送信状態表示 -->
+                <div id="sendStatus" class="send-status hidden">
+                    <span id="sendStatusIcon"></span>
+                    <span id="sendStatusText"></span>
+                </div>
+
+                <!-- 手動再送信ボタン -->
+                <button id="manualRetryBtn" class="btn-manual-retry hidden">手動で再送信</button>
+
+                <div id="resultDetails" class="result-details">
+                    <!-- JavaScriptで詳細結果を表示 -->
+                </div>
+
+                <button id="retryBtn" class="btn-primary">もう一度挑戦</button>
+            </div>
+        </div>
+    </div>
+
+    <footer style="position: fixed; bottom: 0; left: 0; right: 0; text-align: center; padding: 10px; background: rgba(0,0,0,0.1); color: white; font-size: 0.85em; z-index: 1000;">
+        <p>&copy;2025 IshiyamaYoshihiro</p>
+    </footer>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="hyakumasu-config.js"></script>
+    <script src="hyakumasu-script.js"></script>
+</body>
+</html>
