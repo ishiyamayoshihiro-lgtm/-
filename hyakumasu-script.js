@@ -8,8 +8,6 @@ let userInputs = {}; // ユーザーの入力 {row-col: value}
 let startTime = null;
 let endTime = null;
 let timerInterval = null;
-let currentCellIndex = 0; // テンキーパッド用の現在のセル位置（0-99）
-let allInputs = []; // すべての入力フィールド（配列）
 
 // DOM要素
 const loginScreen = document.getElementById('loginScreen');
@@ -177,8 +175,6 @@ function generateGrid() {
     // グリッドコンテンツを生成
     gridContent.innerHTML = '';
     userInputs = {};
-    allInputs = []; // 入力フィールド配列をリセット
-    currentCellIndex = 0; // 現在のセル位置をリセット
 
     for (let row = 0; row < 10; row++) {
         // 左側の数字
@@ -200,21 +196,17 @@ function generateGrid() {
             input.dataset.row = row;
             input.dataset.col = col;
             input.dataset.key = `${row}-${col}`;
-            input.dataset.index = allInputs.length; // インデックスを保存
 
             // 入力イベント
             input.addEventListener('input', handleInput);
             input.addEventListener('keydown', handleKeyDown);
-            input.addEventListener('focus', handleFocus);
 
-            allInputs.push(input); // 配列に追加
             cellDiv.appendChild(input);
             gridContent.appendChild(cellDiv);
         }
     }
 
     updateProgress();
-    updateNumpadNextButton(); // 「次へ」ボタンの状態を更新
 }
 
 // 入力処理
@@ -584,8 +576,6 @@ function resetTest() {
     userInputs = {};
     startTime = null;
     endTime = null;
-    currentCellIndex = 0;
-    allInputs = [];
 
     // 送信状態をリセット
     sendStatus = 'idle';
@@ -600,105 +590,3 @@ function resetTest() {
         retryBtn.style.display = 'none';
     }
 }
-
-// ========== テンキーパッド関連の関数 ==========
-
-// フォーカスイベント処理
-function handleFocus(e) {
-    const input = e.target;
-    const index = parseInt(input.dataset.index);
-    currentCellIndex = index;
-    updateNumpadNextButton();
-}
-
-// テンキーパッドで数字を入力
-function numpadInputNumber(value) {
-    if (currentCellIndex >= 0 && currentCellIndex < allInputs.length) {
-        const input = allInputs[currentCellIndex];
-        input.value = value;
-
-        // inputイベントを手動でトリガー
-        const event = new Event('input', { bubbles: true });
-        input.dispatchEvent(event);
-
-        // 自動的に次のセルに移動
-        numpadMoveNext();
-    }
-}
-
-// テンキーパッドで次へ移動
-function numpadMoveNext() {
-    if (currentCellIndex < allInputs.length - 1) {
-        currentCellIndex++;
-        const nextInput = allInputs[currentCellIndex];
-        nextInput.focus();
-        nextInput.select();
-        updateNumpadNextButton();
-    } else if (currentCellIndex === allInputs.length - 1) {
-        // 最後の問題なので提出
-        submitAnswers();
-    }
-}
-
-// テンキーパッドで戻る
-function numpadMoveBack() {
-    if (currentCellIndex > 0) {
-        // 現在のセルをクリア
-        const currentInput = allInputs[currentCellIndex];
-        currentInput.value = '';
-        const event = new Event('input', { bubbles: true });
-        currentInput.dispatchEvent(event);
-
-        // 前のセルに移動
-        currentCellIndex--;
-        const prevInput = allInputs[currentCellIndex];
-        prevInput.focus();
-        prevInput.select();
-        updateNumpadNextButton();
-    }
-}
-
-// 「次へ」ボタンの表示を更新
-function updateNumpadNextButton() {
-    const nextBtn = document.getElementById('numpadNext');
-    if (!nextBtn) return;
-
-    if (currentCellIndex === allInputs.length - 1) {
-        nextBtn.textContent = '提出';
-        nextBtn.classList.add('submit-mode');
-    } else {
-        nextBtn.textContent = '次へ';
-        nextBtn.classList.remove('submit-mode');
-    }
-}
-
-// テンキーパッドのイベントリスナーを設定
-document.addEventListener('DOMContentLoaded', () => {
-    // 数字ボタン
-    const numpadBtns = document.querySelectorAll('.numpad-btn[data-value]');
-    numpadBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const value = btn.dataset.value;
-            numpadInputNumber(value);
-        });
-    });
-
-    // 戻るボタン
-    const backBtn = document.getElementById('numpadBack');
-    if (backBtn) {
-        backBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            numpadMoveBack();
-        });
-    }
-
-    // 次へボタン
-    const nextBtn = document.getElementById('numpadNext');
-    if (nextBtn) {
-        nextBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            numpadMoveNext();
-        });
-    }
-});
