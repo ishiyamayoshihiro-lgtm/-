@@ -343,56 +343,78 @@ function showResult(correctCount) {
     showDetailedResults();
 }
 
-// 詳細結果を表示
+// 詳細結果を表示（10×10グリッド形式）
 function showDetailedResults() {
     resultDetails.innerHTML = '';
 
-    let incorrectCount = 0;
-    const maxDisplay = 20; // 最大20件まで表示
+    // グリッドコンテナを作成
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'result-grid-container';
+
+    const gridWrapper = document.createElement('div');
+    gridWrapper.className = 'result-grid-wrapper';
+
+    // 左上の空白セル
+    const cornerCell = document.createElement('div');
+    cornerCell.className = 'result-corner-cell';
+    gridWrapper.appendChild(cornerCell);
+
+    // 上部の数字（横の数字）
+    const topNumbersDiv = document.createElement('div');
+    topNumbersDiv.className = 'result-top-numbers';
+    topNumbers.forEach(num => {
+        const div = document.createElement('div');
+        div.className = 'result-top-number';
+        div.textContent = num;
+        topNumbersDiv.appendChild(div);
+    });
+    gridWrapper.appendChild(topNumbersDiv);
+
+    // グリッドコンテンツ
+    const gridContent = document.createElement('div');
+    gridContent.className = 'result-grid-content';
 
     for (let row = 0; row < 10; row++) {
+        // 左側の数字
+        const leftNumberDiv = document.createElement('div');
+        leftNumberDiv.className = 'result-left-number';
+        leftNumberDiv.textContent = leftNumbers[row];
+        gridContent.appendChild(leftNumberDiv);
+
+        // 各セル
         for (let col = 0; col < 10; col++) {
             const key = `${row}-${col}`;
             const correctAnswer = answers[key];
             const userAnswer = userInputs[key];
+            const isCorrect = userAnswer === correctAnswer;
 
-            if (userAnswer !== correctAnswer && incorrectCount < maxDisplay) {
-                incorrectCount++;
+            const cellDiv = document.createElement('div');
+            cellDiv.className = `result-cell ${isCorrect ? 'result-correct' : 'result-incorrect'}`;
+            cellDiv.textContent = userAnswer !== undefined ? userAnswer : '-';
+            cellDiv.title = `${leftNumbers[row]} + ${topNumbers[col]} = ${correctAnswer}\nあなたの答え: ${userAnswer !== undefined ? userAnswer : '未入力'}`;
 
-                const resultItem = document.createElement('div');
-                resultItem.className = 'result-item incorrect';
-
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'result-item-question';
-
-                if (calculationMode === 'addition') {
-                    questionDiv.textContent = `問: ${leftNumbers[row]} + ${topNumbers[col]}`;
-                } else if (calculationMode === 'subtraction') {
-                    questionDiv.textContent = `問: ${leftNumbers[row]} - ${topNumbers[col]}`;
-                }
-
-                const answerDiv = document.createElement('div');
-                answerDiv.className = 'result-item-answer';
-                answerDiv.innerHTML = `正解: ${correctAnswer} | あなたの答え: <span class="user-wrong">${userAnswer !== undefined ? userAnswer : '未入力'}</span>`;
-
-                resultItem.appendChild(questionDiv);
-                resultItem.appendChild(answerDiv);
-                resultDetails.appendChild(resultItem);
-            }
+            gridContent.appendChild(cellDiv);
         }
     }
 
-    if (incorrectCount === 0) {
-        const perfectDiv = document.createElement('div');
-        perfectDiv.className = 'result-item correct';
-        perfectDiv.innerHTML = '<div class="result-item-question">🎉 すべて正解です！</div>';
-        resultDetails.appendChild(perfectDiv);
-    } else if (incorrectCount === maxDisplay) {
-        const moreDiv = document.createElement('div');
-        moreDiv.className = 'result-item';
-        moreDiv.innerHTML = `<div class="result-item-question">※ 間違いが多いため、最初の${maxDisplay}件のみ表示しています</div>`;
-        resultDetails.appendChild(moreDiv);
-    }
+    gridWrapper.appendChild(gridContent);
+    gridContainer.appendChild(gridWrapper);
+    resultDetails.appendChild(gridContainer);
+
+    // 凡例を追加
+    const legend = document.createElement('div');
+    legend.className = 'result-legend';
+    legend.innerHTML = `
+        <div class="legend-item">
+            <div class="legend-box result-correct">10</div>
+            <span>正解</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-box result-incorrect">5</div>
+            <span>不正解</span>
+        </div>
+    `;
+    resultDetails.appendChild(legend);
 }
 
 // 送信状態を管理する変数

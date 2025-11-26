@@ -453,8 +453,128 @@ header h1 {
 .result-details {
     margin: 30px 0;
     text-align: left;
-    max-height: 400px;
-    overflow-y: auto;
+}
+
+/* 結果グリッド */
+.result-grid-container {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.result-grid-wrapper {
+    display: grid;
+    grid-template-columns: 40px repeat(10, 40px);
+    grid-template-rows: 40px;
+    gap: 2px;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.result-corner-cell {
+    grid-column: 1;
+    grid-row: 1;
+    background: #f8f9fa;
+}
+
+.result-top-numbers {
+    grid-column: 2 / -1;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    gap: 2px;
+}
+
+.result-top-number {
+    background: #667eea;
+    color: white;
+    font-weight: bold;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.result-grid-content {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 40px repeat(10, 40px);
+    gap: 2px;
+}
+
+.result-left-number {
+    background: #764ba2;
+    color: white;
+    font-weight: bold;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.result-cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: help;
+    transition: all 0.3s;
+}
+
+.result-cell:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.result-correct {
+    background: #d4edda;
+    color: #155724;
+    border: 2px solid #28a745;
+}
+
+.result-incorrect {
+    background: #f8d7da;
+    color: #721c24;
+    border: 2px solid #dc3545;
+}
+
+/* 凡例 */
+.result-legend {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legend-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border-radius: 5px;
+    font-size: 1.1em;
 }
 
 .result-item {
@@ -534,6 +654,22 @@ header h1 {
     .score-circle span {
         font-size: 2em;
     }
+
+    .result-grid-wrapper {
+        grid-template-columns: 35px repeat(10, 35px);
+    }
+
+    .result-cell,
+    .legend-box {
+        width: 35px;
+        height: 35px;
+        font-size: 1em;
+    }
+
+    .result-top-number,
+    .result-left-number {
+        font-size: 0.9em;
+    }
 }
 
 @media (max-width: 480px) {
@@ -556,5 +692,25 @@ header h1 {
 
     .grid-container {
         padding: 15px;
+    }
+
+    .result-grid-wrapper {
+        grid-template-columns: 30px repeat(10, 30px);
+    }
+
+    .result-cell,
+    .legend-box {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9em;
+    }
+
+    .result-top-number,
+    .result-left-number {
+        font-size: 0.85em;
+    }
+
+    .result-grid-container {
+        padding: 10px;
     }
 }
