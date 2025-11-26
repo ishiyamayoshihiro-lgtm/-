@@ -112,14 +112,14 @@ function backToMenu() {
 
 // テスト開始
 function startTest() {
-    // 数字をランダムに生成（0-9）
-    topNumbers = generateRandomNumbers(10);
-    leftNumbers = generateRandomNumbers(10);
+    // 数字をランダムに生成（1-20から5個）
+    topNumbers = generateRandomNumbers(5);
+    leftNumbers = generateRandomNumbers(5);
 
     // 正解を計算
     answers = {};
-    for (let row = 0; row < 10; row++) {
-        for (let col = 0; col < 10; col++) {
+    for (let row = 0; row < 5; row++) {
+        for (let col = 0; col < 5; col++) {
             const key = `${row}-${col}`;
             if (calculationMode === 'addition') {
                 answers[key] = leftNumbers[row] + topNumbers[col];
@@ -150,14 +150,19 @@ function startTest() {
     }
 }
 
-// ランダムな数字の配列を生成（0-9が1回ずつ）
+// ランダムな数字の配列を生成（1-20から重複なしで指定個数）
 function generateRandomNumbers(count) {
-    const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-    // Fisher-Yatesシャッフルアルゴリズム
-    for (let i = numbers.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+    const numbers = [];
+    const used = new Set();
+
+    while (numbers.length < count) {
+        const num = Math.floor(Math.random() * 20) + 1; // 1-20の範囲
+        if (!used.has(num)) {
+            numbers.push(num);
+            used.add(num);
+        }
     }
+
     return numbers;
 }
 
@@ -176,7 +181,7 @@ function generateGrid() {
     gridContent.innerHTML = '';
     userInputs = {};
 
-    for (let row = 0; row < 10; row++) {
+    for (let row = 0; row < 5; row++) {
         // 左側の数字
         const leftNumberDiv = document.createElement('div');
         leftNumberDiv.className = 'left-number';
@@ -184,7 +189,7 @@ function generateGrid() {
         gridContent.appendChild(leftNumberDiv);
 
         // 入力セル
-        for (let col = 0; col < 10; col++) {
+        for (let col = 0; col < 5; col++) {
             const cellDiv = document.createElement('div');
             cellDiv.className = 'grid-cell';
 
@@ -246,12 +251,12 @@ function moveToNextCell(row, col) {
     let nextRow = row;
     let nextCol = col + 1;
 
-    if (nextCol >= 10) {
+    if (nextCol >= 5) {
         nextCol = 0;
         nextRow = row + 1;
     }
 
-    if (nextRow < 10) {
+    if (nextRow < 5) {
         const nextInput = document.querySelector(`input[data-row="${nextRow}"][data-col="${nextCol}"]`);
         if (nextInput) {
             nextInput.focus();
@@ -263,10 +268,10 @@ function moveToNextCell(row, col) {
 // 進捗更新
 function updateProgress() {
     const filledCount = Object.keys(userInputs).length;
-    progressText.textContent = `入力済み: ${filledCount}/100`;
+    progressText.textContent = `入力済み: ${filledCount}/25`;
 
     // すべて入力されたら提出ボタンを有効化
-    submitBtn.disabled = filledCount < 100;
+    submitBtn.disabled = filledCount < 25;
 }
 
 // タイマー開始
@@ -330,20 +335,20 @@ function showResult(correctCount) {
     const seconds = elapsedSeconds % 60;
     const timeString = `${minutes}分${seconds}秒`;
 
-    const percentage = Math.round((correctCount / 100) * 100);
+    const percentage = Math.round((correctCount / 25) * 100);
 
-    scoreText.textContent = `${correctCount}/100`;
+    scoreText.textContent = `${correctCount}/25`;
     scorePercentage.textContent = `${percentage}%`;
     timeDisplay.textContent = timeString;
 
     // Spreadsheetに結果を送信
-    sendResultToSpreadsheet(correctCount, 100, elapsedSeconds, timeString, calculationMode);
+    sendResultToSpreadsheet(correctCount, 25, elapsedSeconds, timeString, calculationMode);
 
     // 詳細結果を表示
     showDetailedResults();
 }
 
-// 詳細結果を表示（10×10グリッド形式）
+// 詳細結果を表示（5×5グリッド形式）
 function showDetailedResults() {
     resultDetails.innerHTML = '';
 
@@ -374,7 +379,7 @@ function showDetailedResults() {
     const gridContent = document.createElement('div');
     gridContent.className = 'result-grid-content';
 
-    for (let row = 0; row < 10; row++) {
+    for (let row = 0; row < 5; row++) {
         // 左側の数字
         const leftNumberDiv = document.createElement('div');
         leftNumberDiv.className = 'result-left-number';
@@ -382,7 +387,7 @@ function showDetailedResults() {
         gridContent.appendChild(leftNumberDiv);
 
         // 各セル
-        for (let col = 0; col < 10; col++) {
+        for (let col = 0; col < 5; col++) {
             const key = `${row}-${col}`;
             const correctAnswer = answers[key];
             const userAnswer = userInputs[key];

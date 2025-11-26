@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>百ます計算</title>
+    <title>25ます計算</title>
     <link rel="stylesheet" href="hyakumasu-style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>百ます計算</h1>
+            <h1>25ます計算</h1>
             <p class="subtitle">計算力を鍛えよう</p>
         </header>
 
@@ -31,12 +31,12 @@
                 <div class="menu-buttons">
                     <button id="selectAdditionBtn" class="btn-menu">
                         <div class="menu-btn-title">足し算</div>
-                        <div class="menu-btn-desc">0〜9の足し算 100問</div>
+                        <div class="menu-btn-desc">1〜20の足し算 25問</div>
                     </button>
                     <!-- 将来的に他の演算モードを追加可能 -->
                     <!-- <button id="selectSubtractionBtn" class="btn-menu">
                         <div class="menu-btn-title">引き算</div>
-                        <div class="menu-btn-desc">0〜18の引き算 100問</div>
+                        <div class="menu-btn-desc">1〜40の引き算 25問</div>
                     </button> -->
                 </div>
             </div>
@@ -48,8 +48,8 @@
                 <h2 id="instructionTitle">足し算モード</h2>
                 <div class="instruction-content">
                     <h3>📋 出題形式</h3>
-                    <p>10×10のマス目に、縦と横の数字を足した答えを入力します。</p>
-                    <p>例：縦の数字が<strong>3</strong>、横の数字が<strong>7</strong>の場合、答えは<strong>10</strong>です。</p>
+                    <p>5×5のマス目に、縦と横の数字を足した答えを入力します。</p>
+                    <p>例：縦の数字が<strong>15</strong>、横の数字が<strong>8</strong>の場合、答えは<strong>23</strong>です。</p>
 
                     <h3>✏️ 回答方法</h3>
                     <p>各マスをクリックまたはタップして、数字を入力してください。</p>
@@ -77,7 +77,7 @@
                     <span id="timerValue">0:00</span>
                 </div>
                 <div class="progress-info">
-                    <span id="progressText">入力済み: 0/100</span>
+                    <span id="progressText">入力済み: 0/25</span>
                 </div>
             </div>
 
@@ -109,7 +109,7 @@
                 <h2>テスト結果</h2>
                 <div class="score-display">
                     <div class="score-circle">
-                        <span id="scoreText">0/100</span>
+                        <span id="scoreText">0/25</span>
                     </div>
                     <p class="score-percentage" id="scorePercentage">0%</p>
                     <p class="time-display" id="timeDisplay">0分0秒</p>

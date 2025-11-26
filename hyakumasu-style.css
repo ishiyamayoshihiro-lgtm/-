@@ -260,7 +260,7 @@ header h1 {
 
 .grid-wrapper {
     display: grid;
-    grid-template-columns: 50px repeat(10, 50px);
+    grid-template-columns: 50px repeat(5, 50px);
     grid-template-rows: 50px;
     gap: 2px;
     width: fit-content;
@@ -280,7 +280,7 @@ header h1 {
     grid-column: 2 / -1;
     grid-row: 1;
     display: grid;
-    grid-template-columns: repeat(10, 50px);
+    grid-template-columns: repeat(5, 50px);
     gap: 2px;
     position: sticky;
     top: 0;
@@ -304,7 +304,7 @@ header h1 {
     grid-column: 1 / -1;
     grid-row: 2;
     display: grid;
-    grid-template-columns: 50px repeat(10, 50px);
+    grid-template-columns: 50px repeat(5, 50px);
     gap: 2px;
 }
 
@@ -475,7 +475,7 @@ header h1 {
 
 .result-grid-wrapper {
     display: grid;
-    grid-template-columns: 40px repeat(10, 40px);
+    grid-template-columns: 40px repeat(5, 40px);
     grid-template-rows: 40px;
     gap: 2px;
     width: fit-content;
@@ -492,7 +492,7 @@ header h1 {
     grid-column: 2 / -1;
     grid-row: 1;
     display: grid;
-    grid-template-columns: repeat(10, 40px);
+    grid-template-columns: repeat(5, 40px);
     gap: 2px;
 }
 
@@ -511,7 +511,7 @@ header h1 {
     grid-column: 1 / -1;
     grid-row: 2;
     display: grid;
-    grid-template-columns: 40px repeat(10, 40px);
+    grid-template-columns: 40px repeat(5, 40px);
     gap: 2px;
 }
 
@@ -629,7 +629,7 @@ header h1 {
     }
 
     .grid-wrapper {
-        grid-template-columns: 40px repeat(10, 40px);
+        grid-template-columns: 40px repeat(5, 40px);
     }
 
     .grid-cell {
@@ -664,7 +664,7 @@ header h1 {
     }
 
     .result-grid-wrapper {
-        grid-template-columns: 35px repeat(10, 35px);
+        grid-template-columns: 35px repeat(5, 35px);
     }
 
     .result-cell,
@@ -682,7 +682,7 @@ header h1 {
 
 @media (max-width: 480px) {
     .grid-wrapper {
-        grid-template-columns: 35px repeat(10, 35px);
+        grid-template-columns: 35px repeat(5, 35px);
     }
 
     .grid-cell {
@@ -703,7 +703,7 @@ header h1 {
     }
 
     .result-grid-wrapper {
-        grid-template-columns: 30px repeat(10, 30px);
+        grid-template-columns: 30px repeat(5, 30px);
     }
 
     .result-cell,

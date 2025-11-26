@@ -1,14 +1,14 @@
 /**
- * 百ます計算アプリ - Google Apps Script コード
+ * 25ます計算アプリ - Google Apps Script コード
  *
  * このコードをGoogle Spreadsheetの「拡張機能」→「Apps Script」にコピー＆ペーストしてください
  *
  * 設定手順:
- * 1. Google Spreadsheetを新規作成（例: 「百ます計算_結果記録」）
+ * 1. Google Spreadsheetを新規作成（例: 「25ます計算_結果記録」）
  * 2. 「拡張機能」→「Apps Script」を開く
  * 3. このコードをコピー＆ペースト
  * 4. 「デプロイ」→「新しいデプロイ」→「ウェブアプリ」
- *    - 説明: 百ます計算アプリ
+ *    - 説明: 25ます計算アプリ
  *    - 次のユーザーとして実行: 自分
  *    - アクセスできるユーザー: 全員
  * 5. デプロイをクリックし、表示されたWebアプリのURLをコピー
@@ -38,7 +38,7 @@ function doPost(e) {
 
 // GETリクエストを処理（テスト用）
 function doGet(e) {
-  return ContentService.createTextOutput('百ます計算アプリのWebアプリが正常に動作しています。');
+  return ContentService.createTextOutput('25ます計算アプリのWebアプリが正常に動作しています。');
 }
 
 // Spreadsheetに結果を記録
