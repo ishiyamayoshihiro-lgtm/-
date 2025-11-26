@@ -271,6 +271,9 @@ header h1 {
     grid-column: 1;
     grid-row: 1;
     background: #f8f9fa;
+    position: sticky;
+    top: 0;
+    z-index: 20;
 }
 
 .top-numbers {
@@ -279,6 +282,11 @@ header h1 {
     display: grid;
     grid-template-columns: repeat(10, 50px);
     gap: 2px;
+    position: sticky;
+    top: 0;
+    z-index: 15;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2px 0;
 }
 
 .top-number {
