@@ -83,6 +83,13 @@ header h1 {
 #googleSignInBtn {
     display: flex;
     justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#googleSignInBtn > div,
+#googleSignInBtn iframe {
     margin: 0 auto;
 }
 
