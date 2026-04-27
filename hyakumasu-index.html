@@ -209,13 +209,27 @@
                 <!-- 生徒登録コンテンツ -->
                 <div id="adminStudentSection" class="hidden">
                     <div class="admin-mgmt-section">
-                        <h3>生徒を登録</h3>
-                        <div class="admin-form-row">
-                            <input type="email" id="newStudentEmail" placeholder="生徒のメールアドレス" class="admin-input admin-input-wide">
+                        <h3>生徒を一括登録</h3>
+                        <p class="admin-section-note">スプレッドシートの各列を選択してコピー→それぞれのテキストエリアに貼り付けてください。行数が一致していれば自動的に対応付けされます。</p>
+                        <div class="admin-bulk-form">
+                            <div class="admin-bulk-col">
+                                <label class="admin-bulk-label">メールアドレス <span class="required">*</span></label>
+                                <textarea id="newStudentEmails" class="admin-textarea" placeholder="s.2025.0001@haguroko.ed.jp&#10;s.2025.0002@haguroko.ed.jp&#10;…" rows="6"></textarea>
+                            </div>
+                            <div class="admin-bulk-col">
+                                <label class="admin-bulk-label">姓</label>
+                                <textarea id="newStudentSei" class="admin-textarea" placeholder="山田&#10;鈴木&#10;…" rows="6"></textarea>
+                            </div>
+                            <div class="admin-bulk-col">
+                                <label class="admin-bulk-label">名</label>
+                                <textarea id="newStudentMei" class="admin-textarea" placeholder="太郎&#10;花子&#10;…" rows="6"></textarea>
+                            </div>
+                        </div>
+                        <div class="admin-form-row" style="margin-top:12px;">
                             <select id="newStudentClass" class="admin-select">
                                 <option value="">クラスを選択</option>
                             </select>
-                            <button id="addStudentBtn" class="btn-admin-add">登録</button>
+                            <button id="addStudentBtn" class="btn-admin-add">一括登録</button>
                         </div>
                         <div id="studentMgmtMsg" class="admin-msg hidden"></div>
                     </div>

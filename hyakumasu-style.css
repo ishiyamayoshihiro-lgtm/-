@@ -869,6 +869,54 @@ header h1 {
 
 .admin-input-wide { min-width: 260px; }
 
+.admin-section-note {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #e8f5e9;
+    border-radius: 6px;
+    border-left: 3px solid #28a745;
+}
+
+.admin-bulk-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 5px;
+}
+
+.admin-bulk-col { display: flex; flex-direction: column; gap: 6px; }
+
+.admin-bulk-label {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #444;
+}
+
+.required { color: #dc3545; }
+
+.admin-textarea {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-family: monospace;
+    resize: vertical;
+    width: 100%;
+    line-height: 1.6;
+}
+
+.admin-textarea:focus {
+    outline: none;
+    border-color: #28a745;
+    box-shadow: 0 0 4px rgba(40,167,69,0.2);
+}
+
+@media (max-width: 768px) {
+    .admin-bulk-form { grid-template-columns: 1fr; }
+}
+
 .btn-admin-add {
     padding: 8px 20px;
     background: #28a745;

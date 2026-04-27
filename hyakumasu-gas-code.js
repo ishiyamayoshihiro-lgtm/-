@@ -25,7 +25,11 @@ function doPost(e) {
     }
     if (action === 'addStudent') {
       if (!data.email || !data.className) return createResponse('error', 'メールとクラス名が必要です');
-      return addStudentGas(data.email, data.className);
+      return addStudentGas(data.email, data.className, data.sei || '', data.mei || '');
+    }
+    if (action === 'addStudentsBulk') {
+      if (!data.students || !Array.isArray(data.students)) return createResponse('error', 'データが不完全です');
+      return addStudentsBulkGas(data.students);
     }
     if (action === 'deleteStudent') {
       if (!data.email) return createResponse('error', 'メールが必要です');
@@ -130,9 +134,10 @@ function getStudents() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName('生徒登録');
   if (!sheet || sheet.getLastRow() <= 1) return [];
-  return sheet.getRange(2, 1, sheet.getLastRow() - 1, 2).getValues()
+  const numCols = Math.min(Math.max(sheet.getLastColumn(), 2), 4);
+  return sheet.getRange(2, 1, sheet.getLastRow() - 1, numCols).getValues()
     .filter(function(r) { return r[0]; })
-    .map(function(r) { return { email: String(r[0]), className: String(r[1]) }; });
+    .map(function(r) { return { email: String(r[0] || ''), className: String(r[1] || ''), sei: String(r[2] || ''), mei: String(r[3] || '') }; });
 }
 
 function getStudentClass(email) {
@@ -143,17 +148,38 @@ function getStudentClass(email) {
   return null;
 }
 
-function addStudentGas(email, className) {
-  const sheet = getOrCreateSheet('生徒登録', ['メールアドレス', 'クラス名']);
+function addStudentGas(email, className, sei, mei) {
+  const sheet = getOrCreateSheet('生徒登録', ['メールアドレス', 'クラス名', '姓', '名']);
   const data = sheet.getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][0]) === email) {
-      sheet.getRange(i + 1, 2).setValue(className);
+      sheet.getRange(i + 1, 2, 1, 3).setValues([[className, sei || '', mei || '']]);
       return createResponse('success', 'クラスを更新しました');
     }
   }
-  sheet.appendRow([email, className]);
+  sheet.appendRow([email, className, sei || '', mei || '']);
   return createResponse('success', '生徒を登録しました');
+}
+
+function addStudentsBulkGas(students) {
+  const sheet = getOrCreateSheet('生徒登録', ['メールアドレス', 'クラス名', '姓', '名']);
+  const data = sheet.getDataRange().getValues();
+  const emailToRow = {};
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0]) emailToRow[String(data[i][0])] = i + 1;
+  }
+  let added = 0, updated = 0;
+  students.forEach(function(s) {
+    if (!s.email) return;
+    if (emailToRow[s.email]) {
+      sheet.getRange(emailToRow[s.email], 2, 1, 3).setValues([[s.className, s.sei || '', s.mei || '']]);
+      updated++;
+    } else {
+      sheet.appendRow([s.email, s.className, s.sei || '', s.mei || '']);
+      added++;
+    }
+  });
+  return createResponse('success', added + '名追加、' + updated + '名更新しました');
 }
 
 function deleteStudentGas(email) {

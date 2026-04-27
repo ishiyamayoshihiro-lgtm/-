@@ -1,6 +1,7 @@
 // グローバル変数
 let userEmail = null;
 let userClass = null;
+let studentNameMap = {}; // email → {sei, mei, className}
 let calculationMode = 'addition';
 let topNumbers = [];
 let leftNumbers = [];
@@ -565,6 +566,23 @@ function initAdminScreen() {
     document.getElementById('addStudentBtn').addEventListener('click', addStudentHandler);
     document.getElementById('studentFilterClass').addEventListener('change', loadStudentList);
     loadAdminData();
+    loadStudentNameMap();
+}
+
+async function loadStudentNameMap() {
+    try {
+        const result = await adminGet('getStudents');
+        studentNameMap = {};
+        result.data.forEach(s => {
+            studentNameMap[s.email] = { sei: s.sei, mei: s.mei, className: s.className };
+        });
+    } catch (e) {}
+}
+
+function getDisplayName(email) {
+    const info = studentNameMap[email];
+    if (info && (info.sei || info.mei)) return `${info.sei} ${info.mei}`.trim();
+    return email.split('@')[0];
 }
 
 function refreshCurrentTab() {
@@ -672,9 +690,8 @@ function renderAdminTable(data) {
         countEl.textContent = `${data.length}件`;
         thead.innerHTML = '<tr><th>日時</th><th>生徒</th><th>モード</th><th>正解数</th><th>正解率</th><th>タイム</th></tr>';
         tbody.innerHTML = data.map(row => {
-            const student = row.email.split('@')[0];
             const cls = scoreClass(row.percentage);
-            return `<tr><td>${row.timestamp}</td><td class="student-name">${student}</td><td>${row.mode}</td><td>${row.correctCount}/${row.totalQuestions}</td><td><span class="score-badge ${cls}">${row.percentage}%</span></td><td>${row.timeString}</td></tr>`;
+            return `<tr><td>${row.timestamp}</td><td class="student-name">${getDisplayName(row.email)}</td><td>${row.mode}</td><td>${row.correctCount}/${row.totalQuestions}</td><td><span class="score-badge ${cls}">${row.percentage}%</span></td><td>${row.timeString}</td></tr>`;
         }).join('');
     } else {
         const studentMap = {};
@@ -695,7 +712,7 @@ function renderAdminTable(data) {
             const avg = Math.round(s.totalScore / s.count);
             const bt = s.bestTime === Infinity ? '-' : `${Math.floor(s.bestTime / 60)}分${String(s.bestTime % 60).padStart(2, '0')}秒`;
             const cls = scoreClass(s.bestScore);
-            return `<tr><td class="student-name">${s.email.split('@')[0]}</td><td>${s.count}回</td><td><span class="score-badge ${cls}">${s.bestScore}%</span></td><td>${avg}%</td><td>${bt}</td><td>${s.latestDate}</td></tr>`;
+            return `<tr><td class="student-name">${getDisplayName(s.email)}</td><td>${s.count}回</td><td><span class="score-badge ${cls}">${s.bestScore}%</span></td><td>${avg}%</td><td>${bt}</td><td>${s.latestDate}</td></tr>`;
         }).join('');
     }
 }
@@ -785,11 +802,13 @@ async function loadStudentList() {
             listEl.innerHTML = '<p style="color:#999;padding:10px;">生徒が登録されていません</p>';
         } else {
             listEl.innerHTML = `<table class="admin-table" style="margin-top:10px">
-                <thead><tr><th>メールアドレス</th><th>クラス</th><th>操作</th></tr></thead>
+                <thead><tr><th>姓</th><th>名</th><th>クラス</th><th>メールアドレス</th><th>操作</th></tr></thead>
                 <tbody>${students.map(s => `
                     <tr>
-                        <td>${s.email}</td>
+                        <td>${s.sei || '-'}</td>
+                        <td>${s.mei || '-'}</td>
                         <td>${s.className}</td>
+                        <td style="font-size:0.85em;color:#666;">${s.email}</td>
                         <td><button class="btn-admin-delete" onclick="deleteStudentHandler('${s.email}')">削除</button></td>
                     </tr>`).join('')}
                 </tbody>
@@ -800,17 +819,43 @@ async function loadStudentList() {
     }
 }
 
+function parsePastedColumn(text) {
+    return text.split(/[\r\n]+/).map(s => s.trim()).filter(s => s.length > 0);
+}
+
 async function addStudentHandler() {
-    const emailInput = document.getElementById('newStudentEmail');
-    const classSelect = document.getElementById('newStudentClass');
-    const email = emailInput.value.trim();
-    const className = classSelect.value;
+    const emailsText = document.getElementById('newStudentEmails').value;
+    const seiText = document.getElementById('newStudentSei').value;
+    const meiText = document.getElementById('newStudentMei').value;
+    const className = document.getElementById('newStudentClass').value;
     const msgEl = document.getElementById('studentMgmtMsg');
-    if (!email || !className) { showAdminMsg(msgEl, 'メールアドレスとクラスを入力してください', 'error'); return; }
+
+    const emails = parsePastedColumn(emailsText);
+    const seis = parsePastedColumn(seiText);
+    const meis = parsePastedColumn(meiText);
+
+    if (emails.length === 0) { showAdminMsg(msgEl, 'メールアドレスを入力してください', 'error'); return; }
+    if (!className) { showAdminMsg(msgEl, 'クラスを選択してください', 'error'); return; }
+
+    const students = emails.map((email, i) => ({
+        email,
+        className,
+        sei: seis[i] || '',
+        mei: meis[i] || ''
+    }));
+
     try {
-        const result = await adminPost({ action: 'addStudent', email, className });
-        if (result.status === 'success') { emailInput.value = ''; showAdminMsg(msgEl, result.message, 'success'); loadStudentList(); }
-        else showAdminMsg(msgEl, result.message, 'error');
+        const result = await adminPost({ action: 'addStudentsBulk', students });
+        if (result.status === 'success') {
+            document.getElementById('newStudentEmails').value = '';
+            document.getElementById('newStudentSei').value = '';
+            document.getElementById('newStudentMei').value = '';
+            showAdminMsg(msgEl, result.message, 'success');
+            loadStudentList();
+            loadStudentNameMap();
+        } else {
+            showAdminMsg(msgEl, result.message, 'error');
+        }
     } catch (e) {
         showAdminMsg(msgEl, '登録に失敗しました', 'error');
     }
@@ -866,7 +911,7 @@ function renderTodayStats(data) {
     if (topIndiv) {
         const min = Math.floor(topIndiv.elapsedSeconds / 60);
         const sec = String(topIndiv.elapsedSeconds % 60).padStart(2, '0');
-        indivHtml = `<strong>${topIndiv.className}</strong>（${topIndiv.email}）　${topIndiv.correctCount}/${topIndiv.totalQuestions}問・${min}分${sec}秒`;
+        indivHtml = `<strong>${topIndiv.className}</strong>（${getDisplayName(topIndiv.email)}）　${topIndiv.correctCount}/${topIndiv.totalQuestions}問・${min}分${sec}秒`;
     }
 
     let classHtml = 'データなし';
@@ -918,7 +963,7 @@ function renderAllClassRanking(rankingData) {
             ? '<tr><td colspan="4" style="text-align:center;color:#999;padding:15px;">受験データなし</td></tr>'
             : ranking.map(r => `<tr>
                 <td>${r.rank}</td>
-                <td>${r.email}</td>
+                <td>${getDisplayName(r.email)}</td>
                 <td>${r.correctCount}/${r.totalQuestions}</td>
                 <td>${r.timeString}</td>
             </tr>`).join('');
