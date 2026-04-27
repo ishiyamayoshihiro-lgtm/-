@@ -2,6 +2,7 @@
 let userEmail = null;
 let userClass = null;
 let studentNameMap = {}; // email → {sei, mei, className}
+let cachedClasses = null; // クラス一覧キャッシュ
 let calculationMode = 'addition';
 let topNumbers = [];
 let leftNumbers = [];
@@ -567,6 +568,16 @@ function initAdminScreen() {
     document.getElementById('studentFilterClass').addEventListener('change', loadStudentList);
     loadAdminData();
     loadStudentNameMap();
+    preloadClasses();
+}
+
+async function preloadClasses() {
+    try {
+        const result = await adminGet('getClasses');
+        cachedClasses = result.data;
+    } catch (e) {
+        // 失敗してもタブ切り替え時に再取得するので問題なし
+    }
 }
 
 async function loadStudentNameMap() {
@@ -728,24 +739,39 @@ function scoreClass(pct) {
 // クラス管理
 // =====================
 
+function renderClassList(classes) {
+    const listEl = document.getElementById('classList');
+    if (classes.length === 0) {
+        listEl.innerHTML = '<p style="color:#999;padding:10px;">クラスが登録されていません</p>';
+    } else {
+        listEl.innerHTML = classes.map(cls => `
+            <div class="admin-list-item">
+                <span>${cls}</span>
+                <button class="btn-admin-delete" onclick="deleteClassHandler('${cls}')">削除</button>
+            </div>`).join('');
+    }
+    updateClassSelects(classes);
+    cachedClasses = classes;
+}
+
 async function loadClassList() {
     const listEl = document.getElementById('classList');
-    listEl.innerHTML = '<p style="color:#666;padding:10px;">読み込み中...</p>';
+
+    // キャッシュがあれば即表示
+    if (cachedClasses !== null) {
+        renderClassList(cachedClasses);
+    } else {
+        listEl.innerHTML = '<p style="color:#666;padding:10px;">読み込み中...</p>';
+    }
+
+    // 裏で最新データを取得して更新
     try {
         const result = await adminGet('getClasses');
-        const classes = result.data;
-        if (classes.length === 0) {
-            listEl.innerHTML = '<p style="color:#999;padding:10px;">クラスが登録されていません</p>';
-        } else {
-            listEl.innerHTML = classes.map(cls => `
-                <div class="admin-list-item">
-                    <span>${cls}</span>
-                    <button class="btn-admin-delete" onclick="deleteClassHandler('${cls}')">削除</button>
-                </div>`).join('');
-        }
-        updateClassSelects(classes);
+        renderClassList(result.data);
     } catch (e) {
-        listEl.innerHTML = '<p style="color:red;padding:10px;">読み込みに失敗しました</p>';
+        if (cachedClasses === null) {
+            listEl.innerHTML = '<p style="color:red;padding:10px;">読み込みに失敗しました。<button onclick="loadClassList()" style="margin-left:8px;padding:4px 10px;background:#28a745;color:white;border:none;border-radius:4px;cursor:pointer;">再試行</button></p>';
+        }
     }
 }
 
@@ -765,8 +791,14 @@ async function addClassHandler() {
     const msgEl = document.getElementById('classMgmtMsg');
     try {
         const result = await adminPost({ action: 'addClass', className });
-        if (result.status === 'success') { input.value = ''; showAdminMsg(msgEl, result.message, 'success'); loadClassList(); }
-        else showAdminMsg(msgEl, result.message, 'error');
+        if (result.status === 'success') {
+            input.value = '';
+            cachedClasses = null; // キャッシュをクリアして再取得
+            showAdminMsg(msgEl, result.message, 'success');
+            loadClassList();
+        } else {
+            showAdminMsg(msgEl, result.message, 'error');
+        }
     } catch (e) {
         showAdminMsg(msgEl, '追加に失敗しました', 'error');
     }
@@ -776,7 +808,7 @@ async function deleteClassHandler(className) {
     if (!confirm(`「${className}」を削除しますか？`)) return;
     try {
         const result = await adminPost({ action: 'deleteClass', className });
-        if (result.status === 'success') loadClassList();
+        if (result.status === 'success') { cachedClasses = null; loadClassList(); }
         else alert(result.message);
     } catch (e) { alert('削除に失敗しました'); }
 }
@@ -984,10 +1016,20 @@ function renderAllClassRanking(rankingData) {
 
 async function adminGet(action, params = {}) {
     const query = new URLSearchParams({ action, ...params }).toString();
-    const res = await fetch(`${CONFIG.GAS_WEB_APP_URL}?${query}`, { redirect: 'follow' });
-    const result = await res.json();
-    if (result.status !== 'success') throw new Error(result.message);
-    return result;
+    const url = `${CONFIG.GAS_WEB_APP_URL}?${query}`;
+    let lastError;
+    for (let attempt = 0; attempt < 3; attempt++) {
+        if (attempt > 0) await new Promise(r => setTimeout(r, 800));
+        try {
+            const res = await fetch(url, { redirect: 'follow' });
+            const result = await res.json();
+            if (result.status !== 'success') throw new Error(result.message);
+            return result;
+        } catch (e) {
+            lastError = e;
+        }
+    }
+    throw lastError;
 }
 
 async function adminPost(data) {
