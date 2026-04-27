@@ -33,12 +33,30 @@
                         <div class="menu-btn-title">足し算</div>
                         <div class="menu-btn-desc">1〜20の足し算 25問</div>
                     </button>
-                    <!-- 将来的に他の演算モードを追加可能 -->
-                    <!-- <button id="selectSubtractionBtn" class="btn-menu">
-                        <div class="menu-btn-title">引き算</div>
-                        <div class="menu-btn-desc">1〜40の引き算 25問</div>
-                    </button> -->
+                    <button id="viewRankingBtn" class="btn-menu btn-menu-ranking hidden">
+                        <div class="menu-btn-title">クラスランキング</div>
+                        <div class="menu-btn-desc" id="rankingBtnDesc">クラスのランキングを確認</div>
+                    </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- クラスランキング画面（生徒用） -->
+        <div id="rankingScreen" class="screen hidden">
+            <div class="ranking-panel">
+                <h2>クラスランキング</h2>
+                <p id="rankingClassName" class="ranking-class-label"></p>
+                <div id="rankingLoading" class="admin-loading">
+                    <div class="loading-spinner"></div>
+                    <p>読み込み中...</p>
+                </div>
+                <div id="rankingError" class="admin-error hidden"></div>
+                <div id="rankingContent" class="hidden">
+                    <p id="rankingTotal" class="ranking-total"></p>
+                    <div id="rankingTable"></div>
+                    <div id="myRank"></div>
+                </div>
+                <button id="backFromRankingBtn" class="btn-secondary">メニューに戻る</button>
             </div>
         </div>
 
@@ -83,23 +101,39 @@
 
             <div class="grid-container">
                 <div class="grid-wrapper">
-                    <!-- 左上の空白セル -->
                     <div class="grid-cell corner-cell"></div>
-
-                    <!-- 上部の数字（横の数字） -->
-                    <div id="topNumbers" class="top-numbers">
-                        <!-- JavaScriptで動的に生成 -->
-                    </div>
-
-                    <!-- 左側の数字と入力マス -->
-                    <div id="gridContent" class="grid-content">
-                        <!-- JavaScriptで動的に生成 -->
-                    </div>
+                    <div id="topNumbers" class="top-numbers"></div>
+                    <div id="gridContent" class="grid-content"></div>
                 </div>
             </div>
 
             <div class="submit-container">
                 <button id="submitBtn" class="btn-submit" disabled>提出する</button>
+            </div>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="resultScreen" class="screen hidden">
+            <div class="result-card">
+                <h2>テスト結果</h2>
+                <div class="score-display">
+                    <div class="score-circle">
+                        <span id="scoreText">0/25</span>
+                    </div>
+                    <p class="score-percentage" id="scorePercentage">0%</p>
+                    <p class="time-display" id="timeDisplay">0分0秒</p>
+                </div>
+
+                <div id="sendStatus" class="send-status hidden">
+                    <span id="sendStatusIcon"></span>
+                    <span id="sendStatusText"></span>
+                </div>
+
+                <button id="manualRetryBtn" class="btn-manual-retry hidden">手動で再送信</button>
+
+                <div id="resultDetails" class="result-details"></div>
+
+                <button id="retryBtn" class="btn-primary">もう一度挑戦</button>
             </div>
         </div>
 
@@ -121,70 +155,90 @@
                 <div class="admin-tabs">
                     <button id="tabAllRecords" class="admin-tab active">全記録</button>
                     <button id="tabByStudent" class="admin-tab">生徒別集計</button>
+                    <button id="tabClassMgmt" class="admin-tab">クラス管理</button>
+                    <button id="tabStudentReg" class="admin-tab">生徒登録</button>
+                    <button id="tabClassRanking" class="admin-tab">クラス別ランキング</button>
                 </div>
 
-                <!-- フィルター -->
-                <div class="admin-filters">
-                    <select id="filterMode" class="admin-select">
-                        <option value="">すべてのモード</option>
-                        <option value="足し算">足し算</option>
-                        <option value="引き算">引き算</option>
-                    </select>
-                    <input type="date" id="filterDateFrom" class="admin-date-input">
-                    <span style="color:#666;">〜</span>
-                    <input type="date" id="filterDateTo" class="admin-date-input">
-                    <button id="applyFilterBtn" class="btn-admin-filter">絞り込み</button>
-                    <button id="resetFilterBtn" class="btn-admin-filter-reset">リセット</button>
-                </div>
-
-                <!-- 読み込み状態 -->
-                <div id="adminLoading" class="admin-loading">
-                    <div class="loading-spinner"></div>
-                    <p>データを読み込み中...</p>
-                </div>
-
-                <!-- エラー表示 -->
-                <div id="adminError" class="admin-error hidden"></div>
-
-                <!-- テーブルコンテナ -->
-                <div id="adminTableContainer" class="admin-table-container hidden">
-                    <div id="adminRecordCount" class="admin-record-count"></div>
-                    <div class="admin-table-scroll">
-                        <table id="adminTable" class="admin-table">
-                            <thead id="adminTableHead"></thead>
-                            <tbody id="adminTableBody"></tbody>
-                        </table>
+                <!-- 全記録 / 生徒別集計 コンテンツ -->
+                <div id="adminDataSection">
+                    <div class="admin-filters">
+                        <select id="filterMode" class="admin-select">
+                            <option value="">すべてのモード</option>
+                            <option value="足し算">足し算</option>
+                            <option value="引き算">引き算</option>
+                        </select>
+                        <input type="date" id="filterDateFrom" class="admin-date-input">
+                        <span style="color:#666;">〜</span>
+                        <input type="date" id="filterDateTo" class="admin-date-input">
+                        <button id="applyFilterBtn" class="btn-admin-filter">絞り込み</button>
+                        <button id="resetFilterBtn" class="btn-admin-filter-reset">リセット</button>
+                    </div>
+                    <div id="adminLoading" class="admin-loading">
+                        <div class="loading-spinner"></div>
+                        <p>データを読み込み中...</p>
+                    </div>
+                    <div id="adminError" class="admin-error hidden"></div>
+                    <div id="adminTableContainer" class="admin-table-container hidden">
+                        <div id="adminRecordCount" class="admin-record-count"></div>
+                        <div class="admin-table-scroll">
+                            <table id="adminTable" class="admin-table">
+                                <thead id="adminTableHead"></thead>
+                                <tbody id="adminTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- 結果画面 -->
-        <div id="resultScreen" class="screen hidden">
-            <div class="result-card">
-                <h2>テスト結果</h2>
-                <div class="score-display">
-                    <div class="score-circle">
-                        <span id="scoreText">0/25</span>
+                <!-- クラス管理コンテンツ -->
+                <div id="adminClassSection" class="hidden">
+                    <div class="admin-mgmt-section">
+                        <h3>クラスを追加</h3>
+                        <div class="admin-form-row">
+                            <input type="text" id="newClassName" placeholder="例: A組" class="admin-input">
+                            <button id="addClassBtn" class="btn-admin-add">追加</button>
+                        </div>
+                        <div id="classMgmtMsg" class="admin-msg hidden"></div>
                     </div>
-                    <p class="score-percentage" id="scorePercentage">0%</p>
-                    <p class="time-display" id="timeDisplay">0分0秒</p>
+                    <div class="admin-mgmt-section">
+                        <h3>登録クラス一覧</h3>
+                        <div id="classList" class="admin-list"></div>
+                    </div>
                 </div>
 
-                <!-- 送信状態表示 -->
-                <div id="sendStatus" class="send-status hidden">
-                    <span id="sendStatusIcon"></span>
-                    <span id="sendStatusText"></span>
+                <!-- 生徒登録コンテンツ -->
+                <div id="adminStudentSection" class="hidden">
+                    <div class="admin-mgmt-section">
+                        <h3>生徒を登録</h3>
+                        <div class="admin-form-row">
+                            <input type="email" id="newStudentEmail" placeholder="生徒のメールアドレス" class="admin-input admin-input-wide">
+                            <select id="newStudentClass" class="admin-select">
+                                <option value="">クラスを選択</option>
+                            </select>
+                            <button id="addStudentBtn" class="btn-admin-add">登録</button>
+                        </div>
+                        <div id="studentMgmtMsg" class="admin-msg hidden"></div>
+                    </div>
+                    <div class="admin-mgmt-section">
+                        <h3>登録生徒一覧</h3>
+                        <div class="admin-form-row" style="margin-bottom:10px;">
+                            <select id="studentFilterClass" class="admin-select">
+                                <option value="">全クラス</option>
+                            </select>
+                        </div>
+                        <div id="studentList" class="admin-list"></div>
+                    </div>
                 </div>
 
-                <!-- 手動再送信ボタン -->
-                <button id="manualRetryBtn" class="btn-manual-retry hidden">手動で再送信</button>
-
-                <div id="resultDetails" class="result-details">
-                    <!-- JavaScriptで詳細結果を表示 -->
+                <!-- クラス別ランキングコンテンツ -->
+                <div id="adminRankingSection" class="hidden">
+                    <div id="todayStatsCard" class="today-stats-card hidden"></div>
+                    <div id="rankingLoadingAdmin" class="admin-loading">
+                        <div class="loading-spinner"></div>
+                        <p>データを読み込み中...</p>
+                    </div>
+                    <div id="allClassRankingContent" class="hidden"></div>
                 </div>
-
-                <button id="retryBtn" class="btn-primary">もう一度挑戦</button>
             </div>
         </div>
     </div>

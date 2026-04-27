@@ -836,6 +836,244 @@ header h1 {
 .score-ok      { background: #d1ecf1; color: #0c5460; }
 .score-poor    { background: #f8d7da; color: #721c24; }
 
+/* クラス管理・生徒登録 */
+.admin-tabs { flex-wrap: wrap; }
+
+.admin-mgmt-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.admin-mgmt-section h3 {
+    color: #28a745;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.admin-form-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.admin-input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95em;
+    min-width: 120px;
+}
+
+.admin-input-wide { min-width: 260px; }
+
+.btn-admin-add {
+    padding: 8px 20px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95em;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+.btn-admin-add:hover { background: #218838; }
+
+.btn-admin-delete {
+    padding: 4px 12px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background 0.2s;
+}
+.btn-admin-delete:hover { background: #c82333; }
+
+.admin-list { margin-top: 10px; }
+
+.admin-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 0.95em;
+}
+
+.admin-msg {
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+.admin-msg.success { background: #d4edda; color: #155724; }
+.admin-msg.error   { background: #f8d7da; color: #721c24; }
+
+/* 今日のクラス対抗 */
+.today-stats-card {
+    background: linear-gradient(135deg, #fff9e6, #fffde7);
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.today-stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.today-stats-header h3 {
+    color: #856404;
+    font-size: 1.2em;
+}
+
+.today-attempts {
+    color: #856404;
+    font-size: 0.9em;
+    background: #fff3cd;
+    padding: 4px 10px;
+    border-radius: 10px;
+}
+
+.today-stats-rows { display: flex; flex-direction: column; gap: 10px; }
+
+.today-stat-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+}
+
+.today-stat-label {
+    font-weight: bold;
+    color: #856404;
+    white-space: nowrap;
+    min-width: 80px;
+    padding-top: 1px;
+}
+
+.today-stat-value { color: #333; line-height: 1.5; }
+
+.today-class-table { margin-top: 15px; }
+
+/* クラス別ランキングカード */
+.class-ranking-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.class-ranking-title {
+    color: #28a745;
+    margin-bottom: 12px;
+    font-size: 1.1em;
+}
+
+/* 生徒用ランキング画面 */
+.ranking-panel {
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+.ranking-panel h2 {
+    color: #667eea;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+.ranking-class-label {
+    color: #764ba2;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.ranking-total {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.ranking-table th {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+}
+
+.ranking-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e9ecef;
+    text-align: center;
+    color: #333;
+}
+
+.ranking-table .my-row td {
+    background: #fff9e6;
+    font-weight: bold;
+    color: #856404;
+}
+
+.you-label {
+    color: #856404;
+    font-size: 0.85em;
+}
+
+.my-rank-card {
+    background: linear-gradient(135deg, #fff3cd, #fffde7);
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+}
+
+.my-rank-label { color: #856404; font-weight: bold; margin-bottom: 5px; }
+
+.my-rank-number {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #856404;
+    margin: 5px 0;
+}
+
+.no-rank-msg {
+    color: #666;
+    font-size: 0.95em;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+/* ランキングボタン */
+.btn-menu-ranking {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+}
+
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
     .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
