@@ -948,7 +948,7 @@ async function adminGet(action, params = {}) {
 async function adminPost(data) {
     const res = await fetch(CONFIG.GAS_WEB_APP_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(data)
     });
     return await res.json();
