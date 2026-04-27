@@ -568,7 +568,6 @@ function initAdminScreen() {
     document.getElementById('studentFilterClass').addEventListener('change', loadStudentList);
     loadAdminData();
     loadStudentNameMap();
-    preloadClasses();
 }
 
 async function preloadClasses() {
@@ -638,6 +637,7 @@ async function loadAdminData() {
             tableContainer.classList.remove('hidden');
             renderAdminStats(adminData);
             renderAdminTable(adminData);
+            preloadClasses(); // GASが温まった直後にクラス一覧を先読み
         } else {
             throw new Error(result.message || '不明なエラー');
         }
