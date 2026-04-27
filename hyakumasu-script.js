@@ -849,7 +849,7 @@ async function loadStudentList() {
         if (students.length === 0) {
             listEl.innerHTML = '<p style="color:#999;padding:10px;">生徒が登録されていません</p>';
         } else {
-            listEl.innerHTML = `<table class="admin-table" style="margin-top:10px">
+            listEl.innerHTML = `<table class="admin-table" style="margin-top:0;border-radius:0;">
                 <thead><tr><th>姓</th><th>名</th><th>クラス</th><th>メールアドレス</th><th>操作</th></tr></thead>
                 <tbody>${students.map(s => `
                     <tr>

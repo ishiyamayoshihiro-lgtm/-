@@ -944,6 +944,20 @@ header h1 {
 
 .admin-list { margin-top: 10px; }
 
+#studentList {
+    max-height: 420px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+#studentList .admin-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
 .admin-list-item {
     display: flex;
     justify-content: space-between;
