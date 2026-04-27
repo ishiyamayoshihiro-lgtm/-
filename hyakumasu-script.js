@@ -567,7 +567,6 @@ function initAdminScreen() {
     document.getElementById('addStudentBtn').addEventListener('click', addStudentHandler);
     document.getElementById('studentFilterClass').addEventListener('change', loadStudentList);
     loadAdminData();
-    loadStudentNameMap();
 }
 
 async function preloadClasses() {
@@ -628,19 +627,15 @@ async function loadAdminData() {
     errorEl.classList.add('hidden');
 
     try {
-        const url = `${CONFIG.GAS_WEB_APP_URL}?action=getResults`;
-        const response = await fetch(url, { redirect: 'follow' });
-        const result = await response.json();
-        if (result.status === 'success') {
-            adminData = result.data;
-            loadingEl.classList.add('hidden');
-            tableContainer.classList.remove('hidden');
-            renderAdminStats(adminData);
-            renderAdminTable(adminData);
-            preloadClasses(); // GASが温まった直後にクラス一覧を先読み
-        } else {
-            throw new Error(result.message || '不明なエラー');
-        }
+        const result = await adminGet('getResults');
+        adminData = result.data;
+        loadingEl.classList.add('hidden');
+        tableContainer.classList.remove('hidden');
+        renderAdminStats(adminData);
+        renderAdminTable(adminData);
+        // GASが温まった後にクラス・生徒データを並列取得
+        preloadClasses();
+        loadStudentNameMap();
     } catch (error) {
         loadingEl.classList.add('hidden');
         errorEl.textContent = `データの読み込みに失敗しました: ${error.message}`;
