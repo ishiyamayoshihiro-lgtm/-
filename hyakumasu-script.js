@@ -588,6 +588,24 @@ async function loadStudentNameMap() {
     } catch (e) {}
 }
 
+// クラスと生徒を1リクエストで取得（GASコールドスタート対策）
+async function loadClassesAndStudents() {
+    try {
+        const result = await adminGet('getClassesAndStudents');
+        cachedClasses = result.data.classes;
+        studentNameMap = {};
+        result.data.students.forEach(s => {
+            studentNameMap[s.email] = { sei: s.sei, mei: s.mei, className: s.className };
+        });
+        // 結果テーブルを名前付きで再描画
+        if (adminData.length > 0) renderAdminTable(adminData);
+        // 現在クラス管理タブにいる場合は即表示
+        if (currentAdminTab === 'classMgmt') renderClassList(cachedClasses);
+        // 現在生徒登録タブにいる場合はセレクトを更新
+        if (currentAdminTab === 'studentReg') updateClassSelects(cachedClasses);
+    } catch (e) {}
+}
+
 function getDisplayName(email) {
     const info = studentNameMap[email];
     if (info && (info.sei || info.mei)) return `${info.sei} ${info.mei}`.trim();
@@ -633,9 +651,8 @@ async function loadAdminData() {
         tableContainer.classList.remove('hidden');
         renderAdminStats(adminData);
         renderAdminTable(adminData);
-        // GASが温まった後にクラス・生徒データを並列取得
-        preloadClasses();
-        loadStudentNameMap();
+        // GASが温まった後にクラス・生徒を1リクエストで取得
+        loadClassesAndStudents();
     } catch (error) {
         loadingEl.classList.add('hidden');
         errorEl.textContent = `データの読み込みに失敗しました: ${error.message}`;
@@ -813,10 +830,16 @@ async function deleteClassHandler(className) {
 // =====================
 
 async function loadStudentList() {
-    try {
-        const classResult = await adminGet('getClasses');
-        updateClassSelects(classResult.data);
-    } catch (e) {}
+    // キャッシュ優先でクラスセレクトを更新（なければGASから取得）
+    if (cachedClasses !== null) {
+        updateClassSelects(cachedClasses);
+    } else {
+        try {
+            const classResult = await adminGet('getClasses');
+            cachedClasses = classResult.data;
+            updateClassSelects(cachedClasses);
+        } catch (e) {}
+    }
 
     const listEl = document.getElementById('studentList');
     const filterClass = document.getElementById('studentFilterClass').value;

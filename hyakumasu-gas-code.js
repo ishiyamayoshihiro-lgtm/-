@@ -60,6 +60,7 @@ function doGet(e) {
       return jsonRes({ status: 'success', data: getClassRanking(params.class) });
     }
     if (action === 'getAllClassRanking') return jsonRes({ status: 'success', data: getAllClassRankingData() });
+    if (action === 'getClassesAndStudents') return jsonRes({ status: 'success', data: { classes: getClasses(), students: getStudents() } });
     if (action === 'getTodayStats')    return jsonRes({ status: 'success', data: getTodayStats() });
   } catch (error) {
     return jsonRes({ status: 'error', message: error.toString() });
