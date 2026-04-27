@@ -789,8 +789,10 @@ function updateClassSelects(classes) {
     ['newStudentClass', 'studentFilterClass'].forEach(id => {
         const select = document.getElementById(id);
         if (!select) return;
+        const prev = select.value; // 現在の選択を保持
         const defaultOpt = id === 'studentFilterClass' ? '<option value="">全クラス</option>' : '<option value="">クラスを選択</option>';
         select.innerHTML = defaultOpt + classes.map(cls => `<option value="${cls}">${cls}</option>`).join('');
+        if (prev) select.value = prev; // 選択を復元
     });
 }
 
@@ -838,9 +840,11 @@ async function loadStudentList() {
         if (filterClass) students = students.filter(s => s.className === filterClass);
         if (students.length === 0) {
             listEl.innerHTML = '<p style="color:#999;padding:10px;">生徒が登録されていません</p>';
+            listEl.style.cssText = '';
         } else {
-            listEl.innerHTML = `<table class="admin-table" style="margin-top:0;border-radius:0;border:none;">
-                <thead><tr><th>姓</th><th>名</th><th>クラス</th><th>メールアドレス</th><th>操作</th></tr></thead>
+            listEl.style.cssText = 'max-height:420px;overflow-y:scroll;overflow-x:auto;border:1px solid #dee2e6;border-radius:6px;margin-top:10px;display:block;';
+            listEl.innerHTML = `<table class="admin-table" style="margin-top:0;border-radius:0;border:none;width:100%;">
+                <thead><tr><th style="position:sticky;top:0;background:#667eea;color:#fff;z-index:1;">姓</th><th style="position:sticky;top:0;background:#667eea;color:#fff;z-index:1;">名</th><th style="position:sticky;top:0;background:#667eea;color:#fff;z-index:1;">クラス</th><th style="position:sticky;top:0;background:#667eea;color:#fff;z-index:1;">メールアドレス</th><th style="position:sticky;top:0;background:#667eea;color:#fff;z-index:1;">操作</th></tr></thead>
                 <tbody>${students.map(s => `
                     <tr>
                         <td>${s.sei || '-'}</td>
