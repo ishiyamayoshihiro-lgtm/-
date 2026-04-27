@@ -618,8 +618,232 @@ header h1 {
     font-weight: bold;
 }
 
+/* ===================== */
+/* 管理画面（教員用）     */
+/* ===================== */
+.admin-panel {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.admin-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.admin-panel-header h2 {
+    color: #28a745;
+    font-size: 1.8em;
+    margin-bottom: 5px;
+}
+
+.admin-user-email {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 0.95em;
+}
+
+.btn-admin-action {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: all 0.3s;
+}
+
+.btn-admin-action:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.admin-stat-card {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.admin-stat-value {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.admin-stat-label {
+    font-size: 0.85em;
+    opacity: 0.9;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 5px;
+}
+
+.admin-tab {
+    padding: 10px 25px;
+    border: none;
+    background: none;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 8px 8px 0 0;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.admin-tab.active {
+    background: #28a745;
+    color: white;
+}
+
+.admin-tab:hover:not(.active) {
+    background: #f0f0f0;
+}
+
+.admin-filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.admin-select, .admin-date-input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95em;
+    background: white;
+}
+
+.btn-admin-filter {
+    padding: 8px 20px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: background 0.2s;
+}
+
+.btn-admin-filter:hover { background: #218838; }
+
+.btn-admin-filter-reset {
+    padding: 8px 20px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: background 0.2s;
+}
+
+.btn-admin-filter-reset:hover { background: #5a6268; }
+
+.admin-loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e9ecef;
+    border-top-color: #28a745;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.admin-error {
+    padding: 15px;
+    background: #f8d7da;
+    color: #721c24;
+    border-radius: 8px;
+    border: 1px solid #f5c6cb;
+    margin-top: 15px;
+}
+
+.admin-table-container { margin-top: 10px; }
+
+.admin-record-count {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.admin-table-scroll { overflow-x: auto; }
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+}
+
+.admin-table th {
+    background: #28a745;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e9ecef;
+    color: #333;
+}
+
+.admin-table tr:hover td { background: #f8f9fa; }
+
+.student-name { font-weight: bold; }
+
+.score-badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.score-perfect { background: #d4edda; color: #155724; }
+.score-good    { background: #fff3cd; color: #856404; }
+.score-ok      { background: #d1ecf1; color: #0c5460; }
+.score-poor    { background: #f8d7da; color: #721c24; }
+
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
+    .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .admin-panel { padding: 20px; }
+    .admin-table { font-size: 0.85em; }
+    .admin-table th, .admin-table td { padding: 8px 10px; }
+    .admin-panel-header { flex-direction: column; gap: 10px; }
+
     header h1 {
         font-size: 2em;
     }

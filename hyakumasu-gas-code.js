@@ -36,9 +36,48 @@ function doPost(e) {
   }
 }
 
-// GETリクエストを処理（テスト用）
+// GETリクエストを処理
 function doGet(e) {
+  const action = e.parameter ? e.parameter.action : null;
+
+  if (action === 'getResults') {
+    try {
+      const results = getAllResults();
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: 'success', data: results }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } catch (error) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: 'error', message: error.toString() }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+
   return ContentService.createTextOutput('25ます計算アプリのWebアプリが正常に動作しています。');
+}
+
+// 全結果データを取得
+function getAllResults() {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = spreadsheet.getSheetByName('結果記録');
+
+  if (!sheet || sheet.getLastRow() <= 1) return [];
+
+  const data = sheet.getDataRange().getValues();
+  const rows = data.slice(1);
+
+  return rows.map(function(row) {
+    return {
+      timestamp: row[0] ? Utilities.formatDate(new Date(row[0]), 'Asia/Tokyo', 'yyyy/MM/dd HH:mm') : '',
+      email: String(row[1] || ''),
+      mode: String(row[2] || ''),
+      correctCount: Number(row[3] || 0),
+      totalQuestions: Number(row[4] || 0),
+      percentage: Number(row[5] || 0),
+      timeString: String(row[6] || ''),
+      elapsedSeconds: Number(row[7] || 0)
+    };
+  }).reverse();
 }
 
 // Spreadsheetに結果を記録

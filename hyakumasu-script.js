@@ -12,6 +12,7 @@ let timerInterval = null;
 // DOM要素
 const loginScreen = document.getElementById('loginScreen');
 const menuScreen = document.getElementById('menuScreen');
+const adminScreen = document.getElementById('adminScreen');
 const instructionScreen = document.getElementById('instructionScreen');
 const quizScreen = document.getElementById('quizScreen');
 const resultScreen = document.getElementById('resultScreen');
@@ -49,6 +50,12 @@ window.onload = function() {
     );
 };
 
+// 教員アカウント判定（メールのユーザー名部分に数字がなければ教員）
+function isTeacherAccount(email) {
+    const username = email.split('@')[0];
+    return !/\d/.test(username);
+}
+
 // Google ログインのコールバック
 function handleCredentialResponse(response) {
     const credential = parseJwt(response.credential);
@@ -59,12 +66,8 @@ function handleCredentialResponse(response) {
         loginStatus.textContent = `エラー: @haguroko.ed.jp のアカウントでログインしてください`;
         loginStatus.style.color = '#dc3545';
 
-        // 強制ログアウト
         userEmail = null;
-
-        // Google Sign-Inをリセット
         google.accounts.id.disableAutoSelect();
-
         return;
     }
 
@@ -73,8 +76,14 @@ function handleCredentialResponse(response) {
 
     setTimeout(() => {
         loginScreen.classList.add('hidden');
-        menuScreen.classList.remove('hidden');
-        userEmailDisplay.textContent = `ログイン中: ${userEmail}`;
+        if (isTeacherAccount(userEmail)) {
+            adminScreen.classList.remove('hidden');
+            document.getElementById('adminUserEmail').textContent = `ログイン中: ${userEmail}（教員）`;
+            initAdminScreen();
+        } else {
+            menuScreen.classList.remove('hidden');
+            userEmailDisplay.textContent = `ログイン中: ${userEmail}`;
+        }
     }, 1000);
 }
 
@@ -603,6 +612,185 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
 
     lastSendData = data;
     await sendDataWithRetry(data);
+}
+
+// =====================
+// 管理画面（教員用）
+// =====================
+
+let adminData = [];
+let currentAdminTab = 'all';
+
+function initAdminScreen() {
+    document.getElementById('tabAllRecords').addEventListener('click', () => switchAdminTab('all'));
+    document.getElementById('tabByStudent').addEventListener('click', () => switchAdminTab('students'));
+    document.getElementById('applyFilterBtn').addEventListener('click', applyAdminFilter);
+    document.getElementById('resetFilterBtn').addEventListener('click', resetAdminFilter);
+    document.getElementById('adminRefreshBtn').addEventListener('click', loadAdminData);
+    loadAdminData();
+}
+
+function switchAdminTab(tab) {
+    currentAdminTab = tab;
+    document.getElementById('tabAllRecords').classList.toggle('active', tab === 'all');
+    document.getElementById('tabByStudent').classList.toggle('active', tab === 'students');
+    renderAdminTable(getFilteredData());
+}
+
+async function loadAdminData() {
+    const loadingEl = document.getElementById('adminLoading');
+    const tableContainer = document.getElementById('adminTableContainer');
+    const errorEl = document.getElementById('adminError');
+
+    loadingEl.classList.remove('hidden');
+    tableContainer.classList.add('hidden');
+    errorEl.classList.add('hidden');
+
+    try {
+        const url = `${CONFIG.GAS_WEB_APP_URL}?action=getResults`;
+        const response = await fetch(url, { redirect: 'follow' });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            adminData = result.data;
+            loadingEl.classList.add('hidden');
+            tableContainer.classList.remove('hidden');
+            renderAdminStats(adminData);
+            renderAdminTable(adminData);
+        } else {
+            throw new Error(result.message || '不明なエラー');
+        }
+    } catch (error) {
+        loadingEl.classList.add('hidden');
+        errorEl.textContent = `データの読み込みに失敗しました: ${error.message}`;
+        errorEl.classList.remove('hidden');
+    }
+}
+
+function getFilteredData() {
+    const mode = document.getElementById('filterMode').value;
+    const dateFrom = document.getElementById('filterDateFrom').value;
+    const dateTo = document.getElementById('filterDateTo').value;
+
+    return adminData.filter(row => {
+        if (mode && row.mode !== mode) return false;
+        if (dateFrom || dateTo) {
+            const rowDate = row.timestamp.substring(0, 10).replace(/\//g, '-');
+            if (dateFrom && rowDate < dateFrom) return false;
+            if (dateTo && rowDate > dateTo) return false;
+        }
+        return true;
+    });
+}
+
+function applyAdminFilter() {
+    const filtered = getFilteredData();
+    renderAdminStats(filtered);
+    renderAdminTable(filtered);
+    document.getElementById('adminTableContainer').classList.remove('hidden');
+}
+
+function resetAdminFilter() {
+    document.getElementById('filterMode').value = '';
+    document.getElementById('filterDateFrom').value = '';
+    document.getElementById('filterDateTo').value = '';
+    renderAdminStats(adminData);
+    renderAdminTable(adminData);
+}
+
+function renderAdminStats(data) {
+    const statsEl = document.getElementById('adminStats');
+    const uniqueStudents = new Set(data.map(r => r.email)).size;
+    const totalTests = data.length;
+    const perfectCount = data.filter(r => r.percentage === 100).length;
+    const perfectRate = totalTests > 0 ? Math.round((perfectCount / totalTests) * 100) : 0;
+    const avgScore = totalTests > 0 ? Math.round(data.reduce((s, r) => s + r.percentage, 0) / totalTests) : 0;
+
+    statsEl.innerHTML = `
+        <div class="admin-stat-card">
+            <div class="admin-stat-value">${totalTests}</div>
+            <div class="admin-stat-label">総受験回数</div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-value">${uniqueStudents}</div>
+            <div class="admin-stat-label">受験者数</div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-value">${avgScore}%</div>
+            <div class="admin-stat-label">平均正解率</div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-value">${perfectRate}%</div>
+            <div class="admin-stat-label">満点率</div>
+        </div>
+    `;
+}
+
+function renderAdminTable(data) {
+    const thead = document.getElementById('adminTableHead');
+    const tbody = document.getElementById('adminTableBody');
+    const countEl = document.getElementById('adminRecordCount');
+
+    if (currentAdminTab === 'all') {
+        countEl.textContent = `${data.length}件`;
+        thead.innerHTML = `<tr>
+            <th>日時</th><th>生徒</th><th>モード</th><th>正解数</th><th>正解率</th><th>タイム</th>
+        </tr>`;
+        tbody.innerHTML = data.map(row => {
+            const student = row.email.split('@')[0];
+            const cls = scoreClass(row.percentage);
+            return `<tr>
+                <td>${row.timestamp}</td>
+                <td class="student-name">${student}</td>
+                <td>${row.mode}</td>
+                <td>${row.correctCount}/${row.totalQuestions}</td>
+                <td><span class="score-badge ${cls}">${row.percentage}%</span></td>
+                <td>${row.timeString}</td>
+            </tr>`;
+        }).join('');
+    } else {
+        const studentMap = {};
+        data.forEach(row => {
+            const email = row.email;
+            if (!studentMap[email]) {
+                studentMap[email] = { email, count: 0, latestDate: '', bestScore: 0, bestTime: Infinity, totalScore: 0 };
+            }
+            const s = studentMap[email];
+            s.count++;
+            s.totalScore += row.percentage;
+            if (row.percentage > s.bestScore || (row.percentage === s.bestScore && row.elapsedSeconds < s.bestTime)) {
+                s.bestScore = row.percentage;
+                s.bestTime = row.elapsedSeconds;
+            }
+            if (!s.latestDate || row.timestamp > s.latestDate) s.latestDate = row.timestamp;
+        });
+
+        const students = Object.values(studentMap).sort((a, b) => b.bestScore - a.bestScore || a.bestTime - b.bestTime);
+        countEl.textContent = `${students.length}名`;
+        thead.innerHTML = `<tr>
+            <th>生徒</th><th>受験回数</th><th>最高正解率</th><th>平均正解率</th><th>最速タイム</th><th>最終受験日</th>
+        </tr>`;
+        tbody.innerHTML = students.map(s => {
+            const avg = Math.round(s.totalScore / s.count);
+            const bt = s.bestTime === Infinity ? '-' : `${Math.floor(s.bestTime / 60)}分${String(s.bestTime % 60).padStart(2, '0')}秒`;
+            const cls = scoreClass(s.bestScore);
+            return `<tr>
+                <td class="student-name">${s.email.split('@')[0]}</td>
+                <td>${s.count}回</td>
+                <td><span class="score-badge ${cls}">${s.bestScore}%</span></td>
+                <td>${avg}%</td>
+                <td>${bt}</td>
+                <td>${s.latestDate}</td>
+            </tr>`;
+        }).join('');
+    }
+}
+
+function scoreClass(pct) {
+    if (pct === 100) return 'score-perfect';
+    if (pct >= 80) return 'score-good';
+    if (pct >= 60) return 'score-ok';
+    return 'score-poor';
 }
 
 // テストをリセット

@@ -103,6 +103,62 @@
             </div>
         </div>
 
+        <!-- 管理画面（教員用） -->
+        <div id="adminScreen" class="screen hidden">
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <div>
+                        <h2>管理画面</h2>
+                        <p id="adminUserEmail" class="admin-user-email"></p>
+                    </div>
+                    <button id="adminRefreshBtn" class="btn-admin-action">更新</button>
+                </div>
+
+                <!-- 統計カード -->
+                <div id="adminStats" class="admin-stats-grid"></div>
+
+                <!-- タブ -->
+                <div class="admin-tabs">
+                    <button id="tabAllRecords" class="admin-tab active">全記録</button>
+                    <button id="tabByStudent" class="admin-tab">生徒別集計</button>
+                </div>
+
+                <!-- フィルター -->
+                <div class="admin-filters">
+                    <select id="filterMode" class="admin-select">
+                        <option value="">すべてのモード</option>
+                        <option value="足し算">足し算</option>
+                        <option value="引き算">引き算</option>
+                    </select>
+                    <input type="date" id="filterDateFrom" class="admin-date-input">
+                    <span style="color:#666;">〜</span>
+                    <input type="date" id="filterDateTo" class="admin-date-input">
+                    <button id="applyFilterBtn" class="btn-admin-filter">絞り込み</button>
+                    <button id="resetFilterBtn" class="btn-admin-filter-reset">リセット</button>
+                </div>
+
+                <!-- 読み込み状態 -->
+                <div id="adminLoading" class="admin-loading">
+                    <div class="loading-spinner"></div>
+                    <p>データを読み込み中...</p>
+                </div>
+
+                <!-- エラー表示 -->
+                <div id="adminError" class="admin-error hidden"></div>
+
+                <!-- テーブルコンテナ -->
+                <div id="adminTableContainer" class="admin-table-container hidden">
+                    <div id="adminRecordCount" class="admin-record-count"></div>
+                    <div class="admin-table-scroll">
+                        <table id="adminTable" class="admin-table">
+                            <thead id="adminTableHead"></thead>
+                            <tbody id="adminTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 結果画面 -->
         <div id="resultScreen" class="screen hidden">
             <div class="result-card">
