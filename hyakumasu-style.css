@@ -946,16 +946,25 @@ header h1 {
 
 #studentList {
     max-height: 420px;
-    overflow-y: auto;
+    overflow-y: scroll;
+    overflow-x: auto;
     border: 1px solid #dee2e6;
     border-radius: 6px;
     margin-top: 10px;
+    display: block;
+}
+
+#studentList .admin-table {
+    width: 100%;
+    border: none;
+    border-radius: 0;
 }
 
 #studentList .admin-table thead th {
     position: sticky;
     top: 0;
     z-index: 1;
+    background: #667eea;
 }
 
 .admin-list-item {

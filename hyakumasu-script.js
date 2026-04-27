@@ -828,19 +828,9 @@ async function deleteClassHandler(className) {
 // =====================
 
 async function loadStudentList() {
-    // キャッシュ優先でクラスセレクトを更新（なければGASから取得）
-    if (cachedClasses !== null) {
-        updateClassSelects(cachedClasses);
-    } else {
-        try {
-            const classResult = await adminGet('getClasses');
-            cachedClasses = classResult.data;
-            updateClassSelects(cachedClasses);
-        } catch (e) {}
-    }
-
-    const listEl = document.getElementById('studentList');
+    // フィルタ値を最初に取得（updateClassSelectsを呼ぶと上書きされるため）
     const filterClass = document.getElementById('studentFilterClass').value;
+    const listEl = document.getElementById('studentList');
     listEl.innerHTML = '<p style="color:#666;padding:10px;">読み込み中...</p>';
     try {
         const result = await adminGet('getStudents');
@@ -849,7 +839,7 @@ async function loadStudentList() {
         if (students.length === 0) {
             listEl.innerHTML = '<p style="color:#999;padding:10px;">生徒が登録されていません</p>';
         } else {
-            listEl.innerHTML = `<table class="admin-table" style="margin-top:0;border-radius:0;">
+            listEl.innerHTML = `<table class="admin-table" style="margin-top:0;border-radius:0;border:none;">
                 <thead><tr><th>姓</th><th>名</th><th>クラス</th><th>メールアドレス</th><th>操作</th></tr></thead>
                 <tbody>${students.map(s => `
                     <tr>
