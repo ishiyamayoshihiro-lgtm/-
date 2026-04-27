@@ -597,12 +597,10 @@ async function loadClassesAndStudents() {
         result.data.students.forEach(s => {
             studentNameMap[s.email] = { sei: s.sei, mei: s.mei, className: s.className };
         });
-        // 結果テーブルを名前付きで再描画
+        // タブに関わらず常に描画（非表示でも裏で更新しておく）
+        renderClassList(cachedClasses);
+        updateClassSelects(cachedClasses);
         if (adminData.length > 0) renderAdminTable(adminData);
-        // 現在クラス管理タブにいる場合は即表示
-        if (currentAdminTab === 'classMgmt') renderClassList(cachedClasses);
-        // 現在生徒登録タブにいる場合はセレクトを更新
-        if (currentAdminTab === 'studentReg') updateClassSelects(cachedClasses);
     } catch (e) {}
 }
 
