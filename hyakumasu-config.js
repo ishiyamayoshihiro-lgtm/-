@@ -23,5 +23,5 @@ const CONFIG = {
     // 5. 「次のユーザーとして実行」: 自分
     // 6. 「アクセスできるユーザー」: 全員
     // 7. デプロイされたURLをコピーして以下に貼り付け
-    GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbzuzS_MSmimaTq7u1uEWXxyys2D4ETRrUDoTq1E8NRvG-q3NYpxHhTfLGkoDWRgAVM6Xw/exec'
+    GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbyovWl9m0HFSR3_RZ4Ky8SwFdjXyWOKVFgoHN0an22TmC-lTB47sz1nTa7K-_XgqjwP_w/exec'
 };
