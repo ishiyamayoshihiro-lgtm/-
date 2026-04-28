@@ -402,10 +402,10 @@ function showResult(correctCount) {
     scorePercentage.textContent = `${percentage}%`;
     timeDisplay.textContent = timeString;
     sendResultToSpreadsheet(correctCount, 25, elapsedSeconds, timeString, calculationMode);
-    showDetailedResults();
+    showDetailedResults(correctCount);
 }
 
-function showDetailedResults() {
+function showDetailedResults(correctCount) {
     resultDetails.innerHTML = '';
     const gridContainer = document.createElement('div');
     gridContainer.className = 'result-grid-container';
@@ -454,9 +454,10 @@ function showDetailedResults() {
 
     const legend = document.createElement('div');
     legend.className = 'result-legend';
+    const incorrectCount = 25 - correctCount;
     legend.innerHTML = `
-        <div class="legend-item"><div class="legend-box result-correct">10</div><span>正解</span></div>
-        <div class="legend-item"><div class="legend-box result-incorrect">5</div><span>不正解</span></div>`;
+        <div class="legend-item"><div class="legend-box result-correct"></div><span>正解：${correctCount}問</span></div>
+        <div class="legend-item"><div class="legend-box result-incorrect"></div><span>不正解：${incorrectCount}問</span></div>`;
     resultDetails.appendChild(legend);
 }
 
