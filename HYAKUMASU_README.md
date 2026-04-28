@@ -175,7 +175,7 @@ function generateRandomNumbers(count) {
 
 ## ライセンス
 
-© 2025 IshiyamaYoshihiro
+© 2025-2026 IshiyamaYoshihiro
 
 ## 開発者向けメモ
 
