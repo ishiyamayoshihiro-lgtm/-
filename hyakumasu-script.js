@@ -44,12 +44,14 @@ const isPreviewMode = new URLSearchParams(window.location.search).get('preview')
 window.onload = function() {
     google.accounts.id.initialize({
         client_id: CONFIG.GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse
+        callback: handleCredentialResponse,
+        auto_select: true
     });
     google.accounts.id.renderButton(
         document.getElementById('googleSignInBtn'),
         { theme: 'outline', size: 'large', text: 'signin_with', locale: 'ja' }
     );
+    google.accounts.id.prompt();
 };
 
 // 教員アカウント判定（メールのユーザー名部分に数字がなければ教員）
@@ -110,6 +112,8 @@ startTestBtn.addEventListener('click', startTest);
 backFromInstructionBtn.addEventListener('click', backToMenu);
 submitBtn.addEventListener('click', submitAnswers);
 retryBtn.addEventListener('click', resetTest);
+document.getElementById('backToMenuFromResultBtn').addEventListener('click', resetTest);
+document.getElementById('toRankingFromResultBtn').addEventListener('click', toRankingFromResult);
 document.getElementById('viewRankingBtn').addEventListener('click', showClassRanking);
 document.getElementById('backFromRankingBtn').addEventListener('click', backToMenuFromRanking);
 
@@ -120,6 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const now = new Date();
     document.getElementById('additionBtnTitle').textContent = `${now.getMonth() + 1}月${now.getDate()}日`;
 });
+
+function toRankingFromResult() {
+    resultScreen.classList.add('hidden');
+    showClassRanking();
+}
 
 // =====================
 // 設定取得
@@ -393,6 +402,7 @@ function submitAnswers() {
 function showResult(correctCount) {
     quizScreen.classList.add('hidden');
     resultScreen.classList.remove('hidden');
+    document.getElementById('toRankingFromResultBtn').classList.toggle('hidden', !userClass);
     const elapsedSeconds = Math.floor((endTime - startTime) / 1000);
     const minutes = Math.floor(elapsedSeconds / 60);
     const seconds = elapsedSeconds % 60;

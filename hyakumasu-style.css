@@ -170,7 +170,7 @@ header h1 {
 }
 
 /* ボタンスタイル */
-.btn-primary, .btn-secondary, .btn-submit, .btn-manual-retry {
+.btn-primary, .btn-secondary, .btn-submit, .btn-manual-retry, .btn-ranking {
     padding: 15px 40px;
     border: none;
     border-radius: 10px;
@@ -230,6 +230,24 @@ header h1 {
 .btn-manual-retry:hover {
     background: #e0a800;
     transform: translateY(-2px);
+}
+
+.btn-ranking {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: #333;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+}
+
+.btn-ranking:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
+}
+
+.result-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 /* テスト画面 */
