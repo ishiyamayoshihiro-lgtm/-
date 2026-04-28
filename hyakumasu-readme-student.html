@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25ます計算 - 使い方ガイド（生徒用）</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        header h1 { font-size: 2.2em; margin-bottom: 8px; }
+        header p { font-size: 1.05em; opacity: 0.9; }
+        .content { padding: 36px 28px; }
+        .back-btn {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 18px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95em;
+            margin-bottom: 28px;
+            transition: all 0.2s;
+        }
+        .back-btn:hover { background: #667eea; color: white; }
+        .section { margin-bottom: 40px; }
+        h2 {
+            color: #667eea;
+            font-size: 1.6em;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #667eea;
+        }
+        h3 { color: #764ba2; font-size: 1.1em; margin: 18px 0 10px; }
+        p { margin-bottom: 10px; color: #444; }
+        .step-list { list-style: none; padding: 0; counter-reset: steps; }
+        .step-list li {
+            counter-increment: steps;
+            padding: 13px 16px 13px 54px;
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 1em;
+            color: #333;
+        }
+        .step-list li::before {
+            content: counter(steps);
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .step-list li strong { color: #667eea; }
+        .tip-box {
+            background: #f0f4ff;
+            border-left: 5px solid #667eea;
+            padding: 14px 16px;
+            border-radius: 5px;
+            margin: 14px 0;
+        }
+        .tip-box p { margin: 0; color: #3d4eab; }
+        .warn-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 14px 16px;
+            border-radius: 5px;
+            margin: 14px 0;
+        }
+        .warn-box p { margin: 4px 0; color: #856404; }
+        .ranking-box {
+            background: linear-gradient(135deg, #fff9e6, #fffde7);
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 14px 0;
+            text-align: center;
+        }
+        .ranking-box p { color: #856404; margin: 4px 0; }
+        .ranking-time {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #856404;
+            margin: 8px 0;
+        }
+        .icon-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin: 14px 0;
+        }
+        .icon-card {
+            flex: 1;
+            min-width: 140px;
+            background: linear-gradient(135deg, #f8f0ff, #f0f4ff);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            border: 2px solid #e0d0ff;
+        }
+        .icon-card .icon { font-size: 2em; margin-bottom: 6px; }
+        .icon-card p { font-size: 0.88em; color: #555; margin: 0; }
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.88em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 使い方ガイド</h1>
+            <p>25ます計算 — 生徒用</p>
+        </header>
+
+        <div class="content">
+            <a href="hyakumasu-index.html" class="back-btn">← アプリに戻る</a>
+
+            <!-- ログイン -->
+            <div class="section">
+                <h2>🔑 ログイン</h2>
+                <ol class="step-list">
+                    <li>「<strong>Googleアカウントでログイン</strong>」ボタンをクリック</li>
+                    <li>学校のGoogleアカウント（<strong>@haguroko.ed.jp</strong>）でログイン</li>
+                    <li>ログインが完了するとメニュー画面に移動します</li>
+                </ol>
+                <div class="warn-box">
+                    <p>⚠️ 学校のアカウント以外ではログインできません。</p>
+                </div>
+            </div>
+
+            <!-- テストの受け方 -->
+            <div class="section">
+                <h2>✏️ テストの受け方</h2>
+                <ol class="step-list">
+                    <li>メニュー画面のテストボタン（<strong>朝学習チャレンジ</strong> または <strong>25ます計算練習</strong>）をクリック</li>
+                    <li>説明を読んで「<strong>テスト開始</strong>」をクリック — タイマーが始まります</li>
+                    <li>5×5のマス目に、<strong>左の数＋上の数</strong> の答えを入力する</li>
+                    <li>マスをタップ（またはクリック）して数字を入力。<strong>Tab</strong> キーで次のマスへ移動できます</li>
+                    <li>25マスすべて入力したら「<strong>提出する</strong>」ボタンをクリック</li>
+                </ol>
+
+                <div class="tip-box">
+                    <p>💡 <strong>入力のコツ</strong>：画面上部に「入力済み: ○/25」と表示されます。25になったら提出ボタンが押せます。</p>
+                </div>
+
+                <h3>マス目の見方</h3>
+                <p>例えば、左の数が <strong>8</strong>、上の数が <strong>15</strong> のマスには、足した答え <strong>23</strong> を入力します。</p>
+
+                <div class="icon-row">
+                    <div class="icon-card">
+                        <div class="icon">⏱️</div>
+                        <p>提出まで<br>自動計測</p>
+                    </div>
+                    <div class="icon-card">
+                        <div class="icon">✅</div>
+                        <p>提出後<br>すぐ採点</p>
+                    </div>
+                    <div class="icon-card">
+                        <div class="icon">📊</div>
+                        <p>結果を<br>自動記録</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 結果画面 -->
+            <div class="section">
+                <h2>📊 結果画面</h2>
+                <p>提出後、採点結果が表示されます。</p>
+                <ul style="padding-left:24px;">
+                    <li>正解数・正答率・かかった時間</li>
+                    <li>5×5グリッドで正解・不正解を色で確認できます</li>
+                </ul>
+
+                <h3>ボタンの説明</h3>
+                <ul style="padding-left:24px;">
+                    <li><strong>もう一度挑戦</strong> — 同じモードで再挑戦（説明画面から始まります）</li>
+                    <li><strong>メニューに戻る</strong> — メニュー画面に戻ります</li>
+                    <li><strong>クラスランキングへ</strong> — クラスのランキングを確認（クラス登録済みの場合のみ表示）</li>
+                </ul>
+
+                <div class="warn-box">
+                    <p>⚠️ 「<strong>送信完了</strong>」が表示されるまでページを閉じないでください。</p>
+                    <p>⚠️ 万が一「送信に失敗」と出た場合は「手動で再送信」ボタンを押してください。</p>
+                </div>
+            </div>
+
+            <!-- ランキング -->
+            <div class="section">
+                <h2>🏆 ランキング</h2>
+
+                <div class="ranking-box">
+                    <p>ランキング対象時間</p>
+                    <div class="ranking-time">8:30 〜 8:40</div>
+                    <p>この時間内に提出した記録だけがランキングに反映されます</p>
+                </div>
+
+                <ul style="padding-left:24px;">
+                    <li>時間内なら何度再挑戦してもOK。<strong>一番よいスコアが採用</strong>されます。</li>
+                    <li>正解数が多いほど上位。同じ正解数のときはタイムが短い方が上です。</li>
+                    <li>メニュー画面の「<strong>クラスランキング</strong>」ボタンでクラス内の順位を確認できます。</li>
+                </ul>
+
+                <div class="tip-box">
+                    <p>💡 結果画面に「🏆 この結果はランキング対象です」と表示されたとき、記録が反映されます。</p>
+                </div>
+            </div>
+
+            <!-- 困ったとき -->
+            <div class="section">
+                <h2>🔧 困ったとき</h2>
+
+                <h3>ログインできない</h3>
+                <ul style="padding-left:24px;">
+                    <li>学校のアカウント（@haguroko.ed.jp）でログインしているか確認する</li>
+                    <li>ブラウザをリロード（更新）してみる</li>
+                </ul>
+
+                <h3>提出ボタンが押せない</h3>
+                <ul style="padding-left:24px;">
+                    <li>25マスすべてに数字を入力してください（空白のマスがないか確認）</li>
+                </ul>
+
+                <h3>送信に失敗した</h3>
+                <ul style="padding-left:24px;">
+                    <li>「手動で再送信」ボタンをタップしてください</li>
+                    <li>Wi-Fiやネットワークの接続を確認してください</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>25ます計算 — 生徒用ガイド</strong></p>
+            <p>&copy;2025 IshiyamaYoshihiro</p>
+        </footer>
+    </div>
+</body>
+</html>

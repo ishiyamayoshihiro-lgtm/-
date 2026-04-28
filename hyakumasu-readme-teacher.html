@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25ます計算 - 教員用ガイド</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        header h1 { font-size: 2.2em; margin-bottom: 8px; }
+        header p { font-size: 1.05em; opacity: 0.9; }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+        .content { padding: 36px 30px; }
+        .back-btn {
+            display: inline-block;
+            color: #28a745;
+            text-decoration: none;
+            padding: 8px 18px;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95em;
+            margin-bottom: 28px;
+            transition: all 0.2s;
+        }
+        .back-btn:hover { background: #28a745; color: white; }
+        .section { margin-bottom: 40px; }
+        h2 {
+            color: #28a745;
+            font-size: 1.6em;
+            margin-bottom: 18px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #28a745;
+        }
+        h3 {
+            color: #155724;
+            font-size: 1.15em;
+            margin: 22px 0 10px;
+        }
+        p { margin-bottom: 10px; color: #444; }
+        ul, ol { padding-left: 28px; margin: 10px 0; }
+        li { margin: 8px 0; color: #444; }
+        .step-list { list-style: none; padding: 0; counter-reset: steps; }
+        .step-list li {
+            counter-increment: steps;
+            padding: 12px 16px 12px 52px;
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .step-list li::before {
+            content: counter(steps);
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #28a745;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .tab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin: 16px 0;
+        }
+        .tab-card {
+            background: linear-gradient(135deg, #f0fff4, #e8f5e9);
+            border: 2px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .tab-card h4 { color: #28a745; margin-bottom: 6px; font-size: 1em; }
+        .tab-card p { font-size: 0.88em; color: #555; margin: 0; }
+        .info-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 14px 16px;
+            border-radius: 5px;
+            margin: 14px 0;
+        }
+        .info-box p { margin: 0; color: #155724; }
+        .warn-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 14px 16px;
+            border-radius: 5px;
+            margin: 14px 0;
+        }
+        .warn-box p { margin: 0; color: #856404; }
+        code {
+            background: #f4f4f4;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #d63384;
+            font-size: 0.93em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 0.93em;
+        }
+        th {
+            background: #28a745;
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #e9ecef;
+            color: #444;
+        }
+        tr:hover td { background: #f0fff4; }
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.88em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 教員用ガイド</h1>
+            <p>25ます計算 — 管理画面の使い方</p>
+            <span class="badge">教員専用</span>
+        </header>
+
+        <div class="content">
+            <a href="hyakumasu-index.html" class="back-btn">← アプリに戻る</a>
+
+            <!-- ログイン -->
+            <div class="section">
+                <h2>🔑 ログイン方法</h2>
+                <ol class="step-list">
+                    <li>アプリにアクセスし、「Googleアカウントでログイン」をクリック</li>
+                    <li><code>@haguroko.ed.jp</code> の教員アカウントでログイン</li>
+                    <li>ユーザー名に数字が含まれないアカウントが教員として認識されます</li>
+                </ol>
+                <div class="info-box">
+                    <p>✅ 教員アカウント例: <code>ishiyama@haguroko.ed.jp</code>（数字なし）<br>
+                    生徒アカウント例: <code>s.2025.0001@haguroko.ed.jp</code>（数字あり）</p>
+                </div>
+            </div>
+
+            <!-- 管理画面タブ -->
+            <div class="section">
+                <h2>🖥️ 管理画面のタブ一覧</h2>
+                <div class="tab-grid">
+                    <div class="tab-card">
+                        <h4>📄 全記録</h4>
+                        <p>すべての生徒のテスト結果を日時・正解率・タイムで確認。モードや日付で絞り込み可能。</p>
+                    </div>
+                    <div class="tab-card">
+                        <h4>👤 生徒別集計</h4>
+                        <p>生徒ごとの受験回数・最高正解率・最速タイムを一覧表示。</p>
+                    </div>
+                    <div class="tab-card">
+                        <h4>🏫 クラス管理</h4>
+                        <p>クラスの追加・削除ができます。</p>
+                    </div>
+                    <div class="tab-card">
+                        <h4>🧑‍🎓 生徒登録</h4>
+                        <p>スプレッドシートから姓・名・メールをコピペして一括登録できます。</p>
+                    </div>
+                    <div class="tab-card">
+                        <h4>🏆 クラス別ランキング</h4>
+                        <p>クラスごとのランキングと今日のクラス対抗成績を表示。</p>
+                    </div>
+                    <div class="tab-card">
+                        <h4>⚙️ 出題設定</h4>
+                        <p>演算（足し算/引き算）と数字の範囲を設定します。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 生徒登録 -->
+            <div class="section">
+                <h2>🧑‍🎓 生徒・クラスの登録</h2>
+
+                <h3>クラスを追加する</h3>
+                <ol class="step-list">
+                    <li>「クラス管理」タブをクリック</li>
+                    <li>クラス名（例：<code>A組</code>）を入力して「追加」</li>
+                </ol>
+
+                <h3>生徒を一括登録する</h3>
+                <ol class="step-list">
+                    <li>「生徒登録」タブをクリック</li>
+                    <li>名簿スプレッドシートの「姓」列・「名」列・「メール」列をそれぞれ選択してコピー</li>
+                    <li>各テキストエリアに貼り付け（行数が一致していれば自動対応）</li>
+                    <li>クラスを選択して「一括登録」</li>
+                </ol>
+                <div class="warn-box">
+                    <p>⚠️ 同じメールアドレスで登録すると、クラス・氏名が上書き更新されます。</p>
+                </div>
+            </div>
+
+            <!-- 出題設定 -->
+            <div class="section">
+                <h2>⚙️ 出題設定の変更</h2>
+
+                <h3>演算設定</h3>
+                <p>「足し算」か「引き算」をラジオボタンで選択します。保存すると生徒の次回テストから反映されます。</p>
+
+                <h3>範囲設定</h3>
+                <p>出題する数の上限を設定します。</p>
+                <table>
+                    <tr><th>設定値</th><th>出題範囲</th><th>難易度の目安</th></tr>
+                    <tr><td>5</td><td>1〜5</td><td>易しい（重複なしの組み合わせが少ない）</td></tr>
+                    <tr><td>10</td><td>1〜10</td><td>普通</td></tr>
+                    <tr><td>15</td><td>1〜15</td><td>やや難しい</td></tr>
+                    <tr><td>20</td><td>1〜20</td><td>難しい（デフォルト）</td></tr>
+                </table>
+                <div class="info-box">
+                    <p>💡 a は左側の数、b は上側の数です。それぞれ独立して設定できます。</p>
+                </div>
+            </div>
+
+            <!-- ランキング -->
+            <div class="section">
+                <h2>🏆 ランキングについて</h2>
+                <p>ランキングは<strong>朝学習の時間（8:30〜8:40）</strong>に提出した記録のみが対象です。</p>
+                <ul>
+                    <li>時間内に何度再挑戦してもOK。最高スコアが採用されます。</li>
+                    <li>正解数が多いほど上位。同じ正解数の場合はタイムが短い方が上位。</li>
+                    <li>「クラス別ランキング」タブで全クラスの状況を一覧確認できます。</li>
+                    <li>今日の結果がある場合、「今日のクラス対抗」として上部に表示されます。</li>
+                </ul>
+            </div>
+
+            <!-- 生徒画面プレビュー -->
+            <div class="section">
+                <h2>👀 生徒画面のプレビュー</h2>
+                <p>管理画面ヘッダーの「<strong>生徒画面へ</strong>」ボタンをクリックすると、新しいタブで生徒と同じ画面が表示されます。</p>
+                <ul>
+                    <li>教員アカウントでも生徒の操作感を確認できます。</li>
+                    <li>テストの動作確認やデモに利用してください。</li>
+                    <li>タブを閉じるだけで管理画面に戻れます。</li>
+                </ul>
+            </div>
+
+            <!-- 更新・更新ボタン -->
+            <div class="section">
+                <h2>🔄 データの更新</h2>
+                <p>管理画面右上の「<strong>更新</strong>」ボタンで現在のタブのデータを再読み込みできます。</p>
+                <p>テスト実施後しばらくしてからデータが反映されない場合に使用してください。</p>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>25ます計算 — 教員用ガイド</strong></p>
+            <p>&copy;2025 IshiyamaYoshihiro</p>
+        </footer>
+    </div>
+</body>
+</html>
