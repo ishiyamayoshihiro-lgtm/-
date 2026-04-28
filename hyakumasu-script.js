@@ -3,7 +3,7 @@ let userEmail = null;
 let userClass = null;
 let studentNameMap = {}; // email → {sei, mei, className}
 let cachedClasses = null; // クラス一覧キャッシュ
-let appSettings = { maxA: 20, maxB: 20 }; // 出題範囲設定
+let appSettings = { maxA: 20, maxB: 20, operation: 'addition' }; // 出題設定
 let calculationMode = 'addition';
 let topNumbers = [];
 let leftNumbers = [];
@@ -107,7 +107,7 @@ function parseJwt(token) {
 }
 
 // イベントリスナー
-selectAdditionBtn.addEventListener('click', () => showInstructionScreen('addition'));
+selectAdditionBtn.addEventListener('click', () => showInstructionScreen(appSettings.operation));
 startTestBtn.addEventListener('click', startTest);
 backFromInstructionBtn.addEventListener('click', backToMenu);
 submitBtn.addEventListener('click', submitAnswers);
@@ -1137,15 +1137,20 @@ async function loadDifficultySettings() {
         const result = await adminGet('getSettings');
         document.getElementById('diffMaxA').value = String(result.data.maxA);
         document.getElementById('diffMaxB').value = String(result.data.maxB);
+        const op = result.data.operation || 'addition';
+        const radio = document.querySelector(`input[name="diffOperation"][value="${op}"]`);
+        if (radio) radio.checked = true;
     } catch (e) {}
 }
 
 async function saveDifficultyHandler() {
     const maxA = parseInt(document.getElementById('diffMaxA').value);
     const maxB = parseInt(document.getElementById('diffMaxB').value);
+    const operationEl = document.querySelector('input[name="diffOperation"]:checked');
+    const operation = operationEl ? operationEl.value : 'addition';
     const msgEl = document.getElementById('difficultyMsg');
     try {
-        const result = await adminPost({ action: 'setSettings', maxA, maxB });
+        const result = await adminPost({ action: 'setSettings', maxA, maxB, operation });
         showAdminMsg(msgEl, result.message || '保存しました', result.status === 'success' ? 'success' : 'error');
     } catch (e) {
         showAdminMsg(msgEl, '保存に失敗しました', 'error');

@@ -11,7 +11,7 @@
         <header>
             <h1>25ます計算</h1>
             <p class="subtitle">計算力を鍛えよう</p>
-            <p class="version-label">ver.0.2.3</p>
+            <p class="version-label">ver.0.2.4</p>
         </header>
 
         <!-- ログイン画面 -->
@@ -266,11 +266,23 @@
                     <div id="allClassRankingContent" class="hidden"></div>
                 </div>
 
-                <!-- 難易度設定コンテンツ -->
+                <!-- 出題設定コンテンツ -->
                 <div id="adminDifficultySection" class="hidden">
                     <div class="admin-mgmt-section">
-                        <h3>出題範囲の設定</h3>
-                        <p class="admin-section-note">出題する数の範囲を設定します。保存すると次回のテストから全生徒に反映されます。</p>
+                        <h3>出題設定</h3>
+                        <p class="admin-section-note">保存すると次回のテストから全生徒に反映されます。</p>
+
+                        <h4 class="admin-subsection-title">演算設定</h4>
+                        <div class="admin-form-row" style="gap:24px;margin-bottom:20px;">
+                            <label class="admin-radio-label">
+                                <input type="radio" name="diffOperation" value="addition"> 足し算
+                            </label>
+                            <label class="admin-radio-label">
+                                <input type="radio" name="diffOperation" value="subtraction"> 引き算
+                            </label>
+                        </div>
+
+                        <h4 class="admin-subsection-title">範囲設定</h4>
                         <div class="admin-form-row" style="margin-bottom:12px;">
                             <span style="font-size:1em;color:#333;">1 &le; a（左の数）&le;</span>
                             <select id="diffMaxA" class="admin-select" style="width:80px;">

@@ -342,11 +342,12 @@ function getTodayStats() {
 function getAppSettings() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName('設定');
-  const defaults = { maxA: 20, maxB: 20 };
+  const defaults = { maxA: 20, maxB: 20, operation: 'addition' };
   if (!sheet || sheet.getLastRow() <= 1) return defaults;
   sheet.getDataRange().getValues().slice(1).forEach(function(row) {
     if (row[0] === 'maxA') defaults.maxA = Number(row[1]) || 20;
     if (row[0] === 'maxB') defaults.maxB = Number(row[1]) || 20;
+    if (row[0] === 'operation') defaults.operation = String(row[1]) || 'addition';
   });
   return defaults;
 }
@@ -358,9 +359,9 @@ function setAppSettings(data) {
   for (var i = 1; i < existing.length; i++) {
     if (existing[i][0]) keyToRow[String(existing[i][0])] = i + 1;
   }
-  ['maxA', 'maxB'].forEach(function(key) {
+  ['maxA', 'maxB', 'operation'].forEach(function(key) {
     if (data[key] !== undefined) {
-      var val = Number(data[key]);
+      var val = key === 'operation' ? String(data[key]) : Number(data[key]);
       if (keyToRow[key]) {
         sheet.getRange(keyToRow[key], 2).setValue(val);
       } else {
