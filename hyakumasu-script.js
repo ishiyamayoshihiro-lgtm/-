@@ -111,7 +111,7 @@ selectAdditionBtn.addEventListener('click', () => showInstructionScreen('additio
 startTestBtn.addEventListener('click', startTest);
 backFromInstructionBtn.addEventListener('click', backToMenu);
 submitBtn.addEventListener('click', submitAnswers);
-retryBtn.addEventListener('click', resetTest);
+retryBtn.addEventListener('click', retryTest);
 document.getElementById('backToMenuFromResultBtn').addEventListener('click', resetTest);
 document.getElementById('toRankingFromResultBtn').addEventListener('click', toRankingFromResult);
 document.getElementById('viewRankingBtn').addEventListener('click', showClassRanking);
@@ -568,6 +568,18 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
     const data = { email: userEmail, correctCount, totalQuestions, elapsedSeconds, timeString, mode: modeName };
     lastSendData = data;
     await sendDataWithRetry(data);
+}
+
+function retryTest() {
+    resultScreen.classList.add('hidden');
+    topNumbers = []; leftNumbers = []; answers = {}; userInputs = {};
+    startTime = null; endTime = null;
+    sendStatus = 'idle'; retryCount = 0; lastSendData = null;
+    const statusElement = document.getElementById('sendStatus');
+    const retryBtnEl = document.getElementById('manualRetryBtn');
+    if (statusElement) statusElement.classList.add('hidden');
+    if (retryBtnEl) { retryBtnEl.classList.add('hidden'); retryBtnEl.style.display = 'none'; }
+    showInstructionScreen(calculationMode);
 }
 
 function resetTest() {
