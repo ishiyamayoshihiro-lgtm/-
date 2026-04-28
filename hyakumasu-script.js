@@ -403,6 +403,15 @@ function showResult(correctCount) {
     quizScreen.classList.add('hidden');
     resultScreen.classList.remove('hidden');
     document.getElementById('toRankingFromResultBtn').classList.toggle('hidden', !userClass);
+
+    const now = new Date();
+    const h = now.getHours(), m = now.getMinutes();
+    const inStudyTime = (h === 8 && m >= 30 && m <= 40);
+    const noteEl = document.getElementById('rankingTimeNote');
+    noteEl.textContent = inStudyTime
+        ? '🏆 この結果はランキング対象です'
+        : '⏰ ランキング対象外（朝学習 8:30〜8:40 の記録のみが対象です）';
+    noteEl.className = 'ranking-time-note ' + (inStudyTime ? 'ranking-in-range' : 'ranking-out-range');
     const elapsedSeconds = Math.floor((endTime - startTime) / 1000);
     const minutes = Math.floor(elapsedSeconds / 60);
     const seconds = elapsedSeconds % 60;
@@ -572,6 +581,7 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
 
 function retryTest() {
     resultScreen.classList.add('hidden');
+    document.getElementById('rankingTimeNote').className = 'ranking-time-note hidden';
     topNumbers = []; leftNumbers = []; answers = {}; userInputs = {};
     startTime = null; endTime = null;
     sendStatus = 'idle'; retryCount = 0; lastSendData = null;
@@ -585,6 +595,7 @@ function retryTest() {
 function resetTest() {
     resultScreen.classList.add('hidden');
     menuScreen.classList.remove('hidden');
+    document.getElementById('rankingTimeNote').className = 'ranking-time-note hidden';
     topNumbers = []; leftNumbers = []; answers = {}; userInputs = {};
     startTime = null; endTime = null;
     sendStatus = 'idle'; retryCount = 0; lastSendData = null;

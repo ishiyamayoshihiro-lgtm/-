@@ -244,6 +244,12 @@ function recordResult(data) {
 // ランキング
 // ===============================
 
+// 朝学習時間帯（8:30〜8:40）かどうかを判定
+function isInStudyTime(timestamp) {
+  var time = timestamp.substring(11, 16); // 'HH:mm'
+  return time >= '08:30' && time <= '08:40';
+}
+
 function getClassRanking(className) {
   const students = getStudents().filter(function(s) { return s.className === className; });
   if (students.length === 0) return [];
@@ -251,7 +257,7 @@ function getClassRanking(className) {
   students.forEach(function(s) { emailSet[s.email] = true; });
 
   const best = {};
-  getAllResults().forEach(function(r) {
+  getAllResults().filter(function(r) { return isInStudyTime(r.timestamp); }).forEach(function(r) {
     if (!emailSet[r.email]) return;
     const p = best[r.email];
     if (!p || r.correctCount > p.correctCount || (r.correctCount === p.correctCount && r.elapsedSeconds < p.elapsedSeconds)) {

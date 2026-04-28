@@ -250,6 +250,35 @@ header h1 {
     justify-content: center;
 }
 
+.ranking-notice {
+    color: #856404;
+    background: #fff3cd;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border-left: 4px solid #ffc107;
+    margin: 15px 0;
+    font-size: 0.9em;
+    text-align: left;
+}
+
+.ranking-time-note {
+    font-size: 0.88em;
+    padding: 8px 14px;
+    border-radius: 6px;
+    margin: 10px auto;
+    display: inline-block;
+}
+
+.ranking-in-range {
+    background: #d4edda;
+    color: #155724;
+}
+
+.ranking-out-range {
+    background: #fff3cd;
+    color: #856404;
+}
+
 /* テスト画面 */
 .quiz-header {
     background: white;
