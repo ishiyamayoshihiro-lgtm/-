@@ -122,7 +122,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (manualRetryBtn) manualRetryBtn.addEventListener('click', manualRetrySend);
 
     const now = new Date();
-    document.getElementById('additionBtnTitle').textContent = `${now.getMonth() + 1}月${now.getDate()}日`;
+    const h = now.getHours(), m = now.getMinutes();
+    const inStudyTime = (h === 8 && m >= 30 && m <= 40);
+    if (inStudyTime) {
+        document.getElementById('additionBtnTitle').textContent = `${now.getMonth() + 1}月${now.getDate()}日`;
+        document.getElementById('additionBtnDesc').textContent = '朝学習チャレンジ';
+    } else {
+        document.getElementById('additionBtnTitle').textContent = '25ます計算練習';
+        document.getElementById('additionBtnDesc').textContent = '';
+    }
 });
 
 function toRankingFromResult() {
