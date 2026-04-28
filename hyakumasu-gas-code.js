@@ -35,6 +35,9 @@ function doPost(e) {
       if (!data.email) return createResponse('error', 'メールが必要です');
       return deleteStudentGas(data.email);
     }
+    if (action === 'setSettings') {
+      return setAppSettings(data);
+    }
     return createResponse('error', '不明なアクション: ' + action);
   } catch (error) {
     Logger.log('doPost エラー: ' + error.toString());
@@ -62,6 +65,7 @@ function doGet(e) {
     if (action === 'getAllClassRanking') return jsonRes({ status: 'success', data: getAllClassRankingData() });
     if (action === 'getClassesAndStudents') return jsonRes({ status: 'success', data: { classes: getClasses(), students: getStudents() } });
     if (action === 'getTodayStats')    return jsonRes({ status: 'success', data: getTodayStats() });
+    if (action === 'getSettings')      return jsonRes({ status: 'success', data: getAppSettings() });
   } catch (error) {
     return jsonRes({ status: 'error', message: error.toString() });
   }
@@ -323,4 +327,40 @@ function getTodayStats() {
     topClass: statsArray[0] || null,
     classStats: statsArray
   };
+}
+
+// ===============================
+// 難易度設定
+// ===============================
+
+function getAppSettings() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('設定');
+  const defaults = { maxA: 20, maxB: 20 };
+  if (!sheet || sheet.getLastRow() <= 1) return defaults;
+  sheet.getDataRange().getValues().slice(1).forEach(function(row) {
+    if (row[0] === 'maxA') defaults.maxA = Number(row[1]) || 20;
+    if (row[0] === 'maxB') defaults.maxB = Number(row[1]) || 20;
+  });
+  return defaults;
+}
+
+function setAppSettings(data) {
+  const sheet = getOrCreateSheet('設定', ['キー', '値']);
+  const existing = sheet.getDataRange().getValues();
+  const keyToRow = {};
+  for (var i = 1; i < existing.length; i++) {
+    if (existing[i][0]) keyToRow[String(existing[i][0])] = i + 1;
+  }
+  ['maxA', 'maxB'].forEach(function(key) {
+    if (data[key] !== undefined) {
+      var val = Number(data[key]);
+      if (keyToRow[key]) {
+        sheet.getRange(keyToRow[key], 2).setValue(val);
+      } else {
+        sheet.appendRow([key, val]);
+      }
+    }
+  });
+  return createResponse('success', '設定を保存しました');
 }

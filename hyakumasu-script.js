@@ -3,6 +3,7 @@ let userEmail = null;
 let userClass = null;
 let studentNameMap = {}; // email → {sei, mei, className}
 let cachedClasses = null; // クラス一覧キャッシュ
+let appSettings = { maxA: 20, maxB: 20 }; // 出題範囲設定
 let calculationMode = 'addition';
 let topNumbers = [];
 let leftNumbers = [];
@@ -35,6 +36,9 @@ const scoreText = document.getElementById('scoreText');
 const scorePercentage = document.getElementById('scorePercentage');
 const timeDisplay = document.getElementById('timeDisplay');
 const resultDetails = document.getElementById('resultDetails');
+
+// プレビューモード判定（教員が生徒画面を確認するために使用）
+const isPreviewMode = new URLSearchParams(window.location.search).get('preview') === 'student';
 
 // Google Sign-In初期化
 window.onload = function() {
@@ -72,14 +76,20 @@ function handleCredentialResponse(response) {
 
     setTimeout(() => {
         loginScreen.classList.add('hidden');
-        if (isTeacherAccount(userEmail)) {
+        if (isTeacherAccount(userEmail) && !isPreviewMode) {
             adminScreen.classList.remove('hidden');
             document.getElementById('adminUserEmail').textContent = `ログイン中: ${userEmail}（教員）`;
             initAdminScreen();
+            document.getElementById('previewStudentBtn').addEventListener('click', () => {
+                const url = new URL(window.location.href);
+                url.searchParams.set('preview', 'student');
+                window.open(url.toString(), '_blank');
+            });
         } else {
             menuScreen.classList.remove('hidden');
             userEmailDisplay.textContent = `ログイン中: ${userEmail}`;
             fetchStudentClass();
+            fetchAppSettings();
         }
     }, 1000);
 }
@@ -107,6 +117,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const manualRetryBtn = document.getElementById('manualRetryBtn');
     if (manualRetryBtn) manualRetryBtn.addEventListener('click', manualRetrySend);
 });
+
+// =====================
+// 設定取得
+// =====================
+
+async function fetchAppSettings() {
+    try {
+        const result = await adminGet('getSettings');
+        appSettings = result.data;
+    } catch (e) {}
+}
 
 // =====================
 // 生徒クラス取得
@@ -230,8 +251,8 @@ function backToMenu() {
 }
 
 function startTest() {
-    topNumbers = generateRandomNumbers(5);
-    leftNumbers = generateRandomNumbers(5);
+    topNumbers = generateRandomNumbers(5, appSettings.maxB);
+    leftNumbers = generateRandomNumbers(5, appSettings.maxA);
     answers = {};
     for (let row = 0; row < 5; row++) {
         for (let col = 0; col < 5; col++) {
@@ -253,11 +274,11 @@ function startTest() {
     if (firstInput) firstInput.focus();
 }
 
-function generateRandomNumbers(count) {
+function generateRandomNumbers(count, max) {
     const numbers = [];
     const used = new Set();
     while (numbers.length < count) {
-        const num = Math.floor(Math.random() * 20) + 1;
+        const num = Math.floor(Math.random() * max) + 1;
         if (!used.has(num)) { numbers.push(num); used.add(num); }
     }
     return numbers;
@@ -560,6 +581,8 @@ function initAdminScreen() {
     document.getElementById('tabClassMgmt').addEventListener('click', () => switchAdminTab('classMgmt'));
     document.getElementById('tabStudentReg').addEventListener('click', () => switchAdminTab('studentReg'));
     document.getElementById('tabClassRanking').addEventListener('click', () => switchAdminTab('classRanking'));
+    document.getElementById('tabDifficulty').addEventListener('click', () => switchAdminTab('difficulty'));
+    document.getElementById('saveDifficultyBtn').addEventListener('click', saveDifficultyHandler);
     document.getElementById('applyFilterBtn').addEventListener('click', applyAdminFilter);
     document.getElementById('resetFilterBtn').addEventListener('click', resetAdminFilter);
     document.getElementById('adminRefreshBtn').addEventListener('click', refreshCurrentTab);
@@ -619,7 +642,7 @@ function refreshCurrentTab() {
 
 function switchAdminTab(tab) {
     currentAdminTab = tab;
-    const tabMap = { all: 'tabAllRecords', students: 'tabByStudent', classMgmt: 'tabClassMgmt', studentReg: 'tabStudentReg', classRanking: 'tabClassRanking' };
+    const tabMap = { all: 'tabAllRecords', students: 'tabByStudent', classMgmt: 'tabClassMgmt', studentReg: 'tabStudentReg', classRanking: 'tabClassRanking', difficulty: 'tabDifficulty' };
     Object.values(tabMap).forEach(id => document.getElementById(id).classList.remove('active'));
     document.getElementById(tabMap[tab]).classList.add('active');
 
@@ -627,11 +650,13 @@ function switchAdminTab(tab) {
     document.getElementById('adminClassSection').classList.toggle('hidden', tab !== 'classMgmt');
     document.getElementById('adminStudentSection').classList.toggle('hidden', tab !== 'studentReg');
     document.getElementById('adminRankingSection').classList.toggle('hidden', tab !== 'classRanking');
+    document.getElementById('adminDifficultySection').classList.toggle('hidden', tab !== 'difficulty');
 
     if (tab === 'all' || tab === 'students') renderAdminTable(getFilteredData());
     else if (tab === 'classMgmt') loadClassList();
     else if (tab === 'studentReg') loadStudentList();
     else if (tab === 'classRanking') loadAllClassRanking();
+    else if (tab === 'difficulty') loadDifficultySettings();
 }
 
 async function loadAdminData() {
@@ -1056,4 +1081,28 @@ function showAdminMsg(el, message, type) {
     el.className = `admin-msg ${type}`;
     el.classList.remove('hidden');
     setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+// =====================
+// 難易度設定
+// =====================
+
+async function loadDifficultySettings() {
+    try {
+        const result = await adminGet('getSettings');
+        document.getElementById('diffMaxA').value = String(result.data.maxA);
+        document.getElementById('diffMaxB').value = String(result.data.maxB);
+    } catch (e) {}
+}
+
+async function saveDifficultyHandler() {
+    const maxA = parseInt(document.getElementById('diffMaxA').value);
+    const maxB = parseInt(document.getElementById('diffMaxB').value);
+    const msgEl = document.getElementById('difficultyMsg');
+    try {
+        const result = await adminPost({ action: 'setSettings', maxA, maxB });
+        showAdminMsg(msgEl, result.message || '保存しました', result.status === 'success' ? 'success' : 'error');
+    } catch (e) {
+        showAdminMsg(msgEl, '保存に失敗しました', 'error');
+    }
 }
