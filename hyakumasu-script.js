@@ -116,6 +116,9 @@ document.getElementById('backFromRankingBtn').addEventListener('click', backToMe
 document.addEventListener('DOMContentLoaded', () => {
     const manualRetryBtn = document.getElementById('manualRetryBtn');
     if (manualRetryBtn) manualRetryBtn.addEventListener('click', manualRetrySend);
+
+    const now = new Date();
+    document.getElementById('additionBtnTitle').textContent = `${now.getMonth() + 1}月${now.getDate()}日`;
 });
 
 // =====================
