@@ -1378,6 +1378,19 @@ body.keypad-open {
     align-items: flex-start;
 }
 
+/* キーパッド表示中は送信ボタンをキーパッド直上に固定 */
+body.keypad-open .submit-container {
+    position: fixed;
+    bottom: 292px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.97);
+    padding: 8px 16px 6px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.12);
+    text-align: center;
+}
+
 @media (orientation: landscape) {
     .keypad-btn {
         height: 42px;
@@ -1390,6 +1403,10 @@ body.keypad-open {
 
     body.keypad-open {
         padding-bottom: 210px;
+    }
+
+    body.keypad-open .submit-container {
+        bottom: 212px;
     }
 }
 

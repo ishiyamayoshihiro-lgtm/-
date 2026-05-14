@@ -1,5 +1,8 @@
 // タッチデバイス判定（iPad等）
 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+// iOS判定（iPadはMacIntel+maxTouchPoints>1で判別）
+const isIOS = /iP(ad|hone|od)/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 let activeGridInput = null;
 let keypadButtonsInitialized = false;
 
@@ -333,7 +336,7 @@ function generateGrid() {
             cellDiv.className = 'grid-cell';
             const input = document.createElement('input');
             input.type = 'text';
-            input.inputMode = isTouchDevice ? 'none' : 'numeric';
+            input.inputMode = isIOS ? 'none' : 'numeric';
             input.pattern = '[0-9]*';
             input.maxLength = 2;
             input.dataset.row = row;
