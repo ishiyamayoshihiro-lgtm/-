@@ -314,6 +314,9 @@ function generateRandomNumbers(count, max) {
 }
 
 function generateGrid() {
+    const cornerCell = document.querySelector('.corner-cell');
+    if (cornerCell) cornerCell.textContent = calculationMode === 'addition' ? '＋' : '－';
+
     topNumbersContainer.innerHTML = '';
     topNumbers.forEach(num => {
         const div = document.createElement('div');
