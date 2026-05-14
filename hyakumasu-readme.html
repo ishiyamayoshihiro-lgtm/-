@@ -244,7 +244,7 @@
     <div class="container">
         <header>
             <h1>25ます計算</h1>
-            <p>使い方ガイド & リンク集<span class="version-badge">ver.0.2</span></p>
+            <p>使い方ガイド & リンク集<span class="version-badge">ver.0.4.2</span></p>
         </header>
 
         <div class="content">
@@ -264,17 +264,23 @@
             <div class="section">
                 <h2>📌 現在の機能</h2>
                 <div>
-                    <span class="status-badge status-success">✓ 足し算モード対応</span>
+                    <span class="status-badge status-success">✓ 足し算・引き算モード対応</span>
                     <span class="status-badge status-success">✓ GitHub Pages公開済み</span>
                     <span class="status-badge status-success">✓ スプレッドシート連携完了</span>
                     <span class="status-badge status-success">✓ 自動リトライ機能搭載</span>
+                    <span class="status-badge status-success">✓ クラスランキング対応</span>
+                    <span class="status-badge status-success">✓ 出題設定（演算・範囲）</span>
                     <span class="status-badge status-info">iPad / PC 対応</span>
                 </div>
 
                 <div class="info-grid">
                     <div class="info-card">
-                        <h4>📝 足し算モード</h4>
-                        <p>5×5の25問・1-20の数字が重複なし</p>
+                        <h4>📝 足し算・引き算モード</h4>
+                        <p>5×5の25問。左上のマスに演算記号（＋／－）を表示。数字の範囲は教員が設定可能。</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>📱 コントローラー型キーパッド</h4>
+                        <p>iPad / タッチデバイス向けに十字キー・テンキー・送信ボタン一体型のキーパッドを装備。</p>
                     </div>
                     <div class="info-card">
                         <h4>⏱️ タイマー機能</h4>
@@ -283,6 +289,10 @@
                     <div class="info-card">
                         <h4>✅ 自動採点</h4>
                         <p>提出後すぐに結果表示・間違えた問題を確認</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>🏆 クラスランキング</h4>
+                        <p>朝学習時間（8:30〜8:40）の記録でクラス内ランキングを表示。最高スコアが採用。</p>
                     </div>
                     <div class="info-card">
                         <h4>🔄 送信信頼性</h4>
@@ -334,22 +344,21 @@
                         <code>https://ishiyamayoshihiro-lgtm.github.io/-/hyakumasu-index.html</code>
                     </li>
                     <li>「Googleアカウントでログイン」ボタンをクリック</li>
-                    <li>学校または個人のGoogleアカウントでログイン</li>
-                    <li>「足し算」ボタンをクリック</li>
+                    <li>学校のGoogleアカウント（@haguroko.ed.jp）でログイン</li>
+                    <li>テストボタン（「朝学習チャレンジ」または「25ます計算練習」）をクリック</li>
                     <li>説明を読んで「テスト開始」ボタンをクリック</li>
                     <li>タイマーが自動的にスタートします</li>
                     <li>5×5のマス目に答えを入力（合計25問）
                         <ul>
-                            <li>縦と横の数字（1-20）を足した答えを入力</li>
-                            <li>各マスをクリック/タップして数字を入力</li>
-                            <li>Tabキーで次のマスに移動、Shift+Tabで前のマスに戻る</li>
+                            <li>左上のマスに表示された記号（＋または－）が演算モードを示す</li>
+                            <li>PC：各マスをクリックしてキーボードで入力。Tabキーで次のマスへ</li>
+                            <li>iPad：マスをタップするとコントローラー型キーパッドが表示される。十字キーでマス移動、テンキーで数字入力、中央の送信ボタンで提出</li>
                         </ul>
                     </li>
-                    <li>すべてのマスを埋めたら「提出する」ボタンをクリック</li>
+                    <li>すべてのマスを埋めたら「提出する」ボタンをクリック（iPadはキーパッド中央の丸いボタン）</li>
                     <li>採点結果が表示されます
                         <ul>
-                            <li>正解数と正答率</li>
-                            <li>経過時間</li>
+                            <li>正解数と正答率・経過時間</li>
                             <li>5×5グリッド形式で正誤を確認</li>
                         </ul>
                     </li>
@@ -404,10 +413,9 @@
                 <h3>問題の仕様</h3>
                 <ul>
                     <li><strong>問題数:</strong> 5×5 = 25問</li>
-                    <li><strong>数字の範囲:</strong> 1-20（各数字が縦・横それぞれ重複なし）</li>
+                    <li><strong>数字の範囲:</strong> 教員が出題設定で変更可能（デフォルト 1-20、各数字が縦・横それぞれ重複なし）</li>
                     <li><strong>数字配置:</strong> 毎回ランダムに配置</li>
-                    <li><strong>計算方法:</strong> 縦の数字 + 横の数字</li>
-                    <li><strong>答えの範囲:</strong> 2-40</li>
+                    <li><strong>演算モード:</strong> 足し算 / 引き算（教員が設定）。左上マスに ＋ または － を表示</li>
                 </ul>
             </div>
 
@@ -476,77 +484,51 @@
             <div class="section">
                 <h2>📝 更新履歴</h2>
 
+                <h3>ver.0.4.2 (2026年5月14日)</h3>
+                <ul>
+                    <li>📐 グリッド左上のマスに演算記号（＋ / －）を表示</li>
+                </ul>
+
+                <h3>ver.0.4.1 (2026年5月14日)</h3>
+                <ul>
+                    <li>📱 コントローラー型キーパッドのボタンサイズアップ</li>
+                    <li>📱 十字キーとテンキーを画面両端に広げた配置に変更</li>
+                </ul>
+
+                <h3>ver.0.4.0 (2026年5月)</h3>
+                <ul>
+                    <li>🎮 キーパッドをコントローラー型に刷新（十字キー・中央送信ボタン・テンキー）</li>
+                    <li>✅ 送信ボタンをキーパッド中央に統合（25問完答で緑色に変化）</li>
+                </ul>
+
+                <h3>ver.0.3.x (2026年5月)</h3>
+                <ul>
+                    <li>📱 iPad向け固定キーパッドを追加・iOS判定での入力制御</li>
+                    <li>🐛 PC・iPad両デバイスでのキーパッド動作を修正</li>
+                    <li>🐛 5行目がキーパッドに隠れないスクロール制御を実装</li>
+                    <li>🐛 一斉挑戦時に設定が取得できず0点になるバグを修正（ver.0.2.9）</li>
+                </ul>
+
+                <h3>ver.0.2.5〜0.2.8 (2026年4月〜5月)</h3>
+                <ul>
+                    <li>📖 生徒用・教員用の使い方ガイドを追加</li>
+                    <li>⚙️ 出題設定に演算設定（足し算/引き算）を追加</li>
+                    <li>🎨 教員用ガイドの配色をインディゴブルーに変更</li>
+                    <li>©️ コピーライトを2025-2026に更新</li>
+                </ul>
+
                 <h3>ver.0.2 (2025年11月26日)</h3>
                 <ul>
-                    <li>🔢 <strong>25ます計算に変更</strong>
-                        <ul>
-                            <li>問題数を100問から25問に削減（10×10 → 5×5）</li>
-                            <li>数字の範囲を0-9から1-20に拡大（難易度向上）</li>
-                            <li>各行・列に重複しない数字を配置</li>
-                            <li>答えの範囲: 2-40</li>
-                        </ul>
-                    </li>
-                    <li>🎯 <strong>集中力への配慮</strong>
-                        <ul>
-                            <li>問題数を減らして集中力を維持しやすく</li>
-                            <li>難易度を上げて学習効果を向上</li>
-                        </ul>
-                    </li>
-                    <li>📝 <strong>結果表示の改善</strong>
-                        <ul>
-                            <li>5×5グリッド形式で正誤を視覚的に確認</li>
-                        </ul>
-                    </li>
-                    <li>🔐 <strong>セキュリティ強化</strong>
-                        <ul>
-                            <li>ログインドメイン制限を追加（@haguroko.ed.jp のみ許可）</li>
-                            <li>指定ドメイン以外のアカウントはエラー表示して強制ログアウト</li>
-                            <li>特定教育機関の生徒・教員のみアクセス可能</li>
-                        </ul>
-                    </li>
+                    <li>🔢 <strong>25ます計算に変更</strong>（100問 → 25問、数字範囲 0-9 → 1-20）</li>
+                    <li>🔐 ログインドメイン制限（@haguroko.ed.jp のみ許可）</li>
+                    <li>📝 5×5グリッド形式で正誤を視覚的に確認</li>
                 </ul>
 
                 <h3>ver.0.1 (2025年11月26日)</h3>
                 <ul>
-                    <li>🎉 <strong>初版リリース</strong>
-                        <ul>
-                            <li>百ます計算アプリの基本機能を実装</li>
-                            <li>足し算モード（10×10の100問、0-9の数字）</li>
-                            <li>Google OAuth 2.0認証実装</li>
-                            <li>Google Spreadsheet連携（結果自動記録）</li>
-                            <li>自動採点機能</li>
-                            <li>タイマー機能</li>
-                        </ul>
-                    </li>
-                    <li>✨ <strong>数字重複排除機能</strong>
-                        <ul>
-                            <li>左と上の数字が0-9で重複しないように実装</li>
-                            <li>Fisher-Yatesシャッフルアルゴリズムで毎回ランダムに配置</li>
-                            <li>各数字が縦・横それぞれ1回ずつ表示される</li>
-                        </ul>
-                    </li>
-                    <li>🎨 <strong>UI改善</strong>
-                        <ul>
-                            <li>Googleログインボタンを中央揃えに修正</li>
-                        </ul>
-                    </li>
-                    <li>🔄 <strong>データ送信の信頼性向上</strong>
-                        <ul>
-                            <li>自動リトライ機能（最大3回、3秒間隔）</li>
-                            <li>送信状態の可視化（送信中→再送信中→送信完了/失敗）</li>
-                            <li>手動再送信ボタンの追加</li>
-                            <li>CORSエラー時の自動フォールバック（no-corsモード）</li>
-                        </ul>
-                    </li>
-                    <li>📱 <strong>デバイス対応</strong>
-                        <ul>
-                            <li>PC・iPad両対応</li>
-                            <li>キーボード入力対応（Tab/Shift+Tab/Enterキーでナビゲーション）</li>
-                            <li>タッチ入力対応（タップして数字入力）</li>
-                            <li>レスポンシブデザイン（画面サイズに応じて最適化）</li>
-                        </ul>
-                    </li>
-                    <li>✅ <strong>GitHub Pages公開</strong></li>
+                    <li>🎉 初版リリース（百ます計算・足し算モード・Google OAuth・スプレッドシート連携）</li>
+                    <li>🔄 自動リトライ機能（最大3回）・手動再送信ボタン</li>
+                    <li>📱 PC・iPad両対応・レスポンシブデザイン</li>
                 </ul>
             </div>
 
@@ -554,19 +536,17 @@
             <div class="section">
                 <h2>🔮 今後の予定</h2>
                 <ul>
-                    <li>引き算モードの追加</li>
                     <li>掛け算モードの追加</li>
-                    <li>難易度設定（数字の範囲変更）</li>
-                    <li>成績履歴の表示機能</li>
-                    <li>ランキング機能</li>
+                    <li>成績履歴の表示機能（個人の推移グラフ）</li>
+                    <li>引き算の正解計算ロジック修正</li>
                 </ul>
             </div>
         </div>
 
         <footer>
             <p><strong>25ます計算</strong></p>
-            <p>作成日: 2025年11月26日 | 最終更新: 2025年11月26日</p>
-            <p>バージョン: <span class="status-badge status-success">ver.0.2</span></p>
+            <p>作成日: 2025年11月26日 | 最終更新: 2026年5月14日</p>
+            <p>バージョン: <span class="status-badge status-success">ver.0.4.2</span></p>
             <p>状態: <span class="status-badge status-success">✓ 本番運用中</span></p>
             <p style="margin-top: 15px;">&copy;2025-2026 IshiyamaYoshihiro</p>
         </footer>
