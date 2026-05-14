@@ -508,32 +508,21 @@ function showDetailedResults(correctCount) {
 // =====================
 
 function initCustomKeypad() {
-    if (!isTouchDevice) return;
-
-    // キーパッドボタンのリスナーは初回のみ設定
+    // キーパッドボタンのリスナーは初回のみ設定（全デバイス共通）
     if (!keypadButtonsInitialized) {
         document.querySelectorAll('.keypad-btn').forEach(btn => {
-            // touchend: iOS SafariはtouchendのpreventDefaultで合成clickを防げる
             btn.addEventListener('touchend', (e) => {
-                e.preventDefault();
+                e.preventDefault(); // 合成clickを防ぐ
                 if (!activeGridInput) return;
                 handleKeypadPress(btn.dataset.value);
-                if (activeGridInput) activeGridInput.focus(); // blurされても再フォーカス
+                if (activeGridInput) activeGridInput.focus();
             });
-            btn.addEventListener('mousedown', (e) => e.preventDefault()); // デスクトップblur防止
-            btn.addEventListener('click', () => { // デスクトップ用
+            btn.addEventListener('mousedown', (e) => e.preventDefault()); // PCでのblur防止
+            btn.addEventListener('click', () => { // PC用
                 if (activeGridInput) handleKeypadPress(btn.dataset.value);
             });
         });
-
-        // グリッドとキーパッド外をタップしたときだけキーパッドを閉じる
-        document.addEventListener('pointerdown', (e) => {
-            if (!activeGridInput) return;
-            if (!e.target.closest('.grid-cell') && !e.target.closest('#customKeypad')) {
-                hideCustomKeypad();
-            }
-        }, true);
-
+        // ※ pointerdownでのキーパッド自動閉じは廃止（スクロール時に誤って閉じるため）
         keypadButtonsInitialized = true;
     }
 
@@ -543,12 +532,23 @@ function initCustomKeypad() {
             activeGridInput = input;
             document.getElementById('customKeypad').classList.remove('hidden');
             document.body.classList.add('keypad-open');
-            setTimeout(() => {
-                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 60);
+            setTimeout(() => scrollInputAboveKeypad(input), 80);
         });
-        // blur時にキーパッドを閉じない（タップ後にfocus()で復元するため）
     });
+}
+
+function scrollInputAboveKeypad(input) {
+    const keypadEl = document.getElementById('customKeypad');
+    const keypadH = keypadEl.classList.contains('hidden') ? 0 : keypadEl.offsetHeight + 4;
+    const rect = input.getBoundingClientRect();
+    const available = window.innerHeight - keypadH;
+    if (rect.bottom > available - 8) {
+        // セルがキーパッドに隠れている → 上にスクロール
+        window.scrollBy({ top: rect.bottom - (available - 8), behavior: 'smooth' });
+    } else if (rect.top < 56) {
+        // セルが画面上部のヘッダーに隠れている → 下にスクロール
+        window.scrollBy({ top: rect.top - 56, behavior: 'smooth' });
+    }
 }
 
 function handleKeypadPress(value) {
