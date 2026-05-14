@@ -1375,6 +1375,7 @@ header h1 {
 
 body.keypad-open {
     padding-bottom: 290px;
+    align-items: flex-start;
 }
 
 @media (orientation: landscape) {

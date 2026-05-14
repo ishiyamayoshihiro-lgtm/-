@@ -505,6 +505,8 @@ function showDetailedResults(correctCount) {
 // =====================
 
 function initCustomKeypad() {
+    if (!isTouchDevice) return;
+
     // キーパッドボタンのリスナーは初回のみ設定
     if (!keypadButtonsInitialized) {
         document.querySelectorAll('.keypad-btn').forEach(btn => {
