@@ -11,7 +11,7 @@
         <header>
             <h1>25ます計算</h1>
             <p class="subtitle">計算力を鍛えよう</p>
-            <p class="version-label">ver.0.3.6</p>
+            <p class="version-label">ver.0.4.0</p>
         </header>
 
         <!-- ログイン画面 -->
@@ -114,21 +114,40 @@
                 <button id="submitBtn" class="btn-submit" disabled>提出する</button>
             </div>
 
-            <!-- カスタムキーパッド (タッチデバイス用) -->
+            <!-- コントローラー型キーパッド -->
             <div id="customKeypad" class="custom-keypad hidden">
-                <div class="keypad-grid">
-                    <button class="keypad-btn" data-value="7">7</button>
-                    <button class="keypad-btn" data-value="8">8</button>
-                    <button class="keypad-btn" data-value="9">9</button>
-                    <button class="keypad-btn" data-value="4">4</button>
-                    <button class="keypad-btn" data-value="5">5</button>
-                    <button class="keypad-btn" data-value="6">6</button>
-                    <button class="keypad-btn" data-value="1">1</button>
-                    <button class="keypad-btn" data-value="2">2</button>
-                    <button class="keypad-btn" data-value="3">3</button>
-                    <button class="keypad-btn keypad-back" data-value="back">⌫</button>
-                    <button class="keypad-btn" data-value="0">0</button>
-                    <button class="keypad-btn keypad-next" data-value="next">→</button>
+                <div class="keypad-layout">
+                    <!-- 左: 十字キー -->
+                    <div class="dpad-wrap">
+                        <div class="dpad-top">
+                            <button class="keypad-btn dpad-btn" data-value="up">▲</button>
+                        </div>
+                        <div class="dpad-mid">
+                            <button class="keypad-btn dpad-btn" data-value="left">◀</button>
+                            <div class="dpad-nub"></div>
+                            <button class="keypad-btn dpad-btn" data-value="right">▶</button>
+                        </div>
+                        <div class="dpad-bot">
+                            <button class="keypad-btn dpad-btn" data-value="down">▼</button>
+                        </div>
+                    </div>
+                    <!-- 中央: 送信ボタン -->
+                    <button id="keypadSubmitBtn" class="keypad-submit-btn" disabled>送信<br>する</button>
+                    <!-- 右: 数字キー -->
+                    <div class="numpad-wrap">
+                        <button class="keypad-btn" data-value="7">7</button>
+                        <button class="keypad-btn" data-value="8">8</button>
+                        <button class="keypad-btn" data-value="9">9</button>
+                        <button class="keypad-btn" data-value="4">4</button>
+                        <button class="keypad-btn" data-value="5">5</button>
+                        <button class="keypad-btn" data-value="6">6</button>
+                        <button class="keypad-btn" data-value="1">1</button>
+                        <button class="keypad-btn" data-value="2">2</button>
+                        <button class="keypad-btn" data-value="3">3</button>
+                        <button class="keypad-btn keypad-back" data-value="back">⌫</button>
+                        <button class="keypad-btn" data-value="0">0</button>
+                        <div></div>
+                    </div>
                 </div>
             </div>
         </div>

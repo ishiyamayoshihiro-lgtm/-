@@ -380,12 +380,9 @@ function moveToNextCell(row, col) {
 function updateProgress() {
     const filledCount = Object.keys(userInputs).length;
     progressText.textContent = `入力済み: ${filledCount}/25`;
-    const wasDisabled = submitBtn.disabled;
     submitBtn.disabled = filledCount < 25;
-    if (filledCount === 25 && wasDisabled) {
-        hideCustomKeypad();
-        setTimeout(() => submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
-    }
+    const kpSubmit = document.getElementById('keypadSubmitBtn');
+    if (kpSubmit) kpSubmit.disabled = filledCount < 25;
 }
 
 function startTimer() {
@@ -522,6 +519,20 @@ function initCustomKeypad() {
                 if (activeGridInput) handleKeypadPress(btn.dataset.value);
             });
         });
+
+        // キーパッド内送信ボタン
+        const kpSubmit = document.getElementById('keypadSubmitBtn');
+        if (kpSubmit) {
+            kpSubmit.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                if (!kpSubmit.disabled) submitAnswers();
+            });
+            kpSubmit.addEventListener('mousedown', (e) => e.preventDefault());
+            kpSubmit.addEventListener('click', () => {
+                if (!kpSubmit.disabled) submitAnswers();
+            });
+        }
+
         // ※ pointerdownでのキーパッド自動閉じは廃止（スクロール時に誤って閉じるため）
         keypadButtonsInitialized = true;
     }
@@ -554,6 +565,12 @@ function scrollInputAboveKeypad(input) {
 function handleKeypadPress(value) {
     if (!activeGridInput) return;
 
+    // 十字キーナビゲーション
+    if (value === 'up')    { navigateCell(-1, 0); return; }
+    if (value === 'down')  { navigateCell(1, 0);  return; }
+    if (value === 'left')  { navigateCell(0, -1); return; }
+    if (value === 'right') { navigateCell(0, 1);  return; }
+
     const key = activeGridInput.dataset.key;
     const current = activeGridInput.value;
 
@@ -566,9 +583,6 @@ function handleKeypadPress(value) {
         } else {
             userInputs[key] = parseInt(next);
         }
-    } else if (value === 'next') {
-        advanceFromCurrentCell();
-        return;
     } else {
         if (current.length < 2) {
             const next = current + value;
@@ -585,22 +599,31 @@ function handleKeypadPress(value) {
     updateProgress();
 }
 
+function navigateCell(rowDelta, colDelta) {
+    if (!activeGridInput) return;
+    const row = parseInt(activeGridInput.dataset.row);
+    const col = parseInt(activeGridInput.dataset.col);
+    let nr = row + rowDelta;
+    let nc = col + colDelta;
+    // 左右端でのラップ（左端→前行末尾、右端→次行先頭）
+    if (nc < 0) { nc = 4; nr = row - 1; }
+    else if (nc > 4) { nc = 0; nr = row + 1; }
+    if (nr < 0 || nr > 4) return;
+    const next = document.querySelector(`input[data-row="${nr}"][data-col="${nc}"]`);
+    if (next) next.focus();
+}
+
 function advanceFromCurrentCell() {
     if (!activeGridInput) return;
     const row = parseInt(activeGridInput.dataset.row);
     const col = parseInt(activeGridInput.dataset.col);
     let nextRow = row, nextCol = col + 1;
     if (nextCol >= 5) { nextCol = 0; nextRow = row + 1; }
-
     if (nextRow < 5) {
         const nextInput = document.querySelector(`input[data-row="${nextRow}"][data-col="${nextCol}"]`);
         if (nextInput) nextInput.focus();
-    } else {
-        hideCustomKeypad();
-        setTimeout(() => {
-            document.getElementById('submitBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
     }
+    // 最後のセル後は何もしない（送信はキーパッド内ボタンを使用）
 }
 
 function hideCustomKeypad() {
