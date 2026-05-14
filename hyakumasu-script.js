@@ -505,10 +505,12 @@ function initCustomKeypad() {
     // キーパッドボタンのリスナーは初回のみ設定
     if (!keypadButtonsInitialized) {
         document.querySelectorAll('.keypad-btn').forEach(btn => {
-            btn.addEventListener('pointerdown', (e) => {
-                e.preventDefault(); // inputのblurを防ぐ
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
                 handleKeypadPress(btn.dataset.value);
-            });
+            }, { passive: false });
+            btn.addEventListener('mousedown', (e) => e.preventDefault());
+            btn.addEventListener('click', () => handleKeypadPress(btn.dataset.value));
         });
         keypadButtonsInitialized = true;
     }
