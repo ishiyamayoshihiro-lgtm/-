@@ -1327,9 +1327,8 @@ header h1 {
 .keypad-layout {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 14px;
-    max-width: 500px;
+    justify-content: space-between;
+    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -1338,7 +1337,7 @@ header h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
 }
 
 .dpad-top, .dpad-bot {
@@ -1349,12 +1348,12 @@ header h1 {
 .dpad-mid {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
 }
 
 .dpad-nub {
-    width: 38px;
-    height: 38px;
+    width: 48px;
+    height: 48px;
     background: #9ba3ae;
     border-radius: 50%;
     flex-shrink: 0;
@@ -1362,14 +1361,14 @@ header h1 {
 
 /* ボタン共通 */
 .keypad-btn {
-    height: 50px;
-    font-size: 1.5em;
+    height: 60px;
+    font-size: 1.6em;
     font-weight: 500;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     background: white;
     cursor: pointer;
-    box-shadow: 0 3px 0 #9ca3af;
+    box-shadow: 0 4px 0 #9ca3af;
     transition: transform 0.07s, box-shadow 0.07s;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
@@ -1380,20 +1379,20 @@ header h1 {
 }
 
 .keypad-btn:active {
-    transform: translateY(2px);
+    transform: translateY(3px);
     box-shadow: 0 1px 0 #9ca3af;
 }
 
 .dpad-btn {
-    width: 46px;
-    height: 46px;
-    font-size: 1.1em;
+    width: 56px;
+    height: 56px;
+    font-size: 1.2em;
 }
 
 .keypad-back {
     background: #9ba3ae;
     font-size: 1.2em;
-    box-shadow: 0 3px 0 #6b7280;
+    box-shadow: 0 4px 0 #6b7280;
 }
 
 .keypad-back:active {
@@ -1402,17 +1401,17 @@ header h1 {
 
 /* 送信ボタン（キーパッド中央） */
 .keypad-submit-btn {
-    width: 74px;
-    height: 74px;
+    width: 86px;
+    height: 86px;
     border-radius: 50%;
     border: none;
-    font-size: 0.9em;
+    font-size: 1em;
     font-weight: bold;
     line-height: 1.4;
     background: #adb5bd;
     color: #6c757d;
     cursor: not-allowed;
-    box-shadow: 0 4px 0 #6c757d;
+    box-shadow: 0 5px 0 #6c757d;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
@@ -1423,23 +1422,23 @@ header h1 {
     background: #28a745;
     color: white;
     cursor: pointer;
-    box-shadow: 0 4px 0 #155724;
+    box-shadow: 0 5px 0 #155724;
 }
 
 .keypad-submit-btn:not([disabled]):active {
-    transform: translateY(2px);
+    transform: translateY(3px);
     box-shadow: 0 2px 0 #155724;
 }
 
 /* 数字キーエリア */
 .numpad-wrap {
     display: grid;
-    grid-template-columns: repeat(3, 54px);
-    gap: 6px;
+    grid-template-columns: repeat(3, 66px);
+    gap: 8px;
 }
 
 body.keypad-open {
-    padding-bottom: 236px;
+    padding-bottom: 310px;
     align-items: flex-start;
 }
 
@@ -1449,14 +1448,15 @@ body.keypad-open .submit-container {
 }
 
 @media (orientation: landscape) {
-    .keypad-btn { height: 40px; font-size: 1.2em; }
-    .dpad-btn { width: 38px; height: 38px; font-size: 1em; }
-    .dpad-nub { width: 32px; height: 32px; }
-    .keypad-submit-btn { width: 60px; height: 60px; font-size: 0.8em; }
-    .numpad-wrap { grid-template-columns: repeat(3, 46px); gap: 5px; }
-    .keypad-layout { gap: 10px; }
-    .custom-keypad { padding: 5px 16px 10px; }
-    body.keypad-open { padding-bottom: 178px; }
+    .keypad-btn { height: 44px; font-size: 1.3em; }
+    .dpad-btn { width: 44px; height: 44px; font-size: 1.1em; }
+    .dpad-nub { width: 38px; height: 38px; }
+    .keypad-submit-btn { width: 68px; height: 68px; font-size: 0.9em; }
+    .numpad-wrap { grid-template-columns: repeat(3, 54px); gap: 6px; }
+    .dpad-wrap { gap: 5px; }
+    .dpad-mid { gap: 5px; }
+    .custom-keypad { padding: 6px 20px 12px; }
+    body.keypad-open { padding-bottom: 216px; }
 }
 
 @media (max-width: 480px) {
