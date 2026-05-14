@@ -1306,6 +1306,92 @@ header h1 {
     }
 }
 
+/* ===================== */
+/* カスタムキーパッド      */
+/* ===================== */
+.custom-keypad {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #c8cdd4;
+    padding: 8px 12px 16px;
+    z-index: 1001;
+    box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.25);
+}
+
+.keypad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.keypad-btn {
+    height: 58px;
+    font-size: 1.6em;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #9ca3af;
+    transition: transform 0.07s, box-shadow 0.07s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.keypad-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #9ca3af;
+}
+
+.keypad-back {
+    background: #9ba3ae;
+    color: #1a1a1a;
+    font-size: 1.3em;
+    box-shadow: 0 3px 0 #6b7280;
+}
+
+.keypad-back:active {
+    box-shadow: 0 1px 0 #6b7280;
+}
+
+.keypad-next {
+    background: #667eea;
+    color: white;
+    font-size: 1.4em;
+    box-shadow: 0 3px 0 #4a5bc0;
+}
+
+.keypad-next:active {
+    box-shadow: 0 1px 0 #4a5bc0;
+}
+
+body.keypad-open {
+    padding-bottom: 290px;
+}
+
+@media (orientation: landscape) {
+    .keypad-btn {
+        height: 42px;
+        font-size: 1.3em;
+    }
+
+    .custom-keypad {
+        padding: 5px 12px 8px;
+    }
+
+    body.keypad-open {
+        padding-bottom: 210px;
+    }
+}
+
 @media (max-width: 480px) {
     .grid-wrapper {
         grid-template-columns: 35px repeat(5, 35px);

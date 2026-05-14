@@ -1,3 +1,8 @@
+// タッチデバイス判定（iPad等）
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+let activeGridInput = null;
+let keypadButtonsInitialized = false;
+
 // グローバル変数
 let userEmail = null;
 let userClass = null;
@@ -286,6 +291,7 @@ function startTest() {
         }
     }
     generateGrid();
+    initCustomKeypad();
     instructionScreen.classList.add('hidden');
     quizScreen.classList.remove('hidden');
     startTime = new Date();
@@ -327,7 +333,7 @@ function generateGrid() {
             cellDiv.className = 'grid-cell';
             const input = document.createElement('input');
             input.type = 'text';
-            input.inputMode = 'numeric';
+            input.inputMode = isTouchDevice ? 'none' : 'numeric';
             input.pattern = '[0-9]*';
             input.maxLength = 2;
             input.dataset.row = row;
@@ -388,6 +394,7 @@ function stopTimer() {
 }
 
 function submitAnswers() {
+    hideCustomKeypad();
     endTime = new Date();
     stopTimer();
     let correctCount = 0;
@@ -486,6 +493,103 @@ function showDetailedResults(correctCount) {
         <div class="legend-item"><div class="legend-box result-correct"></div><span>正解：${correctCount}問</span></div>
         <div class="legend-item"><div class="legend-box result-incorrect"></div><span>不正解：${incorrectCount}問</span></div>`;
     resultDetails.appendChild(legend);
+}
+
+// =====================
+// カスタムキーパッド
+// =====================
+
+function initCustomKeypad() {
+    if (!isTouchDevice) return;
+
+    // キーパッドボタンのリスナーは初回のみ設定
+    if (!keypadButtonsInitialized) {
+        document.querySelectorAll('.keypad-btn').forEach(btn => {
+            btn.addEventListener('pointerdown', (e) => {
+                e.preventDefault(); // inputのblurを防ぐ
+                handleKeypadPress(btn.dataset.value);
+            });
+        });
+        keypadButtonsInitialized = true;
+    }
+
+    // 新しく生成されたグリッドのinputにフォーカスリスナーを付ける
+    document.querySelectorAll('.grid-cell input').forEach(input => {
+        input.addEventListener('focus', () => {
+            activeGridInput = input;
+            document.getElementById('customKeypad').classList.remove('hidden');
+            document.body.classList.add('keypad-open');
+            setTimeout(() => {
+                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 60);
+        });
+        input.addEventListener('blur', () => {
+            setTimeout(() => {
+                const active = document.activeElement;
+                if (!active || !active.closest('.grid-cell')) {
+                    hideCustomKeypad();
+                }
+            }, 150);
+        });
+    });
+}
+
+function handleKeypadPress(value) {
+    if (!activeGridInput) return;
+
+    const key = activeGridInput.dataset.key;
+    const current = activeGridInput.value;
+
+    if (value === 'back') {
+        const next = current.slice(0, -1);
+        activeGridInput.value = next;
+        if (next === '') {
+            delete userInputs[key];
+            activeGridInput.classList.remove('filled');
+        } else {
+            userInputs[key] = parseInt(next);
+        }
+    } else if (value === 'next') {
+        advanceFromCurrentCell();
+        return;
+    } else {
+        if (current.length < 2) {
+            const next = current + value;
+            activeGridInput.value = next;
+            userInputs[key] = parseInt(next);
+            activeGridInput.classList.add('filled');
+            if (next.length >= 2) {
+                updateProgress();
+                advanceFromCurrentCell();
+                return;
+            }
+        }
+    }
+    updateProgress();
+}
+
+function advanceFromCurrentCell() {
+    if (!activeGridInput) return;
+    const row = parseInt(activeGridInput.dataset.row);
+    const col = parseInt(activeGridInput.dataset.col);
+    let nextRow = row, nextCol = col + 1;
+    if (nextCol >= 5) { nextCol = 0; nextRow = row + 1; }
+
+    if (nextRow < 5) {
+        const nextInput = document.querySelector(`input[data-row="${nextRow}"][data-col="${nextCol}"]`);
+        if (nextInput) nextInput.focus();
+    } else {
+        hideCustomKeypad();
+        setTimeout(() => {
+            document.getElementById('submitBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+}
+
+function hideCustomKeypad() {
+    document.getElementById('customKeypad').classList.add('hidden');
+    document.body.classList.remove('keypad-open');
+    activeGridInput = null;
 }
 
 // =====================
@@ -588,6 +692,7 @@ async function sendResultToSpreadsheet(correctCount, totalQuestions, elapsedSeco
 }
 
 function retryTest() {
+    hideCustomKeypad();
     resultScreen.classList.add('hidden');
     document.getElementById('rankingTimeNote').className = 'ranking-time-note hidden';
     topNumbers = []; leftNumbers = []; answers = {}; userInputs = {};
@@ -601,6 +706,7 @@ function retryTest() {
 }
 
 function resetTest() {
+    hideCustomKeypad();
     resultScreen.classList.add('hidden');
     menuScreen.classList.remove('hidden');
     document.getElementById('rankingTimeNote').className = 'ranking-time-note hidden';
