@@ -145,7 +145,7 @@ function toRankingFromResult() {
 async function fetchAppSettings() {
     try {
         const result = await adminGet('getSettings');
-        appSettings = result.data;
+        appSettings = Object.assign({ maxA: 20, maxB: 20, operation: 'addition' }, result.data);
     } catch (e) {}
 }
 
