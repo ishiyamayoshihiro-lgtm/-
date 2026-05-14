@@ -377,7 +377,12 @@ function moveToNextCell(row, col) {
 function updateProgress() {
     const filledCount = Object.keys(userInputs).length;
     progressText.textContent = `入力済み: ${filledCount}/25`;
+    const wasDisabled = submitBtn.disabled;
     submitBtn.disabled = filledCount < 25;
+    if (filledCount === 25 && wasDisabled) {
+        hideCustomKeypad();
+        setTimeout(() => submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+    }
 }
 
 function startTimer() {
@@ -500,8 +505,6 @@ function showDetailedResults(correctCount) {
 // =====================
 
 function initCustomKeypad() {
-    if (!isTouchDevice) return;
-
     // キーパッドボタンのリスナーは初回のみ設定
     if (!keypadButtonsInitialized) {
         document.querySelectorAll('.keypad-btn').forEach(btn => {
