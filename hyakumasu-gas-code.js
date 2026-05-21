@@ -66,6 +66,7 @@ function doGet(e) {
     if (action === 'getClassesAndStudents') return jsonRes({ status: 'success', data: { classes: getClasses(), students: getStudents() } });
     if (action === 'getTodayStats')    return jsonRes({ status: 'success', data: getTodayStats() });
     if (action === 'getSettings')      return jsonRes({ status: 'success', data: getAppSettings() });
+  if (action === 'getClassCompetitionRanking') return jsonRes({ status: 'success', data: getClassCompetitionRankingData() });
   } catch (error) {
     return jsonRes({ status: 'error', message: error.toString() });
   }
@@ -342,12 +343,15 @@ function getTodayStats() {
 function getAppSettings() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName('設定');
-  const defaults = { maxA: 20, maxB: 20, operation: 'addition' };
+  const defaults = { maxA: 20, maxB: 20, operation: 'addition', rankingEnabled: true, penaltySecondsPerWrong: 10, penaltySecondsPerAbsent: 5 };
   if (!sheet || sheet.getLastRow() <= 1) return defaults;
   sheet.getDataRange().getValues().slice(1).forEach(function(row) {
     if (row[0] === 'maxA') defaults.maxA = Number(row[1]) || 20;
     if (row[0] === 'maxB') defaults.maxB = Number(row[1]) || 20;
     if (row[0] === 'operation') defaults.operation = String(row[1]) || 'addition';
+    if (row[0] === 'rankingEnabled') defaults.rankingEnabled = row[1] !== false;
+    if (row[0] === 'penaltySecondsPerWrong') defaults.penaltySecondsPerWrong = Number(row[1]);
+    if (row[0] === 'penaltySecondsPerAbsent') defaults.penaltySecondsPerAbsent = Number(row[1]);
   });
   return defaults;
 }
@@ -359,9 +363,12 @@ function setAppSettings(data) {
   for (var i = 1; i < existing.length; i++) {
     if (existing[i][0]) keyToRow[String(existing[i][0])] = i + 1;
   }
-  ['maxA', 'maxB', 'operation'].forEach(function(key) {
+  ['maxA', 'maxB', 'operation', 'rankingEnabled', 'penaltySecondsPerWrong', 'penaltySecondsPerAbsent'].forEach(function(key) {
     if (data[key] !== undefined) {
-      var val = key === 'operation' ? String(data[key]) : Number(data[key]);
+      var val;
+      if (key === 'operation') val = String(data[key]);
+      else if (key === 'rankingEnabled') val = data[key] === true || data[key] === 'true';
+      else val = Number(data[key]);
       if (keyToRow[key]) {
         sheet.getRange(keyToRow[key], 2).setValue(val);
       } else {
@@ -370,4 +377,85 @@ function setAppSettings(data) {
     }
   });
   return createResponse('success', '設定を保存しました');
+}
+
+// ===============================
+// クラス対抗ランキング
+// ===============================
+
+function getMostRecentThursdayStr() {
+  const now = new Date();
+  const jstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const dayOfWeek = jstNow.getUTCDay(); // 0=Sun, 1=Mon, ..., 4=Thu
+  const daysFromThursday = (dayOfWeek - 4 + 7) % 7;
+  const thursday = new Date(now.getTime() - daysFromThursday * 24 * 60 * 60 * 1000);
+  return Utilities.formatDate(thursday, 'Asia/Tokyo', 'yyyy/MM/dd');
+}
+
+function getClassCompetitionRankingData() {
+  const settings = getAppSettings();
+  const penaltyWrong = typeof settings.penaltySecondsPerWrong === 'number' ? settings.penaltySecondsPerWrong : 10;
+  const penaltyAbsent = typeof settings.penaltySecondsPerAbsent === 'number' ? settings.penaltySecondsPerAbsent : 5;
+
+  const thursdayStr = getMostRecentThursdayStr();
+
+  const targetResults = getAllResults().filter(function(r) {
+    if (!r.timestamp.startsWith(thursdayStr)) return false;
+    const time = r.timestamp.substring(11, 16);
+    return time >= '08:30' && time <= '08:40';
+  });
+
+  const classes = getClasses();
+  const students = getStudents();
+
+  const classSizeMap = {};
+  classes.forEach(function(cls) { classSizeMap[cls] = 0; });
+  students.forEach(function(s) {
+    if (s.className in classSizeMap) classSizeMap[s.className]++;
+  });
+
+  const emailToClass = {};
+  students.forEach(function(s) { emailToClass[s.email] = s.className; });
+
+  const bestPerStudent = {};
+  targetResults.forEach(function(r) {
+    const cls = emailToClass[r.email];
+    if (!cls || !(cls in classSizeMap)) return;
+    const wrongCount = r.totalQuestions - r.correctCount;
+    const adjustedTime = r.elapsedSeconds + wrongCount * penaltyWrong;
+    const prev = bestPerStudent[r.email];
+    if (!prev || adjustedTime < prev.adjustedTime) {
+      bestPerStudent[r.email] = { email: r.email, className: cls, adjustedTime: adjustedTime };
+    }
+  });
+
+  const classDataMap = {};
+  classes.forEach(function(cls) {
+    classDataMap[cls] = { className: cls, classSize: classSizeMap[cls] || 0, challengerCount: 0, totalAdjustedTime: 0 };
+  });
+  Object.values(bestPerStudent).forEach(function(s) {
+    if (classDataMap[s.className]) {
+      classDataMap[s.className].challengerCount++;
+      classDataMap[s.className].totalAdjustedTime += s.adjustedTime;
+    }
+  });
+
+  return {
+    thursdayDate: thursdayStr,
+    penaltySecondsPerWrong: penaltyWrong,
+    penaltySecondsPerAbsent: penaltyAbsent,
+    classes: classes.map(function(cls) {
+      const d = classDataMap[cls];
+      const avgAdjustedTime = d.challengerCount > 0 ? Math.round(d.totalAdjustedTime / d.challengerCount) : null;
+      const absentCount = Math.max(0, d.classSize - d.challengerCount);
+      const rankingScore = d.challengerCount > 0 ? avgAdjustedTime + absentCount * penaltyAbsent : null;
+      return {
+        className: cls,
+        classSize: d.classSize,
+        challengerCount: d.challengerCount,
+        avgAdjustedTime: avgAdjustedTime,
+        rankingScore: rankingScore
+      };
+    })
+  };
 }

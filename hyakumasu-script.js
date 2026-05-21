@@ -11,7 +11,8 @@ let userEmail = null;
 let userClass = null;
 let studentNameMap = {}; // email → {sei, mei, className}
 let cachedClasses = null; // クラス一覧キャッシュ
-let appSettings = { maxA: 20, maxB: 20, operation: 'addition' }; // 出題設定
+let appSettings = { maxA: 20, maxB: 20, operation: 'addition', rankingEnabled: true, penaltySecondsPerWrong: 10, penaltySecondsPerAbsent: 5 }; // 出題設定
+let classCompetitionRefreshTimer = null;
 let calculationMode = 'addition';
 let topNumbers = [];
 let leftNumbers = [];
@@ -153,8 +154,9 @@ function toRankingFromResult() {
 async function fetchAppSettings() {
     try {
         const result = await adminGet('getSettings');
-        appSettings = Object.assign({ maxA: 20, maxB: 20, operation: 'addition' }, result.data);
+        appSettings = Object.assign({ maxA: 20, maxB: 20, operation: 'addition', rankingEnabled: true, penaltySecondsPerWrong: 10, penaltySecondsPerAbsent: 5 }, result.data);
     } catch (e) {}
+    initClassCompetitionSection();
 }
 
 // =====================
@@ -258,6 +260,132 @@ function renderStudentRanking(ranking) {
 function backToMenuFromRanking() {
     rankingScreen.classList.add('hidden');
     menuScreen.classList.remove('hidden');
+}
+
+// =====================
+// クラス対抗ランキング（生徒用）
+// =====================
+
+function formatSecondsDisplay(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}分${s}秒`;
+}
+
+function initClassCompetitionSection() {
+    const section = document.getElementById('classCompetitionSection');
+    if (!section) return;
+
+    const now = new Date();
+    const h = now.getHours();
+    const isThursday = now.getDay() === 4;
+
+    if (!isThursday || h < 8 || !appSettings.rankingEnabled) {
+        section.classList.add('hidden');
+        if (classCompetitionRefreshTimer) {
+            clearInterval(classCompetitionRefreshTimer);
+            classCompetitionRefreshTimer = null;
+        }
+        return;
+    }
+
+    section.classList.remove('hidden');
+    const m = now.getMinutes();
+    const isLive = h === 8 && m < 40;
+    const isResult = h > 8 || (h === 8 && m >= 40);
+
+    document.getElementById('classCompetitionLive').classList.toggle('hidden', !isLive);
+    document.getElementById('classCompetitionResult').classList.toggle('hidden', !isResult);
+
+    loadClassCompetitionData();
+
+    if (isLive && !classCompetitionRefreshTimer) {
+        classCompetitionRefreshTimer = setInterval(async () => {
+            const nowR = new Date();
+            const hR = nowR.getHours();
+            const mR = nowR.getMinutes();
+            const isThursdayNow = nowR.getDay() === 4;
+
+            if (!isThursdayNow || hR < 8) {
+                clearInterval(classCompetitionRefreshTimer);
+                classCompetitionRefreshTimer = null;
+                section.classList.add('hidden');
+                return;
+            }
+
+            const isLiveNow = hR === 8 && mR < 40;
+            const isResultNow = hR > 8 || (hR === 8 && mR >= 40);
+            document.getElementById('classCompetitionLive').classList.toggle('hidden', !isLiveNow);
+            document.getElementById('classCompetitionResult').classList.toggle('hidden', !isResultNow);
+
+            await loadClassCompetitionData();
+
+            if (!isLiveNow) {
+                clearInterval(classCompetitionRefreshTimer);
+                classCompetitionRefreshTimer = null;
+            }
+        }, 60000);
+    }
+}
+
+async function loadClassCompetitionData() {
+    try {
+        const result = await adminGet('getClassCompetitionRanking');
+        const data = result.data;
+        const now = new Date();
+        const h = now.getHours();
+        const m = now.getMinutes();
+        const isLive = now.getDay() === 4 && h === 8 && m < 40;
+        if (isLive) {
+            renderClassCompetitionLive(data);
+        } else {
+            renderClassCompetitionResult(data);
+        }
+    } catch (e) {}
+}
+
+function renderClassCompetitionLive(data) {
+    const container = document.getElementById('competitionClassCards');
+    if (!container) return;
+    if (!data.classes || data.classes.length === 0) {
+        container.innerHTML = '<p style="color:#856404;text-align:center;padding:10px;">クラスが登録されていません</p>';
+        return;
+    }
+    container.innerHTML = data.classes.map(cls => {
+        const timeStr = cls.avgAdjustedTime !== null ? formatSecondsDisplay(cls.avgAdjustedTime) : '--';
+        return `<div class="competition-class-card">
+            <div class="competition-class-name">${cls.className}</div>
+            <div class="competition-challenger-count">挑戦者数<br><span class="competition-count-val">${cls.challengerCount}／${cls.classSize}</span></div>
+            <div class="competition-avg-time">平均クリアタイム<br><span class="competition-time-val">${timeStr}</span></div>
+        </div>`;
+    }).join('');
+}
+
+function renderClassCompetitionResult(data) {
+    const container = document.getElementById('competitionResultList');
+    if (!container) return;
+    if (!data.classes || data.classes.length === 0) {
+        container.innerHTML = '<p style="color:#856404;text-align:center;padding:10px;">クラスが登録されていません</p>';
+        return;
+    }
+    const sorted = [...data.classes]
+        .filter(c => c.classSize > 0)
+        .sort((a, b) => {
+            if (a.rankingScore === null && b.rankingScore === null) return 0;
+            if (a.rankingScore === null) return 1;
+            if (b.rankingScore === null) return -1;
+            return a.rankingScore - b.rankingScore;
+        });
+    const rankIcons = ['🥇', '🥈', '🥉'];
+    container.innerHTML = sorted.map((cls, i) => {
+        const scoreStr = cls.rankingScore !== null ? formatSecondsDisplay(cls.rankingScore) : '--';
+        const rank = rankIcons[i] || `${i + 1}位`;
+        return `<div class="competition-result-row">
+            <span class="competition-result-rank">${rank}</span>
+            <span class="competition-result-class">${cls.className}</span>
+            <span class="competition-result-time">平均クリアタイム　${scoreStr}</span>
+        </div>`;
+    }).join('');
 }
 
 // =====================
@@ -1289,6 +1417,9 @@ async function loadDifficultySettings() {
         const op = result.data.operation || 'addition';
         const radio = document.querySelector(`input[name="diffOperation"][value="${op}"]`);
         if (radio) radio.checked = true;
+        document.getElementById('rankingEnabledToggle').checked = result.data.rankingEnabled !== false;
+        document.getElementById('penaltySecondsPerWrong').value = result.data.penaltySecondsPerWrong ?? 10;
+        document.getElementById('penaltySecondsPerAbsent').value = result.data.penaltySecondsPerAbsent ?? 5;
     } catch (e) {}
 }
 
@@ -1297,9 +1428,12 @@ async function saveDifficultyHandler() {
     const maxB = parseInt(document.getElementById('diffMaxB').value);
     const operationEl = document.querySelector('input[name="diffOperation"]:checked');
     const operation = operationEl ? operationEl.value : 'addition';
+    const rankingEnabled = document.getElementById('rankingEnabledToggle').checked;
+    const penaltySecondsPerWrong = parseInt(document.getElementById('penaltySecondsPerWrong').value) || 0;
+    const penaltySecondsPerAbsent = parseInt(document.getElementById('penaltySecondsPerAbsent').value) || 0;
     const msgEl = document.getElementById('difficultyMsg');
     try {
-        const result = await adminPost({ action: 'setSettings', maxA, maxB, operation });
+        const result = await adminPost({ action: 'setSettings', maxA, maxB, operation, rankingEnabled, penaltySecondsPerWrong, penaltySecondsPerAbsent });
         showAdminMsg(msgEl, result.message || '保存しました', result.status === 'success' ? 'success' : 'error');
     } catch (e) {
         showAdminMsg(msgEl, '保存に失敗しました', 'error');
