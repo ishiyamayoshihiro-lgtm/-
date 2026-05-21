@@ -11,7 +11,7 @@ let userEmail = null;
 let userClass = null;
 let studentNameMap = {}; // email → {sei, mei, className}
 let cachedClasses = null; // クラス一覧キャッシュ
-let appSettings = { maxA: 20, maxB: 20, operation: 'addition', rankingEnabled: true, penaltySecondsPerWrong: 10, penaltySecondsPerAbsent: 5 }; // 出題設定
+let appSettings = { maxA: 20, maxB: 20, operation: 'addition', rankingEnabled: false, penaltySecondsPerWrong: 10, penaltySecondsPerAbsent: 5 }; // 出題設定
 let classCompetitionRefreshTimer = null;
 let calculationMode = 'addition';
 let topNumbers = [];
@@ -154,7 +154,7 @@ function toRankingFromResult() {
 async function fetchAppSettings() {
     try {
         const result = await adminGet('getSettings');
-        appSettings = Object.assign({ maxA: 20, maxB: 20, operation: 'addition', rankingEnabled: true, penaltySecondsPerWrong: 10, penaltySecondsPerAbsent: 5 }, result.data);
+        appSettings = Object.assign({ maxA: 20, maxB: 20, operation: 'addition', rankingEnabled: false, penaltySecondsPerWrong: 10, penaltySecondsPerAbsent: 5 }, result.data);
     } catch (e) {}
     initClassCompetitionSection();
 }

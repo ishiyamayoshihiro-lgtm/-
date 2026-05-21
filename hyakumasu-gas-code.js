@@ -343,7 +343,7 @@ function getTodayStats() {
 function getAppSettings() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName('設定');
-  const defaults = { maxA: 20, maxB: 20, operation: 'addition', rankingEnabled: true, penaltySecondsPerWrong: 10, penaltySecondsPerAbsent: 5 };
+  const defaults = { maxA: 20, maxB: 20, operation: 'addition', rankingEnabled: false, penaltySecondsPerWrong: 10, penaltySecondsPerAbsent: 5 };
   if (!sheet || sheet.getLastRow() <= 1) return defaults;
   sheet.getDataRange().getValues().slice(1).forEach(function(row) {
     if (row[0] === 'maxA') defaults.maxA = Number(row[1]) || 20;
