@@ -323,6 +323,31 @@
                         <p>データを読み込み中...</p>
                     </div>
                     <div id="allClassRankingContent" class="hidden"></div>
+                    <div class="admin-mgmt-section" style="margin-top:20px;">
+                        <h3>クラス対抗ランキング設定</h3>
+                        <div class="admin-form-row" style="margin-bottom:16px;">
+                            <label class="toggle-label">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="rankingEnabledToggle">
+                                    <span class="toggle-slider"></span>
+                                </div>
+                                ランキングを実施する
+                            </label>
+                        </div>
+                        <p class="admin-section-note" style="margin-bottom:12px;">ランキング算出時の設定</p>
+                        <div class="admin-form-row" style="margin-bottom:12px;align-items:center;">
+                            <span style="font-size:0.95em;color:#333;">不正解は</span>
+                            <input type="number" id="penaltySecondsPerWrong" class="admin-input" style="width:70px;" min="0" max="999" value="10">
+                            <span style="font-size:0.95em;color:#333;">秒として算出する</span>
+                        </div>
+                        <div class="admin-form-row" style="margin-bottom:16px;align-items:center;">
+                            <span style="font-size:0.95em;color:#333;">未挑戦者は</span>
+                            <input type="number" id="penaltySecondsPerAbsent" class="admin-input" style="width:70px;" min="0" max="999" value="5">
+                            <span style="font-size:0.95em;color:#333;">秒として算出する</span>
+                        </div>
+                        <button id="saveRankingSettingsBtn" class="btn-admin-add">保存</button>
+                        <div id="rankingSettingsMsg" class="admin-msg hidden"></div>
+                    </div>
                 </div>
 
                 <!-- 出題設定コンテンツ -->
@@ -359,27 +384,6 @@
                                 <option value="15">15</option>
                                 <option value="20">20</option>
                             </select>
-                        </div>
-                        <h4 class="admin-subsection-title">クラス対抗ランキング設定</h4>
-                        <div class="admin-form-row" style="margin-bottom:16px;">
-                            <label class="toggle-label">
-                                <div class="toggle-switch">
-                                    <input type="checkbox" id="rankingEnabledToggle">
-                                    <span class="toggle-slider"></span>
-                                </div>
-                                ランキングを実施する
-                            </label>
-                        </div>
-                        <p class="admin-section-note" style="margin-bottom:12px;">ランキング算出時の設定</p>
-                        <div class="admin-form-row" style="margin-bottom:12px;align-items:center;">
-                            <span style="font-size:0.95em;color:#333;">不正解は</span>
-                            <input type="number" id="penaltySecondsPerWrong" class="admin-input" style="width:70px;" min="0" max="999" value="10">
-                            <span style="font-size:0.95em;color:#333;">秒として算出する</span>
-                        </div>
-                        <div class="admin-form-row" style="margin-bottom:20px;align-items:center;">
-                            <span style="font-size:0.95em;color:#333;">未挑戦者は</span>
-                            <input type="number" id="penaltySecondsPerAbsent" class="admin-input" style="width:70px;" min="0" max="999" value="5">
-                            <span style="font-size:0.95em;color:#333;">秒として算出する</span>
                         </div>
                         <button id="saveDifficultyBtn" class="btn-admin-add">保存</button>
                         <div id="difficultyMsg" class="admin-msg hidden"></div>

@@ -905,6 +905,7 @@ function initAdminScreen() {
     document.getElementById('tabClassRanking').addEventListener('click', () => switchAdminTab('classRanking'));
     document.getElementById('tabDifficulty').addEventListener('click', () => switchAdminTab('difficulty'));
     document.getElementById('saveDifficultyBtn').addEventListener('click', saveDifficultyHandler);
+    document.getElementById('saveRankingSettingsBtn').addEventListener('click', saveRankingSettingsHandler);
     document.getElementById('applyFilterBtn').addEventListener('click', applyAdminFilter);
     document.getElementById('resetFilterBtn').addEventListener('click', resetAdminFilter);
     document.getElementById('adminRefreshBtn').addEventListener('click', refreshCurrentTab);
@@ -1272,9 +1273,10 @@ async function loadAllClassRanking() {
     todayCard.classList.add('hidden');
 
     try {
-        const [rankingResult, todayResult] = await Promise.all([
+        const [rankingResult, todayResult, settingsResult] = await Promise.all([
             adminGet('getAllClassRanking'),
-            adminGet('getTodayStats')
+            adminGet('getTodayStats'),
+            adminGet('getSettings')
         ]);
 
         loadingEl.classList.add('hidden');
@@ -1286,6 +1288,11 @@ async function loadAllClassRanking() {
 
         renderAllClassRanking(rankingResult.data);
         contentEl.classList.remove('hidden');
+
+        const d = settingsResult.data;
+        document.getElementById('rankingEnabledToggle').checked = d.rankingEnabled !== false;
+        document.getElementById('penaltySecondsPerWrong').value = d.penaltySecondsPerWrong ?? 10;
+        document.getElementById('penaltySecondsPerAbsent').value = d.penaltySecondsPerAbsent ?? 5;
     } catch (e) {
         loadingEl.textContent = '読み込みに失敗しました';
     }
@@ -1417,9 +1424,6 @@ async function loadDifficultySettings() {
         const op = result.data.operation || 'addition';
         const radio = document.querySelector(`input[name="diffOperation"][value="${op}"]`);
         if (radio) radio.checked = true;
-        document.getElementById('rankingEnabledToggle').checked = result.data.rankingEnabled !== false;
-        document.getElementById('penaltySecondsPerWrong').value = result.data.penaltySecondsPerWrong ?? 10;
-        document.getElementById('penaltySecondsPerAbsent').value = result.data.penaltySecondsPerAbsent ?? 5;
     } catch (e) {}
 }
 
@@ -1428,12 +1432,22 @@ async function saveDifficultyHandler() {
     const maxB = parseInt(document.getElementById('diffMaxB').value);
     const operationEl = document.querySelector('input[name="diffOperation"]:checked');
     const operation = operationEl ? operationEl.value : 'addition';
+    const msgEl = document.getElementById('difficultyMsg');
+    try {
+        const result = await adminPost({ action: 'setSettings', maxA, maxB, operation });
+        showAdminMsg(msgEl, result.message || '保存しました', result.status === 'success' ? 'success' : 'error');
+    } catch (e) {
+        showAdminMsg(msgEl, '保存に失敗しました', 'error');
+    }
+}
+
+async function saveRankingSettingsHandler() {
     const rankingEnabled = document.getElementById('rankingEnabledToggle').checked;
     const penaltySecondsPerWrong = parseInt(document.getElementById('penaltySecondsPerWrong').value) || 0;
     const penaltySecondsPerAbsent = parseInt(document.getElementById('penaltySecondsPerAbsent').value) || 0;
-    const msgEl = document.getElementById('difficultyMsg');
+    const msgEl = document.getElementById('rankingSettingsMsg');
     try {
-        const result = await adminPost({ action: 'setSettings', maxA, maxB, operation, rankingEnabled, penaltySecondsPerWrong, penaltySecondsPerAbsent });
+        const result = await adminPost({ action: 'setSettings', rankingEnabled, penaltySecondsPerWrong, penaltySecondsPerAbsent });
         showAdminMsg(msgEl, result.message || '保存しました', result.status === 'success' ? 'success' : 'error');
     } catch (e) {
         showAdminMsg(msgEl, '保存に失敗しました', 'error');
